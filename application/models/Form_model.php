@@ -3,71 +3,81 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
 class Form_model extends CI_Model
 {
-    var $table = 'db_forms';  // Use the correct table name from your new structure
+    var $table = 'db_forms as a'; // Use the correct table name from your new structure
     var $column_form = array(
-        'id',
-        'form_name',
-        'form_title',
-        'form_header_text',
-        'form_footer_text',
-        'form_link',
-        'show_customer_name',
-        'customer_name_label',
-        'customer_name_desc',
-        'show_email',
-        'email_label',
-        'email_desc',
-        'show_phone',
-        'phone_label',
-        'phone_desc',
-        'show_whatsapp',
-        'whatsapp_label',
-        'whatsapp_desc',
-        'show_address',
-        'address_label',
-        'address_desc',
-        'show_states',
-        'states_label',
-        'state_desc',
-        'show_delivery',
-        'delivery_label',
-        'delivery_desc',
-        'delivery_choices',
-        'product_bundle',
-        'created_at',
-        'updated_at',
-        'status',
+        'a.id',
+        'a.form_name',
+        'a.form_title',
+        'a.form_header_text',
+        'a.form_footer_text',
+        'a.form_link',
+        'a.show_customer_name',
+        'a.customer_name_label',
+        'a.customer_name_desc',
+        'a.show_email',
+        'a.email_label',
+        'a.email_desc',
+        'a.show_phone',
+        'a.phone_label',
+        'a.phone_desc',
+        'a.show_whatsapp',
+        'a.whatsapp_label',
+        'a.whatsapp_desc',
+        'a.show_address',
+        'a.address_label',
+        'a.address_desc',
+        'a.show_states',
+        'a.states_label',
+        'a.state_desc',
+        'a.show_delivery',
+        'a.delivery_label',
+        'a.delivery_desc',
+        'a.delivery_choices',
+        'a.created_at',
+        'a.updated_at',
+        'a.status',
+        'a.form_bundles',
+        'COUNT(c.id) as orders_count',
+        // 'JSON_ARRAYAGG(
+        //     JSON_OBJECT(
+        //         "id", b.id,
+        //         "name", b.name,
+        //         "description", b.description,
+        //         "price", b.price,
+        //         "image", b.image
+        //     )
+        // ) as bundles'
     );
 
     var $column_search = array(
-        'form_name',
-        'form_title',
-        'form_link',
-        'customer_name_label',
-        'email_label',
-        'phone_label',
-        'whatsapp_label',
-        'address_label',
-        'states_label',
-        'delivery_label',
-        'product_bundle',
-        'status'
+        'a.form_name',
+        'b.name',
+        'a.form_title',
+        'a.form_link',
+        'a.customer_name_label',
+        'a.email_label',
+        'a.phone_label',
+        'a.whatsapp_label',
+        'a.address_label',
+        'a.states_label',
+        'a.delivery_label',
+        'a.status'
     );
 
-    var $form = array('id' => 'desc');
+    var $form = array('id' => 'desc'); // Default order
 
     public function __construct()
     {
         parent::__construct();
-        $CI = &get_instance();
     }
 
     private function _get_datatables_query()
     {
         $this->db->select($this->column_form);
         $this->db->from($this->table);
-
-        // You can add any joins here as needed
+        // $this->db->join('db_form_bundles as b', 'JSON_CONTAINS(a.form_bundles, CAST(b.id AS JSON), "$")', 'left');
+        $this->db->join('db_orders as c', 'c.form_id = a.id', 'left');
+        $this->db->group_by('a.id'); // Group by form ID to aggregate properly
 
         $i = 0;
         foreach ($this->column_search as $item) {
@@ -75,14 +85,14 @@ class Form_model extends CI_Model
 
             if ($search) {
                 if ($i === 0) {
-                    $this->db->group_start(); // open bracket
+                    $this->db->group_start(); // Open bracket for search
                     $this->db->like($item, $search);
                 } else {
                     $this->db->or_like($item, $search);
                 }
 
                 if (count($this->column_search) - 1 == $i) {
-                    $this->db->group_end(); // close bracket
+                    $this->db->group_end(); // Close bracket for search
                 }
             }
             $i++;
@@ -104,6 +114,7 @@ class Form_model extends CI_Model
             $this->db->limit($_POST['length'], $_POST['start']);
         }
         $query = $this->db->get();
+
         return $query->result();
     }
 
@@ -123,7 +134,7 @@ class Form_model extends CI_Model
     public function get_form_by_id($id)
     {
         $this->_get_datatables_query();
-        $this->db->where("id", $id);
+        $this->db->where("a.id", $id);
         $query = $this->db->get();
         return $query->row(); // Return a single row
     }
@@ -131,44 +142,27 @@ class Form_model extends CI_Model
     public function get_form_by_link($form_link)
     {
         $this->_get_datatables_query();
-        $this->db->where("form_link", $form_link);
+        $this->db->where("a.form_link", $form_link);
         $query = $this->db->get();
         return $query->row(); // Return a single row
     }
 
-    // public function get_form_by_link($form_link)
-    // {
-    //     $query = $this->db->get_where('forms', ['form_link' => $form_link]);
-    //     return $query->row_array(); // Return the form data as an associative array
-    // }
-
-    // public function get_form_by_id($id)
-    // {
-    //     $query = $this->db->get_where('forms', ['id' => $id]);
-    //     return $query->row_array(); // Return the form data as an associative array
-    // }
-
     public function save_form_data($formData)
     {
-        // Prepare form data to insert into the forms table
-        // Ensure product_bundle is encoded to JSON format if it's an array
         if (isset($formData['product_bundle']) && is_array($formData['product_bundle'])) {
             $formData['product_bundle'] = json_encode($formData['product_bundle']);
         }
 
-        // Insert form into the 'forms' table
         $this->db->insert('db_forms', $formData);
         return $this->db->insert_id(); // Return the inserted form ID
     }
 
     public function update_form_by_id($id, $formData)
     {
-        // If product_bundle is provided and it's an array, convert it to JSON
         if (isset($formData['product_bundle']) && is_array($formData['product_bundle'])) {
             $formData['product_bundle'] = json_encode($formData['product_bundle']);
         }
 
-        // Update form in the 'forms' table
         $this->db->where('id', $id);
         $this->db->update('db_forms', $formData);
         return $this->db->affected_rows(); // Return the number of affected rows
@@ -176,16 +170,14 @@ class Form_model extends CI_Model
 
     public function delete_forms($ids)
     {
-        // Delete multiple forms by IDs
-        $this->db->where_in('id', $ids);
+        $this->db->where_in('a.id', $ids);
         $this->db->delete('db_forms');
         return $this->db->affected_rows();
     }
 
     public function delete_form($id)
     {
-        // Delete a single form by ID
-        $this->db->where('id', $id);
+        $this->db->where('a.id', $id);
         $this->db->delete('db_forms');
         return $this->db->affected_rows();
     }

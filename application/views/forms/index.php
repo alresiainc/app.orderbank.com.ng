@@ -701,6 +701,30 @@
                 $(".bulk_action_btn").addClass('hidden').hide();
             });
         });
+
+        function copyFormLink(formLink) {
+            // Create a temporary input element to hold the link
+            const tempInput = document.createElement("input");
+            tempInput.value = formLink;
+            document.body.appendChild(tempInput);
+
+            // Select the input content
+            tempInput.select();
+            tempInput.setSelectionRange(0, 99999); // For mobile devices
+
+            // Copy the content to the clipboard
+            try {
+                document.execCommand("copy");
+                toastr["success"]("Link copied to clipboard: " + formLink);
+
+                // alert("Link copied to clipboard: " + formLink);
+            } catch (err) {
+                toastr["error"]("Failed to copy link. Please try again.");
+            }
+
+            // Remove the temporary input element
+            document.body.removeChild(tempInput);
+        }
     </script>
 
 

@@ -161,9 +161,7 @@
                     <label><?= $form->states_label; ?></label>
                     <select name="state" required>
                         <option value=""><?= $form->state_desc; ?></option>
-                        <!-- Add options dynamically if needed -->
-                        <option value="state1">State 1</option>
-                        <option value="state2">State 2</option>
+                        <?= get_state_select_list(null, true); ?>
                     </select>
                 </div>
             <?php endif; ?>
@@ -184,19 +182,20 @@
                 </div>
             <?php endif; ?>
 
-            <?php if (!empty($form->product_bundle)): ?>
+            <?php if (!empty($bundles)): ?>
+
+
                 <div class="form-group">
-                    <label>Product Bundle</label>
-                    <?php
-                    $products = json_decode($form->product_bundle, true);
-                    if (!empty($products)):
-                        foreach ($products as $product): ?>
-                            <div>
-                                <input type="checkbox" name="products[]" value="<?= $product; ?>">
-                                <?= $product; ?>
-                            </div>
-                    <?php endforeach;
-                    endif; ?>
+                    <label>Select an Item:</label>
+                    <select name="form_bundle_id" class="form-control select2" id="form_bundle_id">
+                        <option value="">-- Select --</option>
+                        <?php foreach ($bundles as $bundle): ?>
+                            <option value="<?= $bundle->id; ?>">
+                                <?= $bundle->name; ?> (<?= $bundle->price; ?>)
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                    <label id="form_bundle_id_msg" class="text-danger"></label>
                 </div>
             <?php endif; ?>
 
