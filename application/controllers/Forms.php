@@ -460,7 +460,7 @@ class Forms extends MY_Controller
         if ($form_data) {
             // Pass the form data to the view
             $data['form'] = $form_data; // Pass form data to the view
-            $data['page_title'] = $form_data?->form_name; // Use form name as page title
+            $data['page_title'] = $form_data->form_name; // Use form name as page title
             // Fetch product bundles
             $data['bundles'] = $this->form_bundles->get_all_bundles();
 
@@ -506,13 +506,13 @@ class Forms extends MY_Controller
             // Display form submission date
             $row[] = show_date($form->created_at); // You can adjust 'created_at' to the actual timestamp of the form
             // Show whether the form is processed or not (status)
-            $status = "<span class='label bg-teal' style='cursor:pointer'>" . $form?->status . " </span>";
+            $status = "<span class='label bg-teal' style='cursor:pointer'>" . $form->status . " </span>";
             if ($form->status == 'active') {
                 $status = "<span class='label label-primary' style='cursor:pointer'> Active </span>";
             } elseif ($form->status == 'inactive') {
                 $status = "<span class='label label-success' style='cursor:pointer'>Inactive </span>";
             } else {
-                $status = "<span class='label label-success' style='cursor:pointer'>" . $form?->status . " </span>";
+                $status = "<span class='label label-success' style='cursor:pointer'>" . $form->status . " </span>";
             }
 
             $row[] = $status;
@@ -521,10 +521,10 @@ class Forms extends MY_Controller
 
             // Optionally add the form link or ID for further actions
             $options = " <a onclick='copyFormLink(\"" . $form_link . "\")' class='btn btn-outline-primary btn-sm' style='margin-right:8px'><i class='fa fa-clipboard' style='margin-right:5px'></i>Copy Link</a>";
-            $options .= "<a href='" . site_url('forms/edit_form/' . $form?->id) . "' class='btn btn-warning btn-sm' style='margin-right:5px'>Edit</a>";
-            // $options .= " <a href='" . site_url('forms/delete_form/' . $form?->id) . "' class='btn btn-danger btn-sm' style='margin-right:8px'>Delete</a>";
-            $options .= " <a onclick='delete_form(\"" . $form?->id . "\")' class='btn btn-danger btn-sm' style='margin-right:8px'>Delete</a>";
-            $options .= "<a target='_blank' href='" . base_url('f/' . $form?->form_link) . "' class='btn btn-info btn-sm'>View</a>";
+            $options .= "<a href='" . site_url('forms/edit_form/' . $form->id) . "' class='btn btn-warning btn-sm' style='margin-right:5px'>Edit</a>";
+            // $options .= " <a href='" . site_url('forms/delete_form/' . $form->id) . "' class='btn btn-danger btn-sm' style='margin-right:8px'>Delete</a>";
+            $options .= " <a onclick='delete_form(\"" . $form->id . "\")' class='btn btn-danger btn-sm' style='margin-right:8px'>Delete</a>";
+            $options .= "<a target='_blank' href='" . base_url('f/' . $form->form_link) . "' class='btn btn-info btn-sm'>View</a>";
 
             $row[] = $options;
 
@@ -588,8 +588,8 @@ class Forms extends MY_Controller
             $bundle_link = base_url('f/' . $bundle->bundle_link);
 
             // Optionally add the bundle link or ID for further actions
-            $options = " <a onclick='update_bundle_model(\"" . $bundle?->id . "\")' class='btn btn-primary btn-sm' style='margin-right:8px'><i class='fa fa-pencil' style='margin-right:5px'></i>Update</a>";
-            $options .= " <a onclick='delete_bundle(\"" . $bundle?->id . "\")' class='btn btn-danger btn-sm' style='margin-right:8px'>Delete</a>";
+            $options = " <a onclick='update_bundle_model(\"" . $bundle->id . "\")' class='btn btn-primary btn-sm' style='margin-right:8px'><i class='fa fa-pencil' style='margin-right:5px'></i>Update</a>";
+            $options .= " <a onclick='delete_bundle(\"" . $bundle->id . "\")' class='btn btn-danger btn-sm' style='margin-right:8px'>Delete</a>";
             $row[] = $options;
 
 
