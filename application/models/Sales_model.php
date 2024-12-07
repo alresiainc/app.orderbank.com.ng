@@ -56,80 +56,10 @@ class Sales_model extends CI_Model
 	 * @param string $filter The filter to apply (e.g., 'delivered')
 	 * @return array|bool Decoded JSON response from the API or false on failure
 	 */
-	public function get_orders($filter = '', $order = '')
-	{
-		$params = array(
-			'filter' => $filter,
-			'order'  => $order,
-			'business_id' => $this->ordebank_business_id,
-		);
 
-		// Make the GET request to the Laravel API
-		$response = $this->curl->simple_get("https://web.app.orderbank.com.ng/get-orders", $params);
 
-		log_message('info', json_encode($params));
-		log_message('info', "response");
-		log_message('info', $response);
-		// Check for cURL errors
-		if (strpos($response, 'cURL Error:') !== false) {
-			return $response; // or handle the error
-		}
 
-		// Decode JSON response
-		$data = json_decode($response);
 
-		// Check if the JSON decoding was successful
-		if (json_last_error() === JSON_ERROR_NONE) {
-			return $data;
-		} else {
-			return "Invalid JSON response: $response";
-		}
-	}
-	public function get_order($id)
-	{
-		// Make the GET request to the Laravel API
-		$response = $this->curl->simple_get("https://web.app.orderbank.com.ng/get-order/$id");
-
-		// Check for cURL errors
-		if (strpos($response, 'cURL Error:') !== false) {
-			return $response; // or handle the error
-		}
-
-		// Decode JSON response
-		$data = json_decode($response);
-
-		// Check if the JSON decoding was successful
-		if (json_last_error() === JSON_ERROR_NONE) {
-			return $data;
-		} else {
-			return "Invalid JSON response: $response";
-		}
-	}
-
-	public function update_order_status($id, $status)
-	{
-		$params = array(
-			'status' => $status
-		);
-
-		// Make the GET request to the Laravel API
-		$response = $this->curl->simple_get("https://web.app.orderbank.com.ng/update-order-status/$id", $params);
-
-		// Check for cURL errors
-		if (strpos($response, 'cURL Error:') !== false) {
-			return $response; // or handle the error
-		}
-
-		// Decode JSON response
-		$data = json_decode($response);
-
-		// Check if the JSON decoding was successful
-		if (json_last_error() === JSON_ERROR_NONE) {
-			return $data;
-		} else {
-			return "Invalid JSON response: $response";
-		}
-	}
 
 	private function _get_datatables_query()
 	{
@@ -414,8 +344,17 @@ class Sales_model extends CI_Model
 				$order_id = $order_details['id']; // Extract order_id from the JSON object
 
 				// Update order status
+				$order_data = [
+					'status' => 'delivered',
+					'id' => $order_id,
+					// 'fees' => '',
+					// 'amount' => '',
+					// 'quantity' => '',
+				];
 
-				$this->update_order_status($order_id, "delivered");
+				// Call the model method to process the order
+				$this->orders->change_order_status($order_data);
+
 
 				// Delete the item
 				// $this->db->where("item_id", $item['item_id'])->delete("db_salesitems");
@@ -449,7 +388,8 @@ class Sales_model extends CI_Model
 
 				//ADD THE ORDER DETAILS 
 				$order_id		= $this->xss_html_filter(trim($_REQUEST['td_data_' . $i . '_22']));
-				$order			= $this->get_order($order_id);
+
+				$order			= $this->orders->get_orders_by_id($order_id);
 
 				//$discount_input  =(empty($discount_input)) ? 0 : $discount_input;
 				//$discount_amt 		=($sales_qty * $unit_total_cost)*$discount_input/100;
@@ -527,7 +467,17 @@ class Sales_model extends CI_Model
 				$salesitems_entry['store_id'] = (store_module() && is_admin()) ? $store_id : get_current_store_id();
 				$q2 = $this->db->insert('db_salesitems', $salesitems_entry);
 
-				$this->update_order_status($order_id, 'Received Via Api');
+				$order_data = [
+					'status' => 'Received',
+					'id' => $order_id,
+					'fees' => '',
+					'amount' => $purchase_price,
+					'quantity' => $sales_qty,
+				];
+
+				// Call the model method to process the order
+				$this->orders->change_order_status($order_data);
+
 
 				//UPDATE itemS QUANTITY IN itemS TABLE
 				$this->load->model('pos_model');
@@ -1072,10 +1022,11 @@ class Sales_model extends CI_Model
 				'item_discount_type' 		=> $res1->discount_type,
 				'item_discount_input' 		=> $res1->discount_input,
 				'service_bit' 				=> $res2->service_bit,
-				'order_details' 				=> $res1->order_details,
+				'order_details' 			=> $res1->order_details,
+				'order_id' 					=> $res1->order_id,
 			);
 
-			$result = $this->return_row_with_data($rowcount++, $info, 'Received Via Api');
+			$result = $this->return_row_with_data($rowcount++, $info, 'Received');
 		}
 		return $result;
 	}

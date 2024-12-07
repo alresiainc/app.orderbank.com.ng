@@ -100,3 +100,4 @@ ERROR - 2024-12-07 23:54:57 --> Severity: Warning --> Undefined variable $length
 ERROR - 2024-12-07 23:54:57 --> Severity: Warning --> Undefined variable $string /Applications/AMPPS/www/backend.myproda.test/application/views/forms/new.php 33
 ERROR - 2024-12-07 23:59:11 --> Severity: Warning --> Undefined variable $length /Applications/AMPPS/www/backend.myproda.test/application/views/forms/new.php 30
 ERROR - 2024-12-07 23:59:11 --> Severity: Warning --> Undefined variable $string /Applications/AMPPS/www/backend.myproda.test/application/views/forms/new.php 33
+ERROR - 2024-12-07 23:35:33 --> 404 Page Not Found: Theme/plugins
