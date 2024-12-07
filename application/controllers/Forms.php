@@ -100,6 +100,10 @@ class Forms extends MY_Controller
                 'delivery_label' => $this->input->post('delivery_label'),
                 'delivery_desc' => $this->input->post('delivery_desc'),
                 'delivery_choices' => $this->input->post('delivery_choices'),
+                'redirect_url' => $this->input->post('redirect_url'),
+                'background_image_url' => $this->input->post('background_image_url'),
+                'background_color' => $this->input->post('background_color'),
+                'accent_color' => $this->input->post('accent_color'),
                 'form_bundles' => json_encode($form_bundles)  // Store selected products as JSON
             );
 
@@ -126,7 +130,8 @@ class Forms extends MY_Controller
 
 
         if ($this->form_validation->run() == TRUE) {
-            sleep(5000);
+            sleep(30); // Pause for 30 seconds
+
             echo json_encode(['success' => true, 'message' => 'Form submitted successfully.']);
         } else {
             // Validation errors
@@ -180,6 +185,9 @@ class Forms extends MY_Controller
                 'delivery_desc' => $this->input->post('delivery_desc'),
                 'delivery_choices' => $this->input->post('delivery_choices'),
                 'redirect_url' => $this->input->post('redirect_url'),
+                'background_image_url' => $this->input->post('background_image_url'),
+                'background_color' => $this->input->post('background_color'),
+                'accent_color' => $this->input->post('accent_color'),
                 'form_bundles' => json_encode($form_bundles)  // Store selected products as JSON
             );
 

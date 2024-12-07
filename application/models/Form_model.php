@@ -38,6 +38,9 @@ class Form_model extends CI_Model
         'a.status',
         'a.form_bundles',
         'a.redirect_url',
+        'a.background_image_url',
+        'a.background_color',
+        'a.accent_color',
         'COUNT(c.id) as orders_count',
         // 'JSON_ARRAYAGG(
         //     JSON_OBJECT(

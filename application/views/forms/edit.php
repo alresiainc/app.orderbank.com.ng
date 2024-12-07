@@ -358,6 +358,31 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="row">
+
+                            <div class="col-sm-4">
+                                <div class="form-group">
+                                    <label>Accent Color:</label>
+                                    <input name="accent_color" type="color" class="form-control" id="accent_color" value="<?php echo $form->accent_color ?>">
+                                    <label id="accent_color_msg" class="text-danger"></label>
+                                </div>
+                            </div>
+
+                            <div class="col-sm-4">
+                                <div class="form-group">
+                                    <label>Background Color:</label>
+                                    <input name="background_color" type="color" class="form-control" id="background_color" value="<?php echo $form->background_color ?>">
+                                    <label id="background_color_msg" class="text-danger"></label>
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="form-group">
+                                    <label>Background Image Url:</label>
+                                    <input name="background_image_url" type="url" class="form-control" id="background_image_url" placeholder="https://www.example.com" value="<?php echo $form->background_image_url ?>">
+                                    <label id="background_image_url_msg" class="text-danger"></label>
+                                </div>
+                            </div>
+                        </div>
                         <!-- Submit Button -->
                         <button type="submit" class="btn btn-primary" id="update-form-button">Update Form</button>
                     </div>

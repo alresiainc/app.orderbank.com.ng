@@ -29,9 +29,16 @@
             box-sizing: border-box;
         }
 
+        :root {
+            --form-color: <?= $form->accent_color ?? "#3498db"; ?>;
+            --form-background: <?= $form->background_color ?? "#f0f4f9"; ?>;
+            --form-background-image: url(<?= $form->background_image_url; ?>);
+        }
+
         body {
             font-family: 'Poppins', sans-serif;
-            background: #f0f4f9;
+            background-image: var(--form-background-image);
+            background: var(--form-background);
             color: #333;
             line-height: 1.6;
             padding: 20px;
@@ -116,7 +123,7 @@
         .form-group input:focus,
         .form-group textarea:focus,
         .form-group select:focus {
-            border-color: #3498db;
+            border-color: var(--form-color);
             background: #eef8ff;
         }
 
@@ -133,7 +140,7 @@
 
         button[type="submit"] {
             display: block;
-            background: #3498db;
+            background: var(--form-color);
             color: #fff;
             padding: 10px 60px;
             font-size: 1.1rem;
@@ -146,7 +153,9 @@
         }
 
         button[type="submit"]:hover {
-            background: #2980b9;
+            background-color: #fff;
+            border: 1px solid var(--form-color);
+            color: var(--form-color);
             transform: scale(1.02);
         }
 
@@ -200,7 +209,7 @@
         }
 
         .select2-container--focus .select2-selection {
-            border-color: #3498db;
+            border-color: var(--form-color);
             box-shadow: 0 0 5px rgba(52, 152, 219, 0.5);
         }
 
@@ -244,7 +253,7 @@
         }
 
         .bundle-box:hover {
-            border-color: #3498db;
+            border-color: var(--form-color);
             transform: scale(1.02);
         }
 
@@ -255,7 +264,7 @@
 
         .bundle-box input[type="radio"]:checked+.bundle-content {
             border: 2px solid transparent;
-            border-top: 8px solid #3498db;
+            border-top: 8px solid var(--form-color);
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
             transform: scale(1.02);
             transition: all 0.3s ease;
@@ -297,23 +306,25 @@
         .bundle-price {
             font-size: 1rem;
             font-weight: bold;
-            color: #3498db;
+            color: var(--form-color);
         }
 
         .hidden {
             display: none;
         }
 
-        .loader-container {
-            position: absolute;
+        #loader-container {
+            position: fixed;
             display: flex;
             align-items: center;
             justify-content: center;
             top: 0;
+            left: 0;
             width: 100%;
             height: 100vh;
-            backdrop-filter: blur(5px);
-            z-index: 999999999999;
+            backdrop-filter: blur(8px);
+            background: rgba(255, 255, 255, 0.7);
+            z-index: 999999;
         }
 
         .loader-wrapper {
@@ -321,25 +332,70 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            margin-top: 20px;
+            text-align: center;
+            animation: fade-in 0.5s ease-in-out;
+            min-width: 400px;
+        }
+
+        @keyframes fade-in {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        .spinner {
+            border: 5px solid rgba(0, 0, 0, 0.1);
+            border-top: 5px solid var(--form-color);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
         }
 
         .progress-bar {
             width: 100%;
             max-width: 400px;
             height: 10px;
-            background: #ddd;
+            background: #eee;
             border-radius: 5px;
             overflow: hidden;
+            margin: 15px 0;
             position: relative;
-            margin-bottom: 10px;
         }
 
         .progress-fill {
             height: 100%;
             width: 0%;
-            background: #3498db;
-            transition: width 0.2s ease;
+            background: var(--form-color);
+            transition: width 0.4s ease;
+        }
+
+        #funny-message {
+            font-size: 1.2rem;
+            color: #333;
+            margin: 0;
+            margin-top: 15px;
+            padding: 0;
+            min-height: 30px;
+        }
+
+        #loading-text {
+            font-size: 1.1rem;
+            color: #666;
         }
 
         .datepicker .tooltip {
@@ -368,7 +424,7 @@
 
         /* Highlight today's date */
         .datepicker .today {
-            background-color: #3498db !important;
+            background-color: var(--form-color) !important;
             /* Custom highlight for today's date */
             color: #fff !important;
             /* border-radius: 50%; */
@@ -395,7 +451,7 @@
         }
 
         .datepicker .active {
-            background-color: #3498db !important;
+            background-color: var(--form-color) !important;
             /* Highlight active date */
             color: #fff !important;
         }
@@ -486,7 +542,7 @@
             <div class="form-group date-toggle" id="custom-date-group" style="display: none;">
                 <label>Select a Custom Date</label>
                 <input type="text" id="custom-date-picker" name="custom_delivery_date"
-                    class="form-control datepicker"
+                    class="form-controls datepicker"
                     placeholder="Pick a date">
             </div>
 
@@ -526,14 +582,17 @@
             <p class="form-footer-text"><?= $form->form_footer_text; ?></p>
         </div>
     </div>
-    <div id="loader-container" class="hiddend">
+    <div id="loader-container" class="hidden">
         <div class="loader-wrapper">
+            <div class="spinner"></div>
+            <p id="funny-message">Preparing your experience...</p>
             <div class="progress-bar">
                 <div class="progress-fill"></div>
             </div>
             <p id="loading-text">Loading... 0%</p>
         </div>
     </div>
+
 
     <!-- jQuery 2.2.3 -->
     <script src="<?= base_url('theme/plugins/jQuery/jquery-2.2.3.min.js'); ?>"></script>
@@ -615,6 +674,43 @@
                     customDateInput.val('');
                 }
             });
+
+            const messages = [
+                "Processing your order... Making sure everything's perfect!",
+                "Hang tight, we're confirming your details...",
+                "Just a moment, we're packaging your request...",
+                "Getting everything ready... almost there!",
+                "Checking stock and preparing your order...",
+                "One last check to ensure a smooth delivery!",
+                "Finalizing your order... almost ready!",
+                "Reviewing your order... ensuring everything is correct!",
+                "Crossing the t's and dotting the i's... just a sec!",
+                "Good things are on the way! Wrapping up your order...",
+                "Your order is in progress... making sure everything adds up!",
+                "Don't worry, we're just double-checking your request!"
+            ];
+
+
+            let typingInterval;
+
+            function typeMessage(message, element) {
+                let charIndex = 0;
+                element = document.getElementById("funny-message");
+
+                element.textContent = "";
+
+                clearInterval(typingInterval);
+                typingInterval = setInterval(() => {
+                    if (charIndex < message.length) {
+                        element.textContent += message.charAt(charIndex);
+                        charIndex++;
+                    } else {
+                        clearInterval(typingInterval);
+                    }
+                }, 50); // Adjust speed as needed
+            }
+
+
 
             function check_field(id) {
                 var field = $("#" + id);
@@ -713,6 +809,7 @@
                 const $progressFill = $(".progress-fill");
                 const $loadingText = $("#loading-text");
                 const $submitButton = $("#submit-button");
+                const funnyMessage = $("#funny-message");
 
                 $loaderContainer.removeClass("hidden"); // Show loader
                 $submitButton.prop("disabled", true); // Disable submit button
@@ -738,6 +835,11 @@
                     // End simulation if 100% reached or AJAX completes
                     if (progress >= 100) clearInterval(interval);
                 }, loaderInterval);
+
+                const messageInterval = setInterval(() => {
+                    const funnyMessage = messages[Math.floor(Math.random() * messages.length)];
+                    typeMessage(funnyMessage);
+                }, 10000);
 
                 // AJAX Request
                 $.ajax({
