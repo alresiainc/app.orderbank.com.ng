@@ -448,7 +448,7 @@ class Forms extends MY_Controller
 
     public function all_bundle_json_data()
     {
-        $list = $this->form_bundles->get_all_bundles(); // Assuming 'get_forms()' fetches form data
+        $list = $this->form_bundles->get_bundles(); // Assuming 'get_forms()' fetches form data
 
         $data = array();
         $no = $_POST['start'];

@@ -546,7 +546,7 @@
                         });
                         $("#order_search").removeClass('ui-autocomplete-loading');
                         // call_code();
-                        show_bulk_option_btn();
+                        // show_bulk_option_btn();
                     },
 
                 },

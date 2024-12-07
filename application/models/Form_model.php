@@ -55,7 +55,6 @@ class Form_model extends CI_Model
 
     var $column_search = array(
         'a.form_name',
-        'b.name',
         'a.form_title',
         'a.form_link',
         'a.customer_name_label',
