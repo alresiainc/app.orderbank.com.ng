@@ -11,6 +11,9 @@
     <link rel="stylesheet" href=" <?= base_url('theme/plugins/select2/select2.min.css'); ?>">
     <!-- bootstrap datepicker -->
     <link rel="stylesheet" href="<?= base_url('theme/plugins/datepicker/datepicker3.css'); ?>">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="<?= base_url('theme/css/font-awesome-4.7.0/css/font-awesome.min.css'); ?>">
     <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css"> -->
 
 
@@ -53,7 +56,8 @@
         }
 
 
-        .form-container {
+        .form-container,
+        .success-message {
             max-width: 700px;
             margin: 30px auto;
             background: #fff;
@@ -489,7 +493,7 @@
             <?php if ($form->show_email): ?>
                 <div class="form-group">
                     <label><?= $form->email_label; ?></label>
-                    <input type="email" name="email" id="email">
+                    <input type="email" name="customer_email" id="email">
                     <span id="email_msg" class="text-danger"></span>
                     <small><?= $form->email_desc; ?></small>
                 </div>
@@ -498,7 +502,7 @@
             <?php if ($form->show_phone): ?>
                 <div class="form-group">
                     <label><?= $form->phone_label; ?></label>
-                    <input type="tel" name="phone" id="phone">
+                    <input type="tel" name="customer_phone" id="phone">
                     <span id="phone_msg" class="text-danger"></span>
                     <small><?= $form->phone_desc; ?></small>
                 </div>
@@ -507,7 +511,7 @@
             <?php if ($form->show_whatsapp): ?>
                 <div class="form-group">
                     <label><?= $form->whatsapp_label; ?></label>
-                    <input type="text" name="whatsapp" id="whatsapp">
+                    <input type="text" name="customer_whatsapp" id="whatsapp">
                     <span id="whatsapp_msg" class="text-danger"></span>
                     <small><?= $form->whatsapp_desc; ?></small>
                 </div>
@@ -560,17 +564,19 @@
                 <label>Select an Item:</label>
                 <div class="bundle-container">
                     <?php foreach ($bundles as $bundle): ?>
-                        <label class="bundle-box">
-                            <input type="radio" name="form_bundle_id" value="<?= $bundle->id; ?>" id="form_bundle">
-                            <div class="bundle-content">
-                                <img src="<?= base_url($bundle->image); ?>" alt="<?= $bundle->name; ?>" class="bundle-image">
-                                <div class="bundle-details">
-                                    <h4 class="bundle-name"><?= $bundle->name; ?></h4>
-                                    <p class="bundle-desc"><?= $bundle->description; ?></p>
-                                    <span class="bundle-price"><?= $bundle->price; ?></span>
+                        <?php if (in_array($bundle->id, json_decode($form->form_bundles))): ?>
+                            <label class="bundle-box">
+                                <input type="radio" name="form_bundle_id" value="<?= $bundle->id; ?>" id="form_bundle">
+                                <div class="bundle-content">
+                                    <img src="<?= base_url($bundle->image); ?>" alt="<?= $bundle->name; ?>" class="bundle-image">
+                                    <div class="bundle-details">
+                                        <h4 class="bundle-name"><?= $bundle->name; ?></h4>
+                                        <p class="bundle-desc"><?= $bundle->description; ?></p>
+                                        <span class="bundle-price"><?= $bundle->price; ?></span>
+                                    </div>
                                 </div>
-                            </div>
-                        </label>
+                            </label>
+                        <?php endif; ?>
                     <?php endforeach; ?>
                 </div>
                 <span id="form_bundle_msg" class="text-danger"></span>
@@ -591,6 +597,20 @@
             <p class="form-footer-text"><?= $form->form_footer_text; ?></p>
         </div>
     </div>
+    <div class="success-message text-center" style="display: none;">
+        <!-- Success Icon -->
+        <div class="success-icon" style="font-size: 50px; color: #28a745; margin-bottom: 20px;">
+            <i class="fa fa-check-circle"></i>
+        </div>
+        <h1 class="form-title">Thank You for Your Order!</h1>
+        <p class="form-header-text">Your order has been successfully received. We’re processing it now and will get back to you shortly with an update.</p>
+        <p>Your order is important to us, and our team is working hard to ensure everything is processed smoothly. You will receive a confirmation email or WhatsApp message and further details about your order soon.</p>
+        <p>If you have any questions or need immediate assistance, feel free to contact our customer support team at any time.</p>
+        <p>We appreciate your business and look forward to serving you!</p>
+    </div>
+
+
+
     <div id="loader-container" class="hidden">
         <div class="loader-wrapper">
             <div class="spinner"></div>
@@ -650,8 +670,7 @@
 
                     // Enable dates from serverToday to maxDate
                     if (currentDate >= serverToday && currentDate <= maxDate) {
-                        console.log("serverToday", serverToday)
-                        console.log("currentDate:", currentDate)
+
                         return {
                             enabled: true, // Enable this date
                             classes: '', // Optional: Add class if needed
@@ -857,24 +876,28 @@
                     data: data,
                     cache: false,
                     contentType: false,
-
                     processData: false,
                     success: function(response) {
                         var data = jQuery.parseJSON(response);
                         console.log("result", data);
 
                         if (data.success == true) {
-                            // Show SweetAlert with three buttons
-
-                            clearInterval(interval);
+                            // Show SweetAlert with three buttons (if needed)
+                            clearInterval(interval); // Ensure `interval` is defined somewhere before use
                             progress = 100;
                             $progressFill.css("width", "100%");
                             $loadingText.text("Loading... 100%");
 
-                            // alert("Form submitted successfully!"); // Success message
                             setTimeout(() => {
                                 $loaderContainer.addClass("hidden"); // Hide loader
                                 $submitButton.prop("disabled", false); // Re-enable button
+                                const redirectUrl = "<?= $form->redirect_url; ?>"; // Ensure this is defined in PHP
+                                if (redirectUrl) {
+                                    window.location.href = redirectUrl; // Redirect to URL after a successful submission
+                                }
+
+                                $('.form-container').hide();
+                                $('.success-message').show();
                             }, 500);
 
                             toastr["success"](data.message);
@@ -882,15 +905,12 @@
                         } else {
                             toastr["error"](data.message);
 
-                            // Enable the button and remove the overlay
+                            // Enable the button and remove the overlay in case of failure
                             clearInterval(interval);
                             $loaderContainer.addClass("hidden");
                             $submitButton.prop("disabled", false);
                         }
-
-
                     },
-
 
                     error: function(jqXHR, textStatus, errorThrown) {
                         console.log("AJAX Error: ", jqXHR, textStatus, errorThrown);
@@ -898,6 +918,7 @@
                         // Try parsing the error message from the server response
                         let errorMessage = "An error occurred. Please try again.";
 
+                        // Attempt to parse error message from JSON response
                         if (jqXHR.responseText) {
                             try {
                                 let response = JSON.parse(jqXHR.responseText);
@@ -910,13 +931,13 @@
                         // Display the error using toastr
                         toastr["error"](errorMessage);
 
-                        // Enable the button and remove the overlay
+                        // Enable the button and remove the overlay after an error
                         clearInterval(interval);
                         $loaderContainer.addClass("hidden");
                         $submitButton.prop("disabled", false);
                     }
-
                 });
+
             });
         });
     </script>

@@ -10,6 +10,8 @@ class Orders_model extends CI_Model
         'a.customer_name',
         'a.customer_email',
         'a.customer_phone',
+        'a.customer_whatsapp',
+        'a.address',
         'a.order_date',
         'a.ref',
         'b.item_name',
@@ -19,12 +21,15 @@ class Orders_model extends CI_Model
         'a.form_id',
         'a.product_id',
         'a.country as country_id',
+        'a.state as state_id',
         'b.service_bit',
         'c.country',
+        'd.state',
         'a.status',
         'a.quantity',
         'a.amount',
         'a.fees',
+        'a.form_bundle_id',
         'a.created_at',
         'a.updated_at',
     );
@@ -34,6 +39,8 @@ class Orders_model extends CI_Model
         'a.customer_name',
         'a.customer_email',
         'a.customer_phone',
+        'a.customer_whatsapp',
+        'a.address',
         'a.order_date',
         'a.ref',
         'b.item_name',
@@ -44,6 +51,7 @@ class Orders_model extends CI_Model
         'a.product_id',
         'b.service_bit',
         'c.country',
+        'd.state',
         'a.status',
         'a.quantity',
         'a.amount',
@@ -67,6 +75,7 @@ class Orders_model extends CI_Model
         $this->db->from($this->table);
         $this->db->join('db_items as b', 'b.id = a.product_id', 'left');
         $this->db->join('db_country as c', 'c.id = a.country', 'left');
+        $this->db->join('db_states as d', 'd.id = a.state', 'left');
 
         // ... other existing joins and conditions ...
 

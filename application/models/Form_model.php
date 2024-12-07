@@ -110,6 +110,30 @@ class Form_model extends CI_Model
         }
     }
 
+    public function check_existing_order($orderData)
+    {
+        $this->db->where('form_id', $orderData['form_id']);
+        $this->db->where('form_bundle_id', $orderData['form_bundle_id']);
+        $this->db->where('customer_name', $orderData['customer_name']);
+        $this->db->where('customer_email', $orderData['customer_email']);
+        $this->db->where('customer_phone', $orderData['customer_phone']);
+        $this->db->where('customer_whatsapp', $orderData['customer_whatsapp']);
+        $this->db->where('order_date', $orderData['order_date']);
+
+        return $this->db->get('db_orders')->row(); // Returns the first matching row or null
+    }
+
+    public function create_order($orderData)
+    {
+        // Validate and sanitize $orderData as needed
+        log_message('info', $orderData);
+        // Insert order into the 'orders' table
+        $this->db->insert('db_orders', $orderData);
+
+        // Return the inserted order ID
+        return $this->db->insert_id();
+    }
+
     function get_forms()
     {
         $this->_get_datatables_query();

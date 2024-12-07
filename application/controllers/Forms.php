@@ -16,6 +16,8 @@ class Forms extends MY_Controller
         $this->load->library('wassenger');
     }
 
+
+
     public function send_message()
     {
 
@@ -131,14 +133,105 @@ class Forms extends MY_Controller
         }
     }
 
+
     public function submit()
     {
+        $form_id = $this->input->post('form_id');
 
-        $this->form_validation->set_rules('form_bundle_id', 'Select a product', 'trim|required');
+        // Fetch form configuration
+        $form_data = $this->forms->get_form_by_id($form_id);
 
+        if (!$form_data) {
+            echo json_encode(['success' => false, 'message' => 'Form not found.']);
+            return;
+        }
 
+        // Dynamically apply validation rules based on form configuration
+        if ($form_data->show_customer_name) {
+            $this->form_validation->set_rules(
+                'customer_name',
+                $form_data->customer_name_label ?? 'Customer Name',
+                'trim' . ($form_data->show_customer_name ? '|required' : '')
+            );
+        }
+
+        if ($form_data->show_email) {
+            $this->form_validation->set_rules(
+                'customer_email',
+                $form_data->email_label ?? 'Customer Email',
+                'trim|valid_email' . ($form_data->show_email ? '|required' : '')
+            );
+        }
+
+        if ($form_data->show_whatsapp) {
+            $this->form_validation->set_rules(
+                'customer_whatsapp',
+                $form_data->whatsapp_label ?? 'Customer WhatsApp',
+                'trim|numeric' . ($form_data->show_whatsapp ? '|required' : '')
+            );
+        }
+
+        if ($form_data->show_phone) {
+            $this->form_validation->set_rules(
+                'customer_phone',
+                $form_data->phone_label ?? 'Customer Phone',
+                'trim|numeric' . ($form_data->show_phone ? '|required' : '')
+            );
+        }
+
+        if ($form_data->show_address) {
+            $this->form_validation->set_rules(
+                'address',
+                $form_data->address_label ?? 'Address',
+                'trim' . ($form_data->show_address ? '|required' : '')
+            );
+        }
+
+        if ($form_data->show_states) {
+            $this->form_validation->set_rules(
+                'state',
+                $form_data->states_label ?? 'State',
+                'trim' . ($form_data->show_states ? '|required' : '')
+            );
+        }
+
+        if ($form_data->show_delivery) {
+            $this->form_validation->set_rules(
+                'delivery_date',
+                $form_data->delivery_label ?? 'Delivery Date',
+                'trim' . ($form_data->show_delivery ? '|required' : '')
+            );
+        }
+
+        // Run validation
         if ($this->form_validation->run() == TRUE) {
-            sleep(30); // Pause for 30 seconds
+            $formData = $this->input->post(); // Still an associative array
+            $orderData = [
+                'form_id' => $form_id,
+                'form_bundle_id' => $formData['form_bundle_id'] ?? null,
+                'order_date' => $form_data->show_delivery ? date("Y-m-d", strtotime($formData['delivery_date'])) : null,
+                'customer_name' => $formData['customer_name'] ?? null,
+                'customer_email' => $formData['customer_email'] ?? null,
+                'customer_phone' => $formData['customer_phone'] ?? null,
+                'customer_whatsapp' => $formData['customer_whatsapp'] ?? null,
+                'address' => $formData['address'] ?? null,
+                'state' => $formData['state'] ?? null,
+            ];
+
+            // Check if an order with the same data already exists
+            $existingOrder = $this->forms->check_existing_order($orderData);
+
+            if ($existingOrder) {
+                $orderData['status'] = 'Duplicate'; // Add status for the new order
+                $orderId = $this->forms->create_order($orderData);
+                echo json_encode(['success' => true, 'message' => 'Form submitted successfully.']);
+                // echo json_encode(['success' => false, 'message' => 'An order with the same details already exists.']);
+                return;
+            }
+
+            // Save the order
+            $orderData['status'] = 'New Order'; // Add status for the new order
+            $orderId = $this->forms->create_order($orderData);
 
             echo json_encode(['success' => true, 'message' => 'Form submitted successfully.']);
         } else {
@@ -146,6 +239,10 @@ class Forms extends MY_Controller
             echo json_encode(['success' => false, 'message' => validation_errors()]);
         }
     }
+
+
+
+
     public function create_bundle()
     {
         // Form validation rules

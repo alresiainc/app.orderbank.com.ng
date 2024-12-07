@@ -287,7 +287,40 @@
                             </div>
                             <hr>
                         </div>
+                        <!-- States Field -->
+                        <div class="field-container">
+                            <div class="row">
+                                <div class="col-sm-3">
+                                    <label for="states_checkbox">
+                                        States Field <span>*</span>
+                                    </label>
+                                    <p>A field for selecting a state.</p>
+                                </div>
+                                <div class="col-sm-9 form-row">
+                                    <div class="form-group">
+                                        <select name="states_checkbox" class="form-control select2">
+                                            <option value="hide" <?= $form->show_state == false ? 'selected' : ''; ?>>Hide</option>
+                                            <option value="show" <?= $form->show_state == true ? 'selected' : ''; ?>>Show</option>
+                                        </select>
+                                    </div>
+                                    <div class="label-description" id="states_fields" style="<?= $form->show_state == true ? '' : 'display: none;' ?>">
+                                        <div class="form-group">
+                                            <label for="states_label">Form Label <span>*</span></label>
+                                            <p>The title of this field.</p>
+                                            <input type="text" class="form-control" id="states_label" name="states_label" placeholder="Enter Label for States" value="<?= $form->state_label; ?>">
+                                            <span id="states_label_msg" class="text-danger"></span>
+                                        </div>
 
+                                        <div class="form-group">
+                                            <label for="state_desc">Form Description</label>
+                                            <p>The description of this field (optional).</p>
+                                            <input type="text" class="form-control" id="state_desc" name="state_desc" placeholder="Enter Description for State field" value="<?= $form->state_label; ?>">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <hr>
+                        </div>
                         <!-- Delivery Options Field -->
                         <div class="field-container">
                             <div class="row">
