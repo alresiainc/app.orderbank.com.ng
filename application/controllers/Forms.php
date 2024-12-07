@@ -475,7 +475,6 @@ class Forms extends MY_Controller
     {
         $list = $this->forms->get_forms(); // Assuming 'get_forms()' fetches form data
 
-
         $data = array();
         $no = $_POST['start'];
 
