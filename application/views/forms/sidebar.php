@@ -24,7 +24,7 @@
             </li>
 
             <li class="new-active-li">
-                <a href="<?php echo $base_url; ?>Bundles">
+                <a href="<?php echo $base_url; ?>forms/bundles">
                     <i class="fa fa-paperclip"></i><span>Bundles</span>
 
                 </a>

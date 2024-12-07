@@ -31,18 +31,27 @@
 
         :root {
             --form-color: <?= $form->accent_color ?? "#3498db"; ?>;
-            --form-background: <?= $form->background_color ?? "#f0f4f9"; ?>;
+            --form-background: <?= $form->background_color; ?>;
             --form-background-image: url(<?= $form->background_image_url; ?>);
         }
 
         body {
             font-family: 'Poppins', sans-serif;
             background-image: var(--form-background-image);
-            background: var(--form-background);
+            /* Background image */
+            background-color: var(--form-background, #f0f4f9);
+            /* Fallback to background color */
+            background-size: cover;
+            /* Ensures the image covers the entire element */
+            background-position: center;
+            /* Centers the image */
+            background-repeat: no-repeat;
+            /* Prevents tiling */
             color: #333;
             line-height: 1.6;
             padding: 20px;
         }
+
 
         .form-container {
             max-width: 700px;

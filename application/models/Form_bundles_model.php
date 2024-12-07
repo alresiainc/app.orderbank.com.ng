@@ -34,8 +34,29 @@ class Form_bundles_model extends CI_Model
         return $this->db->update('db_form_bundles', $data);
     }
 
+
+    public function delete_bundles($ids)
+    {
+
+        $this->db->trans_begin();
+
+        $this->db->where_in('id', $ids);
+
+        $q3 = $this->db->delete("db_form_bundles");
+
+        $this->db->trans_commit();
+        return "success";
+    }
+
     public function delete_bundle($id)
     {
-        return $this->db->delete('db_form_bundles', ['id' => $id]);
+        $this->db->trans_begin();
+
+        $this->db->where("id", $id);
+
+        $q3 = $this->db->delete("db_form_bundles");
+
+        $this->db->trans_commit();
+        return "success";
     }
 }

@@ -33,6 +33,14 @@ class Forms extends MY_Controller
         $this->load->view('forms/index', $data);
     }
 
+    public function bundles()
+    {
+
+        $data = $this->data;
+        $data['page_title'] = "Bundles";
+        $this->load->view('forms/bundles', $data);
+    }
+
     public function new()
     {
 
@@ -138,6 +146,132 @@ class Forms extends MY_Controller
             echo json_encode(['success' => false, 'message' => validation_errors()]);
         }
     }
+    public function create_bundle()
+    {
+        // Form validation rules
+        $this->form_validation->set_rules('name', 'Bundle Name', 'trim|required');
+        $this->form_validation->set_rules('price', 'Bundle Price', 'trim|required');
+
+        if ($this->form_validation->run() == TRUE) {
+            // Initialize bundle data
+            $bundle_data = array(
+                'name' => $this->input->post('name'),
+                'price' => $this->input->post('price'),
+                'description' => $this->input->post('description'),
+            );
+
+            // Check if an image file is uploaded
+            if (!empty($_FILES['image']['name'])) {
+                $config['upload_path'] = './uploads/items/';
+                $config['allowed_types'] = 'jpg|jpeg|png|gif';
+                $config['max_size'] = 2048; // Max size in KB (2MB)
+                $config['file_name'] = 'bundle_' . time();
+
+                // Load the upload library
+                $this->load->library('upload', $config);
+
+                if (!$this->upload->do_upload('image')) {
+                    echo json_encode(['success' => false, 'message' => $this->upload->display_errors()]);
+                    return;
+                } else {
+                    $file_name = $this->upload->data('file_name');
+
+                    // Create Thumbnail
+                    $config_thumb['image_library'] = 'gd2';
+                    $config_thumb['source_image'] = './uploads/items/' . $file_name;
+                    $config_thumb['create_thumb'] = TRUE;
+                    $config_thumb['maintain_ratio'] = TRUE;
+                    $config_thumb['width'] = 75;
+                    $config_thumb['height'] = 50;
+
+                    $this->load->library('image_lib', $config_thumb);
+
+                    if (!$this->image_lib->resize()) {
+                        echo json_encode(['success' => false, 'message' => $this->image_lib->display_errors()]);
+                        return;
+                    }
+
+                    // Save file path to the database
+                    $bundle_data['image'] = 'uploads/items/' . $file_name;
+                }
+            }
+
+            // Insert the new bundle into the database
+            if ($this->form_bundles->insert_bundle($bundle_data)) {
+                echo json_encode(['success' => true, 'message' => 'Bundle created successfully.']);
+            } else {
+                echo json_encode(['success' => false, 'message' => 'Failed to create bundle.']);
+            }
+        } else {
+            // Validation errors
+            echo json_encode(['success' => false, 'message' => validation_errors()]);
+        }
+    }
+
+
+    public function update_bundle($id)
+    {
+        // Form validation rules
+        $this->form_validation->set_rules('name', 'Bundle Name', 'trim|required');
+        $this->form_validation->set_rules('price', 'Bundle Price', 'trim|required');
+
+        if ($this->form_validation->run() == TRUE) {
+            // Initialize bundle data
+            $bundle_data = array(
+                'name' => $this->input->post('name'),
+                'price' => $this->input->post('price'),
+                'description' => $this->input->post('description'),
+            );
+
+            // Check if an image file is uploaded
+            if (!empty($_FILES['image']['name'])) {
+                $config['upload_path'] = './uploads/items/';
+                $config['allowed_types'] = 'jpg|jpeg|png|gif';
+                $config['max_size'] = 2048; // Max size in KB (2MB)
+                $config['file_name'] = 'bundle_' . time();
+
+                // Load the upload library
+                $this->load->library('upload', $config);
+
+                if (!$this->upload->do_upload('image')) {
+                    echo json_encode(['success' => false, 'message' => $this->upload->display_errors()]);
+                    return;
+                } else {
+                    $file_name = $this->upload->data('file_name');
+
+                    // Create Thumbnail
+                    $config_thumb['image_library'] = 'gd2';
+                    $config_thumb['source_image'] = './uploads/items/' . $file_name;
+                    $config_thumb['create_thumb'] = TRUE;
+                    $config_thumb['maintain_ratio'] = TRUE;
+                    $config_thumb['width'] = 75;
+                    $config_thumb['height'] = 50;
+
+                    $this->load->library('image_lib', $config_thumb);
+
+                    if (!$this->image_lib->resize()) {
+                        echo json_encode(['success' => false, 'message' => $this->image_lib->display_errors()]);
+                        return;
+                    }
+
+                    // Save file path to the database
+                    $bundle_data['image'] = 'uploads/items/' . $file_name;
+                }
+            }
+
+            // Update the bundle in the database
+            if ($this->form_bundles->update_bundle($id, $bundle_data)) {
+                echo json_encode(['success' => true, 'message' => 'Bundle updated successfully.']);
+            } else {
+                echo json_encode(['success' => false, 'message' => 'Failed to update bundle data.']);
+            }
+        } else {
+            // Validation errors
+            echo json_encode(['success' => false, 'message' => validation_errors()]);
+        }
+    }
+
+
 
     public function update_form($id)
     {
@@ -205,6 +339,11 @@ class Forms extends MY_Controller
             // Validation errors
             echo json_encode(['success' => false, 'message' => validation_errors()]);
         }
+    }
+    public function bundle_details_json_data($id)
+    {
+        // $list = $this->orders->get_orders_by_id($id);
+        echo json_encode($this->form_bundles->get_bundle_by_id($id));
     }
 
     public function show_form($identifier)
@@ -286,7 +425,8 @@ class Forms extends MY_Controller
             // Optionally add the form link or ID for further actions
             $options = " <a onclick='copyFormLink(\"" . $form_link . "\")' class='btn btn-outline-primary btn-sm' style='margin-right:8px'><i class='fa fa-clipboard' style='margin-right:5px'></i>Copy Link</a>";
             $options .= "<a href='" . site_url('forms/edit_form/' . $form?->id) . "' class='btn btn-warning btn-sm' style='margin-right:5px'>Edit</a>";
-            $options .= " <a href='" . site_url('forms/delete_form/' . $form?->id) . "' class='btn btn-danger btn-sm' style='margin-right:8px'>Delete</a>";
+            // $options .= " <a href='" . site_url('forms/delete_form/' . $form?->id) . "' class='btn btn-danger btn-sm' style='margin-right:8px'>Delete</a>";
+            $options .= " <a onclick='delete_form(\"" . $form?->id . "\")' class='btn btn-danger btn-sm' style='margin-right:8px'>Delete</a>";
             $options .= "<a target='_blank' href='" . base_url('f/' . $form?->form_link) . "' class='btn btn-info btn-sm'>View</a>";
 
             $row[] = $options;
@@ -304,5 +444,80 @@ class Forms extends MY_Controller
         );
 
         echo json_encode($output);
+    }
+
+    public function all_bundle_json_data()
+    {
+        $list = $this->form_bundles->get_all_bundles(); // Assuming 'get_forms()' fetches form data
+
+        $data = array();
+        $no = $_POST['start'];
+
+        foreach ($list as $bundle) {
+            // Increment row number
+            $no++;
+            $row = array();
+
+            // Displaying bundle fields
+            $row[] = $no; // Serial number (row number)
+
+
+            $row[] = "<div style='display:flex; align-items:center; justify-content:start; gap:5px;'>
+            <div>
+            " . (!empty($bundle->image) ? "
+            <a title='Click for Bigger!' href='" . base_url($bundle->image) . "' data-toggle='lightbox'>
+                <img style='border:1px #72afd2 solid; height: 35px; width: 35px;' 
+                     src='" . base_url(return_item_image_thumb($bundle->image)) . "' alt='Image'> 
+            </a>" : "
+            <img style='border:1px #72afd2 solid; height: 35px; width: 35px;' 
+                 src='" . base_url() . "theme/images/no_image.png' title='No Image!' alt='No Image'>") . "
+            </div>
+            <div style='font-weight:600;'>" . $bundle->name . "</div>
+          </div>";
+
+
+            $row[] = $bundle->description ?? '<em>-</em>';
+
+
+            $row[] = store_number_format($bundle->price);
+
+
+
+            // Display bundle submission date
+            $row[] = show_date($bundle->created_at); // You can adjust 'created_at' to the actual timestamp of the bundle
+            // Show whether the bundle is processed or not (status)
+
+
+            $bundle_link = base_url('f/' . $bundle->bundle_link);
+
+            // Optionally add the bundle link or ID for further actions
+            $options = " <a onclick='update_bundle_model(\"" . $bundle?->id . "\")' class='btn btn-primary btn-sm' style='margin-right:8px'><i class='fa fa-pencil' style='margin-right:5px'></i>Update</a>";
+            $options .= " <a onclick='delete_bundle(\"" . $bundle?->id . "\")' class='btn btn-danger btn-sm' style='margin-right:8px'>Delete</a>";
+            $row[] = $options;
+
+
+            $data[] = $row;
+        }
+
+        // Prepare and output the response in JSON format
+        $output = array(
+            "draw" => $_POST['draw'],
+            "recordsTotal" => $this->forms->count_all(), // Adjust based on your model
+            "recordsFiltered" => $this->forms->filtered_all(), // Adjust based on your model
+            "data" => $data,
+        );
+
+        echo json_encode($output);
+    }
+
+    public function delete_form()
+    {
+        $id = $_POST['id'];
+        echo $this->forms->delete_form($id);
+    }
+    public function delete_bundle()
+    {
+        $id = $_POST['id'];
+        echo $this->form_bundles->delete_bundle($id);
     }
 }

@@ -37,8 +37,9 @@
         <div class="content-wrapper">
             <!-- **********************MODALS***************** -->
 
-            <?php $this->load->view('orders/modals/modal_new_order.php'); ?>
-            <?php $this->load->view('orders/modals/modal_process_order.php'); ?>
+
+            <?php $this->load->view('forms/modals/modal_update_bundle'); ?>
+            <?php $this->load->view('forms/modals/modal_new_bundle'); ?>
 
 
             <!-- **********************MODALS END***************** -->
@@ -92,11 +93,8 @@
                                                                 placeholder="Search Form Name"
                                                                 autofocus id="order_search">
 
+                                                            <span class="input-group-addon pointer text-green" id="new-bundle-model-form" title="Click to Create Bundle"><i class="fa fa-plus"></i></span>
 
-                                                            <a class="input-group-addon pointer text-green"
-                                                                href="<?php echo base_url('/forms/new')  ?>"
-                                                                title="Click to Create form"><i
-                                                                    class="fa fa-plus"></i></a>
 
 
 
@@ -106,16 +104,15 @@
                                                 </div>
                                                 <div class="box-body">
                                                     <div class="table-responsive" style="width: 100%">
-                                                        <table id="form_table" class="table custom_hover "
+                                                        <table id="bundle_table" class="table custom_hover "
                                                             width="100%">
                                                             <thead class="bg-gray ">
                                                                 <tr>
                                                                     <th>S/N</th>
-                                                                    <th>Form Name</th>
-                                                                    <th>Products</th>
-                                                                    <th>Orders</th>
+                                                                    <th>Product</th>
+                                                                    <th>Description</th>
+                                                                    <th>Price</th>
                                                                     <th>Created at</th>
-                                                                    <th>Status</th>
                                                                     <th></th>
                                                                 </tr>
                                                             </thead>
@@ -124,7 +121,6 @@
                                                             </tbody>
                                                             <tfoot>
                                                                 <tr class="bg-gray" id="overdiv">
-                                                                    <th></th>
                                                                     <th></th>
                                                                     <th></th>
                                                                     <th></th>
@@ -195,22 +191,12 @@
             todayHighlight: true
         });
 
-        // Initialize iCheck for checkboxes
-        $('.single_checkbox').iCheck({
-            checkboxClass: 'icheckbox_square-orange',
-            radioClass: 'iradio_square-orange',
-            increaseArea: '10%'
-        });
-
-        $('.bulk_checkbox').iCheck({
-            checkboxClass: 'icheckbox_square-orange',
-            radioClass: 'iradio_square-orange',
-            increaseArea: '10%'
-        });
-
         function check_field(id) {
-            if (!$("#" + id).val() || $("#" + id).val() == '') //Also check Others????
+            var field = $("#" + id);
+
+            if (!field || field.val()?.trim() == '') //Also check Others????
             {
+                console.log("#" + id + "true");
                 console.log($("#" + id).val());
                 $('#' + id + '_msg').fadeIn(200).show().html('Required Field').addClass('required');
                 $('#' + id).css({
@@ -219,6 +205,8 @@
                 // flag = false;
                 return true;
             } else {
+                console.log("#" + id + "false");
+                console.log($("#" + id).val());
                 $('#' + id + '_msg').fadeOut(200).hide();
                 $('#' + id).css({
                     'background-color': '#FFFFFF'
@@ -227,230 +215,229 @@
             }
         }
 
-        function delete_order(id) {
-            var base_url = $("#base_url").val();
-            if (confirm("Do You Wants to Delete Record ?")) {
-                $(".box").append('<div class="overlay"><i class="fa fa-refresh fa-spin"></i></div>');
-                $.post("<?php echo site_url('orders/delete_order') ?>", {
-                    id: id
-                }, function(result) {
-                    //alert(result);return;
-                    if (result == "success") {
-                        toastr["success"]("Record Deleted Successfully!");
-                        $('#form_table').DataTable().ajax.reload();
-                    } else if (result == "failed") {
-                        toastr["error"]("Failed to Delete .Try again!");
-                    } else {
-                        toastr["error"](result);
-                    }
-                    $(".overlay").remove();
-                    return false;
-                });
-            } //end confirmation
-        }
-
-        function delete_form(id) {
-            var base_url = "<?php echo $base_url; ?>";
-            if (confirm("Do You Wants to Delete Record ?")) {
-                $(".box").append('<div class="overlay"><i class="fa fa-refresh fa-spin"></i></div>');
-                $.post("<?php echo base_url('forms/delete_form') ?>", {
-                    id: id
-                }, function(result) {
-                    //alert(result);return;
-                    if (result == "success") {
-                        toastr["success"]("Record Deleted Successfully!");
-                        $('#form_table').DataTable().ajax.reload();
-                    } else if (result == "failed") {
-                        toastr["error"]("Failed to Delete .Try again!");
-                    } else {
-                        toastr["error"](result);
-                    }
-                    $(".overlay").remove();
-                    return false;
-                });
-            } //end confirmation
-        }
-
-        function process_order(id) {
-
-            $('#process-order-modal').modal('show');
-            $('#process-order-form')[0].reset();
-            $('#order_id_field').val(id)
+        $('#new-bundle-model-form').click(function(e) {
 
 
-            $('#process-order-form-button').click(function(e) {
+
+            $('#new-bundle-form')[0].reset();
+
+            $('#new-bundle-modal').modal('toggle');
+            $('#new-bundle-form-button').click(function(e) {
                 e.preventDefault();
 
-                if (check_field("tracking_id")) {
+                var flag = true;
+
+                //Validate Input box or selection box should not be blank or empty
+
+                if (check_field("bundle_name") == true) {
+                    var flag = false;
+                }
+
+                if (check_field("bundle_price") == true) {
+                    var flag = false;
+                }
+
+                if (check_field("image") == true) {
+                    var flag = false;
+                }
+
+
+
+                if (flag == false) {
                     toastr["warning"]("You have Missed Something to Fillup!");
                     return;
                 }
-
-                data = new FormData($('#process-order-form')[0]); //form name
+                data = new FormData($('#new-bundle-form')[0]); //form name
                 /*Check XSS Code*/
                 if (!xss_validation(data)) {
                     return false;
                 }
-                $(".box").append('<div class="overlay"><i class="fa fa-refresh fa-spin"></i></div>');
-                $("#process-order-form-button").attr('disabled', true); //Enable Save or Update button
+                $(".box").append(
+                    '<div class="overlay"><i class="fa fa-refresh fa-spin"></i></div>');
+                $("#new-bundle-form-button").attr('disabled',
+                    true); //Enable Save or Update button
                 $.ajax({
                     type: 'POST',
-                    url: "<?php echo site_url('orders/process_order') ?>",
+                    url: "<?php echo site_url('forms/create_bundle/') ?>",
                     data: data,
                     cache: false,
                     contentType: false,
                     processData: false,
                     success: function(result) {
-                        if (result == "success") {
-                            toastr["success"]("Record Updated Successfully!");
-                            $('#form_table').DataTable().ajax.reload();
+                        var data = jQuery.parseJSON(result);
+                        console.log("result", data);
 
-                            $('#process-order-modal').modal('toggle');
+                        if (data.success == true) {
+                            toastr["success"]("Record Created Successfully!");
+                            $('#bundle_table').DataTable().ajax.reload();
 
-                        } else if (result == "failed") {
-                            toastr["error"]("Failed to Update .Try again!");
+                            $('#new-bundle-modal').modal('toggle');
+
                         } else {
-                            toastr["error"](result);
+                            toastr["error"](data?.message);
                         }
                         $(".overlay").remove();
+                        $("#new-bundle-form-button").attr('disabled',
+                            false); //Enable Save or new button
                         return false;
 
+                    },
+                    error: function(xhr) {
+                        console.log(xhr);
+                        $("#new-bundle-form-button").attr('disabled',
+                            false);
                     }
                 });
 
             })
 
-            // if (confirm("Do You Wants to Process this order ?")) {
-            //     $(".box").append('<div class="overlay"><i class="fa fa-refresh fa-spin"></i></div>');
-            //     $.post("<?php echo site_url('orders/process_order') ?>", {
-            //         id: id
-            //     }, function(result) {
-            //         //alert(result);return;
-            //         if (result == "success") {
-            //             toastr["success"]("Record Updated Successfully!");
-            //             $('#form_table').DataTable().ajax.reload();
-            //         } else if (result == "failed") {
-            //             toastr["error"]("Failed to Update .Try again!");
-            //         } else {
-            //             toastr["error"](result);
-            //         }
-            //         $(".overlay").remove();
-            //         return false;
-            //     });
-            // } //end confirmation
-        }
+
+
+        })
+
+        function update_bundle_model(id) {
+
+            $.ajax({
+                type: 'GET',
+                url: "<?php echo site_url('forms/bundle_details_json_data/') ?>" + id,
+                contentType: 'JSON',
+                success: function(result) {
+                    if (result) {
+                        $('#update-bundle-form')[0].reset();
+
+
+                        var bundleDetails = jQuery.parseJSON(result);
 
 
 
-        function multi_delete() {
+                        // Replace these lines with the actual properties you receive in the response
+                        // var productType = result.product_type;
 
-            var this_id = this.id;
+                        var bundleId = bundleDetails.id;
+                        var name = bundleDetails.name;
+                        var image = bundleDetails.image;
+                        var price = bundleDetails.price;
+                        var description = bundleDetails.description;
 
-            if (confirm("Are you sure ?")) {
-                data = new FormData($('#table_form')[0]); //form name
-                /*Check XSS Code*/
-                if (!xss_validation(data)) {
-                    return false;
-                }
 
-                $(".box").append('<div class="overlay"><i class="fa fa-refresh fa-spin"></i></div>');
-                $("#" + this_id).attr('disabled', true); //Enable Save or Update button
-                $.ajax({
-                    type: 'POST',
-                    url: "<?php echo site_url('orders/multi_delete') ?>",
-                    data: data,
-                    cache: false,
-                    contentType: false,
-                    processData: false,
-                    success: function(result) {
-                        result = result;
-                        //alert(result);return;
-                        if (result == "success") {
-                            toastr["success"]("Record Deleted Successfully!");
-                            success.currentTime = 0;
-                            success.play();
-                            $('#form_table').DataTable().ajax.reload();
-                            $(".bulk_action_btn").hide();
-                            $(".bulk_checkbox").prop("checked", false).iCheck('update');
-                        } else if (result == "failed") {
-                            toastr["error"]("Sorry! Failed to save Record.Try again!");
-                            failed.currentTime = 0;
-                            failed.play();
-                        } else {
-                            toastr["error"](result);
-                            failed.currentTime = 0;
-                            failed.play();
-                        }
-                        $("#" + this_id).attr('disabled', false); //Enable Save or Update button
-                        $(".overlay").remove();
+
+
+
+                        $('#current_bundle_id').val(bundleId);
+                        $('#current_bundle_name').val(name);
+                        $('#current_bundle_description').val(description);
+                        $('#current_bundle_price').val(price);
+
+
+                        $('#update-bundle-modal').modal('toggle');
+
+                        $('#update-bundle-form-button').click(function(e) {
+                            e.preventDefault();
+
+                            var flag = true;
+
+                            //Validate Input box or selection box should not be blank or empty
+
+                            if (check_field("current_bundle_name") == true) {
+                                var flag = false;
+                            }
+
+                            if (check_field("current_bundle_price") == true) {
+                                var flag = false;
+                            }
+
+                            if (check_field("current_customer_phone") == true) {
+                                var flag = false;
+                            }
+
+
+
+                            if (flag == false) {
+                                toastr["warning"]("You have Missed Something to Fillup!");
+                                return;
+                            }
+                            data = new FormData($('#update-bundle-form')[0]); //form name
+                            /*Check XSS Code*/
+                            if (!xss_validation(data)) {
+                                return false;
+                            }
+                            $(".box").append(
+                                '<div class="overlay"><i class="fa fa-refresh fa-spin"></i></div>');
+                            $("#update-bundle-form-button").attr('disabled',
+                                true); //Enable Save or Update button
+                            $.ajax({
+                                type: 'POST',
+                                url: "<?php echo site_url('forms/update_bundle/') ?>" + id,
+                                data: data,
+                                cache: false,
+                                contentType: false,
+                                processData: false,
+                                success: function(result) {
+                                    var data = jQuery.parseJSON(result);
+                                    console.log("result", data);
+
+                                    if (data.success == true) {
+                                        toastr["success"]("Record Updated Successfully!");
+                                        $('#bundle_table').DataTable().ajax.reload();
+
+                                        $('#update-bundle-modal').modal('toggle');
+
+                                    } else {
+                                        toastr["error"](data?.message);
+                                    }
+                                    $(".overlay").remove();
+                                    $("#update-bundle-form-button").attr('disabled',
+                                        false); //Enable Save or Update button
+                                    return false;
+
+                                },
+                                error: function(xhr) {
+                                    console.log(xhr);
+                                    $("#update-bundle-form-button").attr('disabled',
+                                        false);
+                                }
+                            });
+
+                        })
+
                     }
-                });
-            }
-            //e.preventDefault
-        }
-
-        function process_selected() {
-            var base_url = $("#base_url").val();
-            var this_id = this.id;
-
-            if (confirm("Are you sure ?")) {
-                data = new FormData($('#table_form')[0]); //form name
-                /*Check XSS Code*/
-                if (!xss_validation(data)) {
-                    return false;
                 }
+            });
+        }
 
+        function delete_bundle(id) {
+            var base_url = "<?php echo $base_url; ?>";
+            if (confirm("Do You Wants to Delete Record ?")) {
                 $(".box").append('<div class="overlay"><i class="fa fa-refresh fa-spin"></i></div>');
-                $("#" + this_id).attr('disabled', true); //Enable Save or Update button
-                $.ajax({
-                    type: 'POST',
-                    url: "<?php echo site_url('orders/multi_process') ?>",
-                    data: data,
-                    cache: false,
-                    contentType: false,
-                    processData: false,
-                    success: function(result) {
-                        result = result;
-                        //alert(result);return;
-                        if (result == "success") {
-                            toastr["success"]("Record Deleted Successfully!");
-                            success.currentTime = 0;
-                            success.play();
-                            $('#form_table').DataTable().ajax.reload();
-                            $(".bulk_action_btn").hide();
-                            $(".bulk_checkbox").prop("checked", false).iCheck('update');
-                        } else if (result == "failed") {
-                            toastr["error"]("Sorry! Failed to save Record.Try again!");
-                            failed.currentTime = 0;
-                            failed.play();
-                        } else {
-                            toastr["error"](result);
-                            failed.currentTime = 0;
-                            failed.play();
-                        }
-                        $("#" + this_id).attr('disabled', false); //Enable Save or Update button
-                        $(".overlay").remove();
+                $.post("<?php echo base_url('forms/delete_bundle') ?>", {
+                    id: id
+                }, function(result) {
+                    //alert(result);return;
+                    if (result == "success") {
+                        toastr["success"]("Record Deleted Successfully!");
+                        $('#bundle_table').DataTable().ajax.reload();
+                    } else if (result == "failed") {
+                        toastr["error"]("Failed to Delete .Try again!");
+                    } else {
+                        toastr["error"](result);
                     }
+                    $(".overlay").remove();
+                    return false;
                 });
-            }
-            //e.preventDefault
+            } //end confirmation
         }
 
-        function show_bulk_option_btn() {
 
-            var single_checkbox = $(document).find(".single_checkbox:checked").length
-            if (single_checkbox > 0) {
-                $(".bulk_action_btn").removeClass('hidden').show();
-            } else {
-                $(".bulk_action_btn").addClass('hidden').hide();
-            }
 
-        }
+
+
+
+
 
         function load_datatable() {
             //datatables
             var search_table = $('#order_search').val();
-            var table = $('#form_table').DataTable({
+            var table = $('#bundle_table').DataTable({
 
                 "aLengthMenu": [
                     [10, 25, 50, 100, 500],
@@ -531,7 +518,7 @@
                 },
                 // Load data for the table's content from an Ajax source
                 "ajax": {
-                    "url": "<?php echo site_url('forms/all_form_json_data') ?>",
+                    "url": "<?php echo site_url('forms/all_bundle_json_data') ?>",
                     "type": "POST",
                     "data": {
                         search_table: search_table,
@@ -545,8 +532,7 @@
                             increaseArea: '10%' // optional
                         });
                         $("#order_search").removeClass('ui-autocomplete-loading');
-                        // call_code();
-                        show_bulk_option_btn();
+
                     },
 
                 },
@@ -610,8 +596,8 @@
 
 
             // $('#order_search').on('keyup change', function() {
-            //     // $('#form_table').DataTable().ajax.reload();
-            //     $('#form_table').DataTable().destroy();
+            //     // $('#bundle_table').DataTable().ajax.reload();
+            //     $('#bundle_table').DataTable().destroy();
             //     load_datatable();
             // });
 
@@ -649,9 +635,9 @@
                         var data = jQuery.parseJSON(result);
                         if (data.success == true) {
 
-                            // $('#form_table').DataTable().destroy();
+                            // $('#bundle_table').DataTable().destroy();
                             // load_datatable();
-                            $('#form_table').DataTable().ajax.reload();
+                            $('#bundle_table').DataTable().ajax.reload();
 
                             $('#new-order-modal').modal('toggle');
                             $('#new-order-form')[0].reset();
@@ -693,7 +679,7 @@
 
                 if (event.target.checked) {
                     var bulk_checkbox = $(document).find(".bulk_checkbox").prop("checked") ? 1 : 0;
-                    var all_checkbox_count = $('#form_table').find('input[type=checkbox]:checked')
+                    var all_checkbox_count = $('#bundle_table').find('input[type=checkbox]:checked')
                         .length - parseInt(bulk_checkbox);
                     var single_checkbox = $(document).find(".single_checkbox").length
 
@@ -723,30 +709,6 @@
                 $(".bulk_action_btn").addClass('hidden').hide();
             });
         });
-
-        function copyFormLink(formLink) {
-            // Create a temporary input element to hold the link
-            const tempInput = document.createElement("input");
-            tempInput.value = formLink;
-            document.body.appendChild(tempInput);
-
-            // Select the input content
-            tempInput.select();
-            tempInput.setSelectionRange(0, 99999); // For mobile devices
-
-            // Copy the content to the clipboard
-            try {
-                document.execCommand("copy");
-                toastr["success"]("Link copied to clipboard: " + formLink);
-
-                // alert("Link copied to clipboard: " + formLink);
-            } catch (err) {
-                toastr["error"]("Failed to copy link. Please try again.");
-            }
-
-            // Remove the temporary input element
-            document.body.removeChild(tempInput);
-        }
     </script>
 
 

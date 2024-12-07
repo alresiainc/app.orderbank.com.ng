@@ -175,15 +175,26 @@ class Form_model extends CI_Model
 
     public function delete_forms($ids)
     {
-        $this->db->where_in('a.id', $ids);
-        $this->db->delete('db_forms');
-        return $this->db->affected_rows();
+
+        $this->db->trans_begin();
+
+        $this->db->where_in('id', $ids);
+
+        $q3 = $this->db->delete("db_forms");
+
+        $this->db->trans_commit();
+        return "success";
     }
 
     public function delete_form($id)
     {
-        $this->db->where('a.id', $id);
-        $this->db->delete('db_forms');
-        return $this->db->affected_rows();
+        $this->db->trans_begin();
+
+        $this->db->where("id", $id);
+
+        $q3 = $this->db->delete("db_forms");
+
+        $this->db->trans_commit();
+        return "success";
     }
 }
