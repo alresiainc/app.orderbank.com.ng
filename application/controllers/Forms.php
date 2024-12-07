@@ -13,7 +13,17 @@ class Forms extends MY_Controller
         $this->load->model('Form_model', 'forms');
         $this->load->model('Form_bundles_model', 'form_bundles');
         $this->load->model('State_model', 'states');
+        $this->load->library('wassenger');
     }
+
+    public function send_message()
+    {
+
+        // print_r($this->wassenger->message);
+        $response = $this->wassenger->numberExist('1234567890', 'Hello, WhatsApp!');
+        echo $response;
+    }
+
 
     public function index()
     {
@@ -39,6 +49,7 @@ class Forms extends MY_Controller
         $data = $this->data;
         $form  = $this->forms->get_form_by_id($id);
         $data['page_title'] = "Edit Forms - " . $form->form_name;
+        $data['bundles'] = $this->form_bundles->get_all_bundles();
         $data['form'] = $form;
 
         $this->load->view('forms/edit', $data);
@@ -108,6 +119,21 @@ class Forms extends MY_Controller
         }
     }
 
+    public function submit()
+    {
+
+        $this->form_validation->set_rules('form_bundle_id', 'Select a product', 'trim|required');
+
+
+        if ($this->form_validation->run() == TRUE) {
+            sleep(5000);
+            echo json_encode(['success' => true, 'message' => 'Form submitted successfully.']);
+        } else {
+            // Validation errors
+            echo json_encode(['success' => false, 'message' => validation_errors()]);
+        }
+    }
+
     public function update_form($id)
     {
         $this->form_validation->set_rules('form_name', 'Form Name', 'trim|required');
@@ -153,6 +179,7 @@ class Forms extends MY_Controller
                 'delivery_label' => $this->input->post('delivery_label'),
                 'delivery_desc' => $this->input->post('delivery_desc'),
                 'delivery_choices' => $this->input->post('delivery_choices'),
+                'redirect_url' => $this->input->post('redirect_url'),
                 'form_bundles' => json_encode($form_bundles)  // Store selected products as JSON
             );
 

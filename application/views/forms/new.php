@@ -357,20 +357,35 @@
                         </div>
 
 
-                        <!-- Products -->
-                        <!-- Bundles -->
-                        <div class="form-group">
-                            <label>Select Bundles:</label>
-                            <select name="form_bundles" class="form-control select2" id="form_bundles">
-                                <option value="">All</option>
-                                <?php foreach ($bundles ?? [] as $bundle): ?>
-                                    <option value="<?= $bundle->id; ?>">
-                                        <?= $bundle->name; ?> (<?= $bundle->price; ?>)
-                                    </option>
-                                <?php endforeach; ?>
-                            </select>
-                            <label id="form_bundles_msg" class="text-danger"></label>
+
+                        <div class="row">
+                            <!-- Bundles -->
+                            <div class="col-sm-5">
+                                <div class="form-group">
+                                    <label>Select Bundles:</label>
+                                    <select name="form_bundles" class="form-control select2" id="form_bundles">
+                                        <option value="">All</option>
+                                        <?php foreach ($bundles ?? [] as $bundle): ?>
+                                            <option value="<?= $bundle->id; ?>">
+                                                <?= $bundle->name; ?> (<?= $bundle->price; ?>)
+                                            </option>
+                                        <?php endforeach; ?>
+                                    </select>
+                                    <label id="form_bundles_msg" class="text-danger"></label>
+                                </div>
+                            </div>
+
+                            <!-- Redirect Url -->
+                            <div class="col-sm-7">
+                                <div class="form-group">
+                                    <label>Redirect Url:</label>
+                                    <input name="redirect_url" type="url" class="form-control" id="redirect_url" placeholder="https://www.example.com">
+                                    <label id="redirect_url_msg" class="text-danger"></label>
+                                </div>
+                            </div>
                         </div>
+
+
 
                         <!-- Submit Button -->
                         <button type="submit" class="btn btn-primary" id="new-form-button">Create Form</button>

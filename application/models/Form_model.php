@@ -37,6 +37,7 @@ class Form_model extends CI_Model
         'a.updated_at',
         'a.status',
         'a.form_bundles',
+        'a.redirect_url',
         'COUNT(c.id) as orders_count',
         // 'JSON_ARRAYAGG(
         //     JSON_OBJECT(
@@ -61,6 +62,7 @@ class Form_model extends CI_Model
         'a.address_label',
         'a.states_label',
         'a.delivery_label',
+        'a.redirect_url',
         'a.status'
     );
 

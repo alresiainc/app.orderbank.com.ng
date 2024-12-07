@@ -4,8 +4,65 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "8c5bda8e716960a3498c5827bb8a36c4",
+    "content-hash": "0d4113885942dce939a189b54aed8889",
     "packages": [
+        {
+            "name": "alresia/laravel-wassenger",
+            "version": "1.2.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/alresiainc/laravel-wassenger.git",
+                "reference": "76ff393acd7c9787a7d4dbcbcc82bd2177d2ada4"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/alresiainc/laravel-wassenger/zipball/76ff393acd7c9787a7d4dbcbcc82bd2177d2ada4",
+                "reference": "76ff393acd7c9787a7d4dbcbcc82bd2177d2ada4",
+                "shasum": ""
+            },
+            "require": {
+                "ext-curl": "*",
+                "php": ">=5.6.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Alresia\\LaravelWassenger\\WassengerServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Alresia\\LaravelWassenger\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Fidelis E Peter",
+                    "email": "fidelisepeter@gmail.com",
+                    "role": "Original developer"
+                }
+            ],
+            "description": "WhatsApp Business Api for Larave Using Wassenger Api",
+            "homepage": "https://github.com/alresiainc/laravel-wassenger#",
+            "keywords": [
+                "LaravelWassenger",
+                "Wassenger",
+                "WhatsAppApi",
+                "WhatsAppBusness",
+                "whatsapp"
+            ],
+            "support": {
+                "issues": "https://github.com/alresiainc/laravel-wassenger/issues",
+                "source": "https://github.com/alresiainc/laravel-wassenger"
+            },
+            "time": "2022-11-19T06:29:20+00:00"
+        },
         {
             "name": "dompdf/dompdf",
             "version": "v1.2.2",
@@ -624,5 +681,5 @@
     "prefer-lowest": false,
     "platform": [],
     "platform-dev": [],
-    "plugin-api-version": "2.1.0"
+    "plugin-api-version": "2.6.0"
 }

@@ -39,6 +39,10 @@ class ComposerStaticInitcdcd42b039ac0fa6dafd359776bb2c3c
         array (
             'Dompdf\\' => 7,
         ),
+        'A' => 
+        array (
+            'Alresia\\LaravelWassenger\\' => 25,
+        ),
     );
 
     public static $prefixDirsPsr4 = array (
@@ -81,6 +85,10 @@ class ComposerStaticInitcdcd42b039ac0fa6dafd359776bb2c3c
         'Dompdf\\' => 
         array (
             0 => __DIR__ . '/..' . '/dompdf/dompdf/src',
+        ),
+        'Alresia\\LaravelWassenger\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/alresia/laravel-wassenger/src',
         ),
     );
 

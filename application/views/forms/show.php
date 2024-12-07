@@ -6,8 +6,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= $form->form_name; ?></title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <!-- Bootstrap 3.3.6 -->
+    <link rel="stylesheet" href="<?= base_url('theme/bootstrap/css/bootstrap.min.css'); ?> ">
+    <link rel="stylesheet" href=" <?= base_url('theme/plugins/select2/select2.min.css'); ?>">
+    <!-- bootstrap datepicker -->
+    <link rel="stylesheet" href="<?= base_url('theme/plugins/datepicker/datepicker3.css'); ?>">
+    <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css"> -->
+
+
+
+    <!--Toastr notification -->
+    <link rel="stylesheet" href="<?= base_url('theme/toastr/toastr.css'); ?>">
+    <!--Toastr notification end-->
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--Custom Css File-->
+    <!-- <link rel="stylesheet" href="<?= base_url('theme/dist/css/custom.css'); ?>"> -->
     <style>
-        /* Reset */
+        /* General Reset */
         * {
             margin: 0;
             padding: 0;
@@ -16,30 +31,46 @@
 
         body {
             font-family: 'Poppins', sans-serif;
-            background: #f9f9f9;
+            background: #f0f4f9;
             color: #333;
             line-height: 1.6;
             padding: 20px;
         }
 
         .form-container {
-            max-width: 600px;
-            margin: 20px auto;
+            max-width: 700px;
+            margin: 30px auto;
             background: #fff;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            padding: 20px 30px;
+            border-radius: 10px;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+            padding: 30px;
         }
 
         h1 {
-            font-size: 1.8rem;
+            font-size: 2rem;
             font-weight: 600;
-            margin-bottom: 10px;
+            margin-bottom: 15px;
             color: #2c3e50;
         }
 
         p {
             margin-bottom: 20px;
+            /* color: #7f8c8d; */
+        }
+
+        .form-title {
+            font-size: 1.7rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .form-header-text {
+            font-size: 1.1rem;
+            font-weight: 400;
+            margin-bottom: 10px;
+            text-align: center;
             color: #7f8c8d;
         }
 
@@ -52,25 +83,41 @@
             display: block;
             margin-bottom: 8px;
             color: #34495e;
+            font-size: 1.1rem;
+        }
+
+        .form-group small {
+            display: block;
+            margin-top: 5px;
+            font-size: 0.9rem;
+            color: #95a5a6;
+        }
+
+        .text-danger.required {
+            color: #e74c3c;
+            display: block;
+            margin-top: 5px;
+            font-size: 0.9rem;
         }
 
         .form-group input,
         .form-group textarea,
         .form-group select {
             width: 100%;
-            padding: 10px 12px;
+            padding: 12px 15px;
             border: 1px solid #ddd;
             border-radius: 5px;
             font-size: 1rem;
             outline: none;
             transition: all 0.3s ease;
+            background: #f9f9f9;
         }
 
         .form-group input:focus,
         .form-group textarea:focus,
         .form-group select:focus {
             border-color: #3498db;
-            background: #f5faff;
+            background: #eef8ff;
         }
 
         .form-group input[type="checkbox"] {
@@ -78,136 +125,690 @@
             margin-right: 8px;
         }
 
+        .button-container {
+            display: flex;
+            justify-content: center;
+            /* Centers the button horizontally */
+        }
+
         button[type="submit"] {
-            display: inline-block;
+            display: block;
             background: #3498db;
             color: #fff;
-            padding: 10px 15px;
-            font-size: 1rem;
+            padding: 10px 60px;
+            font-size: 1.1rem;
+            font-weight: 670;
             border: none;
-            border-radius: 5px;
+            border-radius: 30px;
             cursor: pointer;
-            transition: background 0.3s ease;
+            transition: background 0.3s ease, transform 0.2s;
+            margin-top: 10px;
         }
 
         button[type="submit"]:hover {
             background: #2980b9;
+            transform: scale(1.02);
         }
+
+
 
         .form-footer {
             margin-top: 20px;
             color: #7f8c8d;
             text-align: center;
-            font-size: 0.9rem;
+            font-size: 1.1rem;
         }
 
         @media (max-width: 768px) {
             .form-container {
-                padding: 15px 20px;
+                padding: 20px;
             }
 
             h1 {
-                font-size: 1.6rem;
+                font-size: 1.8rem;
             }
         }
+
+        .select2-container .select2-selection {
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 5px;
+            height: auto;
+            outline: none;
+            transition: all 0.3s ease;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+            outline: none;
+            transition: all 0.3s ease;
+            background: #f9f9f9;
+
+        }
+
+        .select2-container .select2-selection__rendered {
+            font-size: 1rem;
+            color: #34495e;
+            /* padding: 8px 12px; */
+            width: 100%;
+
+
+        }
+
+        .select2-container .select2-selection__arrow {
+            height: 100%;
+            padding: 8px;
+        }
+
+        .select2-container--focus .select2-selection {
+            border-color: #3498db;
+            box-shadow: 0 0 5px rgba(52, 152, 219, 0.5);
+        }
+
+        #custom-date-picker.hidden {
+            display: none;
+        }
+
+        .mt-3 {
+            margin-top: 15px;
+        }
+
+
+        /* Additional Styles */
+        .date-toggle {
+            display: none;
+        }
+
+
+
+        .visible {
+            display: block !important;
+        }
+
+        .bundle-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 20px;
+            margin-top: 10px;
+        }
+
+        .bundle-box {
+            border: 2px solid transparent;
+            border-radius: 8px;
+            background: #f9f9f9;
+            overflow: hidden;
+            display: block;
+            text-decoration: none;
+            color: inherit;
+            cursor: pointer;
+            transition: border-color 0.3s ease, transform 0.2s ease;
+        }
+
+        .bundle-box:hover {
+            border-color: #3498db;
+            transform: scale(1.02);
+        }
+
+        .bundle-box input[type="radio"] {
+            display: none;
+            /* Hides the default radio button */
+        }
+
+        .bundle-box input[type="radio"]:checked+.bundle-content {
+            border: 2px solid transparent;
+            border-top: 8px solid #3498db;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            transform: scale(1.02);
+            transition: all 0.3s ease;
+        }
+
+        .bundle-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .bundle-image {
+            max-width: 100%;
+            width: 100%;
+            height: 120px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+
+        .bundle-details {
+            flex: 1;
+        }
+
+        .bundle-name {
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #2c3e50;
+        }
+
+        .bundle-desc {
+            font-size: 0.7rem;
+            color: #7f8c8d;
+            margin-bottom: 10px;
+        }
+
+        .bundle-price {
+            font-size: 1rem;
+            font-weight: bold;
+            color: #3498db;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .loader-container {
+            position: absolute;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            top: 0;
+            width: 100%;
+            height: 100vh;
+            backdrop-filter: blur(5px);
+            z-index: 999999999999;
+        }
+
+        .loader-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            max-width: 400px;
+            height: 10px;
+            background: #ddd;
+            border-radius: 5px;
+            overflow: hidden;
+            position: relative;
+            margin-bottom: 10px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            width: 0%;
+            background: #3498db;
+            transition: width 0.2s ease;
+        }
+
+        .datepicker .tooltip {
+            font-size: 0.8rem;
+            background: rgba(0, 0, 0, 0.8);
+            color: #fff;
+            padding: 5px 10px;
+            border-radius: 5px;
+            max-width: 200px;
+            text-align: center;
+        }
+
+        /* Custom style for disabled dates */
+
+        .datepicker .disabled-date {
+            color: #aaa !important;
+            /* Light gray text */
+            background-color: #f5f5f5 !important;
+            /* Subtle background */
+            text-decoration: line-through;
+            /* Optional strikethrough */
+            cursor: not-allowed;
+            /* Pointer indicating disabled */
+        }
+
+
+        /* Highlight today's date */
+        .datepicker .today {
+            background-color: #3498db !important;
+            /* Custom highlight for today's date */
+            color: #fff !important;
+            /* border-radius: 50%; */
+        }
+
+        /* Optional tooltip styling */
+        .datepicker .tooltip {
+            font-size: 0.8rem;
+            background: rgba(0, 0, 0, 0.8);
+            color: #fff;
+            padding: 5px 10px;
+            border-radius: 5px;
+            max-width: 200px;
+            text-align: center;
+        }
+
+        .datepicker .disabled-date {
+            color: #aaa !important;
+            /* Gray text */
+            background-color: #f9f9f9 !important;
+            /* Light background */
+            cursor: not-allowed;
+            /* Disabled cursor */
+        }
+
+        .datepicker .active {
+            background-color: #3498db !important;
+            /* Highlight active date */
+            color: #fff !important;
+        }
     </style>
+
 </head>
 
 <body>
     <div class="form-container">
-        <h1><?= $form->form_title; ?></h1>
-        <p><?= $form->form_header_text; ?></p>
+        <h1 class="form-title"><?= $form->form_title; ?></h1>
+        <p class="form-header-text"><?= $form->form_header_text; ?></p>
 
-        <form action="<?= site_url('forms/submit_form'); ?>" method="post">
+        <form action="<?= site_url('forms/submit_form'); ?>" method="post" id="order-form">
             <input type="hidden" name="form_id" value="<?= $form->id; ?>">
 
             <?php if ($form->show_customer_name): ?>
                 <div class="form-group">
                     <label><?= $form->customer_name_label; ?></label>
-                    <input type="text" name="customer_name" placeholder="<?= $form->customer_name_desc; ?>" required>
+                    <input type="text" name="customer_name" id="customer_name">
+                    <span id="customer_name_msg" class="text-danger"></span>
+                    <small><?= $form->customer_name_desc; ?></small>
+
                 </div>
             <?php endif; ?>
 
             <?php if ($form->show_email): ?>
                 <div class="form-group">
                     <label><?= $form->email_label; ?></label>
-                    <input type="email" name="email" placeholder="<?= $form->email_desc; ?>" required>
+                    <input type="email" name="email" id="email">
+                    <span id="email_msg" class="text-danger"></span>
+                    <small><?= $form->email_desc; ?></small>
                 </div>
             <?php endif; ?>
 
             <?php if ($form->show_phone): ?>
                 <div class="form-group">
                     <label><?= $form->phone_label; ?></label>
-                    <input type="tel" name="phone" placeholder="<?= $form->phone_desc; ?>" required>
+                    <input type="tel" name="phone" id="phone">
+                    <span id="phone_msg" class="text-danger"></span>
+                    <small><?= $form->phone_desc; ?></small>
                 </div>
             <?php endif; ?>
 
             <?php if ($form->show_whatsapp): ?>
                 <div class="form-group">
                     <label><?= $form->whatsapp_label; ?></label>
-                    <input type="text" name="whatsapp" placeholder="<?= $form->whatsapp_desc; ?>">
+                    <input type="text" name="whatsapp" id="whatsapp">
+                    <span id="whatsapp_msg" class="text-danger"></span>
+                    <small><?= $form->whatsapp_desc; ?></small>
                 </div>
             <?php endif; ?>
 
             <?php if ($form->show_address): ?>
                 <div class="form-group">
                     <label><?= $form->address_label; ?></label>
-                    <textarea name="address" placeholder="<?= $form->address_desc; ?>" required></textarea>
+                    <textarea name="address" id="address"></textarea>
+                    <span id="address_msg" class="text-danger"></span>
+                    <small><?= $form->address_desc; ?></small>
                 </div>
             <?php endif; ?>
 
             <?php if ($form->show_states): ?>
                 <div class="form-group">
                     <label><?= $form->states_label; ?></label>
-                    <select name="state" required>
+                    <select name="state" id="state">
                         <option value=""><?= $form->state_desc; ?></option>
                         <?= get_state_select_list(null, true); ?>
                     </select>
+                    <span id="state_msg" class="text-danger"></span>
+                    <small><?= $form->state_desc; ?></small>
                 </div>
             <?php endif; ?>
 
+            <!-- Delivery Section -->
             <?php if ($form->show_delivery): ?>
                 <div class="form-group">
                     <label><?= $form->delivery_label; ?></label>
-                    <select name="delivery_choice" required>
-                        <option value=""><?= $form->delivery_desc; ?></option>
-                        <?php
-                        $choices = json_decode($form->delivery_choices, true);
-                        if (!empty($choices)):
-                            foreach ($choices as $choice): ?>
-                                <option value="<?= $choice; ?>"><?= $choice; ?></option>
-                        <?php endforeach;
-                        endif; ?>
+                    <select id="delivery_select" name="delivery_date" class="form-control select2">
+                        <option value="">Select Delivery Date</option>
+                        <option value="<?= date('Y-m-d'); ?>">Today</option>
+                        <option value="<?= date('Y-m-d', strtotime('+1 day')); ?>">Tomorrow</option>
+                        <option value="custom">Custom Date</option>
                     </select>
+                    <span id="delivery_select_msg" class="text-danger"></span>
+                    <small><?= $form->delivery_desc; ?></small>
                 </div>
             <?php endif; ?>
+            <div class="form-group date-toggle" id="custom-date-group" style="display: none;">
+                <label>Select a Custom Date</label>
+                <input type="text" id="custom-date-picker" name="custom_delivery_date"
+                    class="form-control datepicker"
+                    placeholder="Pick a date">
+            </div>
 
-            <?php if (!empty($bundles)): ?>
-
-
-                <div class="form-group">
-                    <label>Select an Item:</label>
-                    <select name="form_bundle_id" class="form-control select2" id="form_bundle_id">
-                        <option value="">-- Select --</option>
-                        <?php foreach ($bundles as $bundle): ?>
-                            <option value="<?= $bundle->id; ?>">
-                                <?= $bundle->name; ?> (<?= $bundle->price; ?>)
-                            </option>
-                        <?php endforeach; ?>
-                    </select>
-                    <label id="form_bundle_id_msg" class="text-danger"></label>
-                </div>
-            <?php endif; ?>
 
             <div class="form-group">
-                <button type="submit">Submit</button>
+                <label>Select an Item:</label>
+                <div class="bundle-container">
+                    <?php foreach ($bundles as $bundle): ?>
+                        <label class="bundle-box">
+                            <input type="radio" name="form_bundle_id" value="<?= $bundle->id; ?>" id="form_bundle">
+                            <div class="bundle-content">
+                                <img src="<?= base_url($bundle->image); ?>" alt="<?= $bundle->name; ?>" class="bundle-image">
+                                <div class="bundle-details">
+                                    <h4 class="bundle-name"><?= $bundle->name; ?></h4>
+                                    <p class="bundle-desc"><?= $bundle->description; ?></p>
+                                    <span class="bundle-price"><?= $bundle->price; ?></span>
+                                </div>
+                            </div>
+                        </label>
+                    <?php endforeach; ?>
+                </div>
+                <span id="form_bundle_msg" class="text-danger"></span>
             </div>
+
+
+
+
+            <!-- Submit Button -->
+            <div class="form-group button-container">
+                <button type="submit">Submit </button>
+            </div>
+
+
         </form>
 
         <div class="form-footer">
-            <p><?= $form->form_footer_text; ?></p>
+            <p class="form-footer-text"><?= $form->form_footer_text; ?></p>
         </div>
     </div>
+    <div id="loader-container" class="hiddend">
+        <div class="loader-wrapper">
+            <div class="progress-bar">
+                <div class="progress-fill"></div>
+            </div>
+            <p id="loading-text">Loading... 0%</p>
+        </div>
+    </div>
+
+    <!-- jQuery 2.2.3 -->
+    <script src="<?= base_url('theme/plugins/jQuery/jquery-2.2.3.min.js'); ?>"></script>
+    <script src="<?= base_url('theme/plugins/select2/select2.min.js'); ?>"></script>
+
+    <script src="<?= base_url('theme/toastr/toastr.js'); ?>"></script>
+    <script src="<?= base_url('theme/toastr/toastr_custom.js'); ?>"></script>
+
+
+    <!-- bootstrap datepicker -->
+    <script src="<?= base_url('theme/plugins/datepicker/bootstrap-datepicker.js'); ?>"></script>
+
+
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script> -->
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.2.3/js/bootstrap.bundle.min.js"></script> -->
+    <script>
+        $(document).ready(function() {
+
+            //Initialize Select2 Elements
+            // Initialize Select2
+            $('#delivery_select').select2({
+                width: '100%',
+                placeholder: 'Select Delivery Date',
+                allowClear: true
+            });
+
+            // Show/hide custom date input based on selection
+
+
+            // Parse today's date from PHP
+            const serverToday = new Date('<?= date('Y-m-d'); ?>T00:00:00');
+
+            // Set up the date picker
+            $('#custom-date-picker').datepicker({
+                autoclose: true,
+                format: 'dd-mm-yyyy',
+                todayHighlight: true, // Highlight today's date
+                startDate: '<?= date('d-m-Y'); ?>', // Include today as the first selectable date
+                endDate: '<?= date('d-m-Y', strtotime('+' . $form->delivery_choices . ' days')); ?>', // End date
+                beforeShowDay: function(date) {
+                    // Normalize the current date and serverToday to midnight
+                    const currentDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+
+                    // Calculate the maxDate
+                    const maxDate = new Date('<?= date('Y-m-d', strtotime('+' . $form->delivery_choices . ' days')); ?>T00:00:00');
+
+                    // Enable dates from serverToday to maxDate
+                    if (currentDate >= serverToday && currentDate <= maxDate) {
+                        console.log("serverToday", serverToday)
+                        console.log("currentDate:", currentDate)
+                        return {
+                            enabled: true, // Enable this date
+                            classes: '', // Optional: Add class if needed
+                            tooltip: "This date is available for delivery." // Tooltip for valid dates
+                        };
+                    }
+
+                    // Disable all other dates
+                    return {
+                        enabled: false,
+                        classes: 'disabled-date', // Styling for disabled dates
+                        tooltip: "This date is unavailable for delivery." // Tooltip for invalid dates
+                    };
+                }
+            });
+
+
+
+
+            // Toggle Custom Date Picker
+            $("#delivery_select").on('change', function() {
+                const customDateGroup = $('#custom-date-group');
+                const customDateInput = $('#custom-date-picker');
+                if ($(this).val() === 'custom') {
+                    customDateGroup.slideDown();
+                    customDateInput.focus();
+                } else {
+                    customDateGroup.slideUp();
+                    customDateInput.val('');
+                }
+            });
+
+            function check_field(id) {
+                var field = $("#" + id);
+
+                if (!field || field.val()?.trim() == '') //Also check Others????
+                {
+                    console.log("#" + id + "true");
+                    console.log($("#" + id).val());
+                    $('#' + id + '_msg').fadeIn(200).show().html('Required Field').addClass('required');
+                    $('#' + id).css({
+                        'background-color': '#E8E2E9'
+                    });
+                    // flag = false;
+                    return true;
+                } else {
+                    console.log("#" + id + "false");
+                    console.log($("#" + id).val());
+                    $('#' + id + '_msg').fadeOut(200).hide();
+                    $('#' + id).css({
+                        'background-color': '#FFFFFF'
+                    }); //White color
+                    return false;
+                }
+            }
+
+            $("#order-form").on("submit", function(e) {
+                e.preventDefault(); // Prevent form's default submission
+
+
+                var flag = true;
+
+                if ($('#customer_name') != undefined) {
+                    isInvalid = check_field("customer_name");
+                }
+
+                if ($('#email') != undefined) {
+                    if (check_field("email") == true) {
+                        var flag = false;
+                    }
+                }
+
+                if ($('#phone') != undefined) {
+                    if (check_field("phone") == true) {
+                        var flag = false;
+                    }
+                }
+
+                if ($('#whatsapp') != undefined) {
+                    if (check_field("whatsapp") == true) {
+                        var flag = false;
+                    }
+                }
+
+                if ($('#address') != undefined) {
+                    if (check_field("address") == true) {
+                        var flag = false;
+                    }
+                }
+
+                if ($('#state') != undefined) {
+                    if (check_field("state") == true) {
+                        var flag = false;
+                    }
+                }
+
+                if ($('#delivery_select') != undefined) {
+                    if (check_field("delivery_select") == true) {
+                        var flag = false;
+                    }
+                }
+
+                // alert(flag)
+
+                if (flag == false) {
+                    toastr["warning"]("You have Missed Something to Fillup!");
+                    return;
+                }
+
+
+                if ($('#form_bundle') != undefined && $('#form_bundle:checked').length < 1) {
+                    toastr["warning"]("You have not selected any Item yet!");
+                    return;
+                }
+
+
+                let csrfName = '<?php echo $this->security->get_csrf_token_name(); ?>';
+                let csrfHash = '<?php echo $this->security->get_csrf_hash(); ?>';
+
+                let data = new FormData($('#order-form')[0]);
+                data.append(csrfName, csrfHash); // Append the CSRF token
+
+                /*Check XSS Code*/
+
+
+                const $loaderContainer = $("#loader-container");
+                const $progressFill = $(".progress-fill");
+                const $loadingText = $("#loading-text");
+                const $submitButton = $("#submit-button");
+
+                $loaderContainer.removeClass("hidden"); // Show loader
+                $submitButton.prop("disabled", true); // Disable submit button
+
+                // Random time estimates
+                const simulatedTime = Math.floor(Math.random() * (15 - 5 + 1)) + 5; // 5–15 seconds
+                const requestTime = Math.floor(Math.random() * (15 - 5 + 1)) + 5; // Random request duration
+                const loaderInterval = simulatedTime * 100; // For progress simulation
+
+                let progress = 0;
+                let interval = setInterval(() => {
+                    if (progress < 90) {
+                        progress += Math.random() * 5; // Increment progress
+                    } else if (progress >= 90 && progress < 100 && requestTime <= simulatedTime) {
+                        progress += Math.random(); // Hold near completion
+                    }
+                    if (progress >= 100) progress = 100;
+
+                    // Update UI
+                    $progressFill.css("width", `${progress}%`);
+                    $loadingText.text(`Loading... ${Math.floor(progress)}%`);
+
+                    // End simulation if 100% reached or AJAX completes
+                    if (progress >= 100) clearInterval(interval);
+                }, loaderInterval);
+
+                // AJAX Request
+                $.ajax({
+                    url: "<?php echo base_url('forms/submit'); ?>", // Replace with your form handler URL
+                    method: "POST",
+                    data: data,
+                    cache: false,
+                    contentType: false,
+
+                    processData: false,
+                    success: function(response) {
+                        var data = jQuery.parseJSON(response);
+                        console.log("result", data);
+
+                        if (data.success == true) {
+                            // Show SweetAlert with three buttons
+
+                            clearInterval(interval);
+                            progress = 100;
+                            $progressFill.css("width", "100%");
+                            $loadingText.text("Loading... 100%");
+
+                            // alert("Form submitted successfully!"); // Success message
+                            setTimeout(() => {
+                                $loaderContainer.addClass("hidden"); // Hide loader
+                                $submitButton.prop("disabled", false); // Re-enable button
+                            }, 500);
+
+                            toastr["success"](data.message);
+
+                        } else {
+                            toastr["error"](data.message);
+
+                            // Enable the button and remove the overlay
+                            clearInterval(interval);
+                            $loaderContainer.addClass("hidden");
+                            $submitButton.prop("disabled", false);
+                        }
+
+
+                    },
+
+
+                    error: function(jqXHR, textStatus, errorThrown) {
+                        console.log("AJAX Error: ", jqXHR, textStatus, errorThrown);
+
+                        // Try parsing the error message from the server response
+                        let errorMessage = "An error occurred. Please try again.";
+
+                        if (jqXHR.responseText) {
+                            try {
+                                let response = JSON.parse(jqXHR.responseText);
+                                errorMessage = response.message || errorMessage; // Use the server-provided message if available
+                            } catch (e) {
+                                console.error("Error parsing server error response: ", e);
+                            }
+                        }
+
+                        // Display the error using toastr
+                        toastr["error"](errorMessage);
+
+                        // Enable the button and remove the overlay
+                        clearInterval(interval);
+                        $loaderContainer.addClass("hidden");
+                        $submitButton.prop("disabled", false);
+                    }
+
+                });
+            });
+        });
+    </script>
 </body>
 
 </html>

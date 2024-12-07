@@ -89,14 +89,14 @@
                                                             <span class="input-group-addon" title="Search Items"><i
                                                                     class="fa fa-barcode"></i></span>
                                                             <input type="text" class="form-control "
-                                                                placeholder="Search Product Name/Shopify ID/Fulfilment ID"
+                                                                placeholder="Search Form Name"
                                                                 autofocus id="order_search">
 
 
-                                                            <span class="input-group-addon pointer text-green"
-                                                                data-toggle="modal" data-target="#new-order-modal"
-                                                                title="Click to Create Order"><i
-                                                                    class="fa fa-plus"></i></span>
+                                                            <a class="input-group-addon pointer text-green"
+                                                                href="<?php echo base_url('/forms/new')  ?>"
+                                                                title="Click to Create form"><i
+                                                                    class="fa fa-plus"></i></a>
 
 
 

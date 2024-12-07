@@ -288,25 +288,76 @@
                             <hr>
                         </div>
 
-                        <!-- JavaScript to toggle visibility -->
-
-
-
-
-                        <!-- Bundles -->
-                        <div class="form-group">
-                            <label>Select Bundles:</label>
-                            <select name="form_bundles[]" class="form-control select2" id="form_bundles" multiple>
-                                <option value="">All</option>
-                                <?php foreach ($bundles ?? [] as $bundle): ?>
-                                    <option value="<?= $bundle->id; ?>" <?= in_array($bundle->id, json_decode($form->form_bundles)) ? 'selected' : ''; ?>>
-                                        <?= $bundle->name; ?> (<?= $bundle->price; ?>)
-                                    </option>
-                                <?php endforeach; ?>
-                            </select>
-                            <label id="form_bundles_msg" class="text-danger"></label>
+                        <!-- Delivery Options Field -->
+                        <div class="field-container">
+                            <div class="row">
+                                <div class="col-sm-3">
+                                    <label for="delivery_checkbox">
+                                        Delivery Options Field <span>*</span>
+                                    </label>
+                                    <p>A field for selecting delivery options.</p>
+                                </div>
+                                <div class="col-sm-9 form-row">
+                                    <div class="form-group">
+                                        <select name="delivery_checkbox" class="form-control select2">
+                                            <option value="hide" <?= $form->show_delivery == false ? 'selected' : ''; ?>>Hide</option>
+                                            <option value="show" <?= $form->show_delivery == true ? 'selected' : ''; ?>>Show</option>
+                                        </select>
+                                    </div>
+                                    <div class="label-description" id="delivery_fields" style="<?= $form->show_delivery == true ? '' : 'display: none;' ?>">
+                                        <div class="form-group">
+                                            <label for="delivery_label">Form Label <span>*</span></label>
+                                            <p>The title of this field.</p>
+                                            <input type="text" class="form-control" id="delivery_label" name="delivery_label" placeholder="Enter Label for Delivery Options" value="<?= $form->delivery_label; ?>">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="delivery_desc">Form Description</label>
+                                            <p>The description of this field (optional).</p>
+                                            <input type="text" class="form-control" id="delivery_desc" name="delivery_desc" placeholder="Enter Description for Delivery Options" value="<?= $form->delivery_desc; ?>">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="delivery_choices">Delivery Days ahead</label>
+                                            <p>Allow customer select a future date for delivery after current day.</p>
+                                            <input type="number" class="form-control" id="delivery_choices" name="delivery_choices" placeholder="e.g., 7, 14, 21" value="<?= $form->delivery_choices; ?>">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <hr>
                         </div>
 
+
+
+
+
+
+                        <div class="row">
+                            <!-- Bundles -->
+                            <div class="col-sm-5">
+                                <div class="form-group">
+                                    <label>Select Bundles:</label>
+                                    <select name="form_bundles[]" class="form-control select2" id="form_bundles" multiple>
+                                        <option value="">All</option>
+                                        <?php foreach ($bundles ?? [] as $bundle): ?>
+                                            <option value="<?= $bundle->id; ?>" <?= in_array($bundle->id, json_decode($form->form_bundles)) ? 'selected' : ''; ?>>
+                                                <?= $bundle->name; ?> (<?= $bundle->price; ?>)
+                                            </option>
+                                        <?php endforeach; ?>
+                                    </select>
+
+                                    <label id="form_bundles_msg" class="text-danger"></label>
+                                </div>
+                            </div>
+
+                            <!-- Redirect Url -->
+                            <div class="col-sm-7">
+                                <div class="form-group">
+                                    <label>Redirect Url:</label>
+                                    <input name="redirect_url" type="url" class="form-control" id="redirect_url" placeholder="https://www.example.com" value="<?php echo $form->redirect_url ?>">
+                                    <label id="redirect_url_msg" class="text-danger"></label>
+                                </div>
+                            </div>
+                        </div>
                         <!-- Submit Button -->
                         <button type="submit" class="btn btn-primary" id="update-form-button">Update Form</button>
                     </div>
