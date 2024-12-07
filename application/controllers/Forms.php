@@ -9,7 +9,12 @@ class Forms extends MY_Controller
     public function __construct()
     {
         parent::__construct();
-        $this->load_global();
+        // $this->load_global();
+        // Bypass `load_global` for the `show_form` method
+        $method = $this->router->fetch_method();
+        if ($method !== 'show_form') {
+            $this->load_global();
+        }
         $this->load->model('Form_model', 'forms');
         $this->load->model('Form_bundles_model', 'form_bundles');
         $this->load->model('State_model', 'states');
