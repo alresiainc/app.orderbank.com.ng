@@ -6,7 +6,7 @@ class Sales_model extends CI_Model
 
 	//Datatable start
 	var $ordebank_business_id = 18;
-// 	var $ordebank_business_id = 434561;
+	// 	var $ordebank_business_id = 434561;
 	var $table = 'db_sales as a';
 	var $column_order = array(
 		'a.id',
@@ -48,6 +48,7 @@ class Sales_model extends CI_Model
 		parent::__construct();
 		$CI = &get_instance();
 		$this->load->library('curl');
+		$this->load->model('Orders_model', 'orders');
 	}
 	/**
 	 * Fetch orders from the Laravel API with a specific filter
@@ -1087,119 +1088,119 @@ class Sales_model extends CI_Model
 		$order_details = json_decode($order_details, true);
 		$item_amount = ($item_sales_price * $item_sales_qty) + $item_tax_amt; ?>
 
-<tr id="row_<?= $rowcount; ?>" data-row='<?= $rowcount; ?>'>
-    <td id="td_<?= $rowcount; ?>_sn" class="sn_column"><?= $rowcount; ?></td> <!-- Add this line for SN -->
-    <td id="td_<?= $rowcount; ?>_22">
-        <select class="form-control select2" id="td_data_<?= $rowcount; ?>_22" name="td_data_<?= $rowcount; ?>_22">
-            <option value="">Select Order</option>
-            <?php foreach ($this->get_orders($order_status) as $order) : ?>
-            <option <?= isset($order_details['id']) && $order_details['id'] == $order->id ? 'selected' : ''; ?>
-                value="<?= htmlspecialchars($order->id, ENT_QUOTES, 'UTF-8'); ?>">
-                <?= htmlspecialchars($order->order_number, ENT_QUOTES, 'UTF-8'); ?> -
-                <?= htmlspecialchars($order->customer_name, ENT_QUOTES, 'UTF-8'); ?> -
-                <?= htmlspecialchars($order->state, ENT_QUOTES, 'UTF-8'); ?></option>
-            <?php endforeach; ?>
-        </select>
-    </td>
+		<tr id="row_<?= $rowcount; ?>" data-row='<?= $rowcount; ?>'>
+			<td id="td_<?= $rowcount; ?>_sn" class="sn_column"><?= $rowcount; ?></td> <!-- Add this line for SN -->
+			<td id="td_<?= $rowcount; ?>_22">
+				<select class="form-control select2" id="td_data_<?= $rowcount; ?>_22" name="td_data_<?= $rowcount; ?>_22">
+					<option value="">Select Order</option>
+					<?php foreach ($this->orders->get_orders_by_status($order_status) as $order) : ?>
+						<option <?= isset($order_details['id']) && $order_details['id'] == $order->id ? 'selected' : ''; ?>
+							value="<?= htmlspecialchars($order->id, ENT_QUOTES, 'UTF-8'); ?>">
+							<?= htmlspecialchars($order->fulfilment_id, ENT_QUOTES, 'UTF-8'); ?> -
+							<?= htmlspecialchars($order->customer_name, ENT_QUOTES, 'UTF-8'); ?> -
+							<?= htmlspecialchars($order->state, ENT_QUOTES, 'UTF-8'); ?></option>
+					<?php endforeach; ?>
+				</select>
+			</td>
 
-    <td id="td_<?= $rowcount; ?>_1">
-        <label class='form-control' style='height:auto;' data-toggle="tooltip" title='Edit ?'>
-            <a id="td_data_<?= $rowcount; ?>_1" href="javascript:void()"
-                onclick="show_sales_item_modal(<?= $rowcount; ?>)" title=""><?= $item_name; ?></a>
-            <i onclick="show_sales_item_modal(<?= $rowcount; ?>)" class="fa fa-edit pointer"></i>
-        </label>
-    </td>
+			<td id="td_<?= $rowcount; ?>_1">
+				<label class='form-control' style='height:auto;' data-toggle="tooltip" title='Edit ?'>
+					<a id="td_data_<?= $rowcount; ?>_1" href="javascript:void()"
+						onclick="show_sales_item_modal(<?= $rowcount; ?>)" title=""><?= $item_name; ?></a>
+					<i onclick="show_sales_item_modal(<?= $rowcount; ?>)" class="fa fa-edit pointer"></i>
+				</label>
+			</td>
 
 
-    <!-- description  -->
-    <!-- <td id="td_<?= $rowcount; ?>_17">
+			<!-- description  -->
+			<!-- <td id="td_<?= $rowcount; ?>_17">
                   
                   <textarea rows="1" type="text" style="font-weight: bold; height=34px;" id="td_data_<?= $rowcount; ?>_17" name="td_data_<?= $rowcount; ?>_17" class="form-control no-padding"><?= $description; ?></textarea>
                </td> -->
 
-    <!-- Qty -->
-    <td id="td_<?= $rowcount; ?>_3">
-        <div class="input-group ">
-            <span class="input-group-btn">
-                <button onclick="decrement_qty(<?= $rowcount; ?>)" type="button" class="btn btn-default btn-flat"><i
-                        class="fa fa-minus text-danger"></i></button></span>
-            <input typ="text" value="<?= $item_sales_qty; ?>" class="form-control no-padding text-center"
-                onkeyup="calculate_tax(<?= $rowcount; ?>)" id="td_data_<?= $rowcount; ?>_3"
-                name="td_data_<?= $rowcount; ?>_3">
-            <span class="input-group-btn">
-                <button onclick="increment_qty(<?= $rowcount; ?>)" type="button" class="btn btn-default btn-flat"><i
-                        class="fa fa-plus text-success"></i></button></span>
-        </div>
-    </td>
+			<!-- Qty -->
+			<td id="td_<?= $rowcount; ?>_3">
+				<div class="input-group ">
+					<span class="input-group-btn">
+						<button onclick="decrement_qty(<?= $rowcount; ?>)" type="button" class="btn btn-default btn-flat"><i
+								class="fa fa-minus text-danger"></i></button></span>
+					<input typ="text" value="<?= $item_sales_qty; ?>" class="form-control no-padding text-center"
+						onkeyup="calculate_tax(<?= $rowcount; ?>)" id="td_data_<?= $rowcount; ?>_3"
+						name="td_data_<?= $rowcount; ?>_3">
+					<span class="input-group-btn">
+						<button onclick="increment_qty(<?= $rowcount; ?>)" type="button" class="btn btn-default btn-flat"><i
+								class="fa fa-plus text-success"></i></button></span>
+				</div>
+			</td>
 
 
 
-    <!-- Unit Cost Without Tax-->
-    <td id="td_<?= $rowcount; ?>_10"><input type="text" name="td_data_<?= $rowcount; ?>_10"
-            id="td_data_<?= $rowcount; ?>_10" class="form-control text-right no-padding only_currency text-center"
-            onkeyup="calculate_tax(<?= $rowcount; ?>)" value="<?= store_number_format($item_sales_price, 0); ?>"></td>
+			<!-- Unit Cost Without Tax-->
+			<td id="td_<?= $rowcount; ?>_10"><input type="text" name="td_data_<?= $rowcount; ?>_10"
+					id="td_data_<?= $rowcount; ?>_10" class="form-control text-right no-padding only_currency text-center"
+					onkeyup="calculate_tax(<?= $rowcount; ?>)" value="<?= store_number_format($item_sales_price, 0); ?>"></td>
 
-    <!-- Discount -->
-    <td id="td_<?= $rowcount; ?>_8">
-        <input type="text" data-toggle="tooltip" title="Click to Change" name="td_data_<?= $rowcount; ?>_8"
-            id="td_data_<?= $rowcount; ?>_8"
-            class="pointer form-control text-right no-padding only_currency text-center item_discount"
-            value="<?= store_number_format($item_discount, 0); ?>" onclick="show_sales_item_modal(<?= $rowcount; ?>)"
-            readonly>
-    </td>
+			<!-- Discount -->
+			<td id="td_<?= $rowcount; ?>_8">
+				<input type="text" data-toggle="tooltip" title="Click to Change" name="td_data_<?= $rowcount; ?>_8"
+					id="td_data_<?= $rowcount; ?>_8"
+					class="pointer form-control text-right no-padding only_currency text-center item_discount"
+					value="<?= store_number_format($item_discount, 0); ?>" onclick="show_sales_item_modal(<?= $rowcount; ?>)"
+					readonly>
+			</td>
 
-    <!-- Tax Amount -->
-    <td id="td_<?= $rowcount; ?>_11">
-        <input type="text" name="td_data_<?= $rowcount; ?>_11" id="td_data_<?= $rowcount; ?>_11"
-            class="form-control text-right no-padding only_currency text-center"
-            value="<?= store_number_format($item_tax_amt, 0); ?>" readonly>
-    </td>
+			<!-- Tax Amount -->
+			<td id="td_<?= $rowcount; ?>_11">
+				<input type="text" name="td_data_<?= $rowcount; ?>_11" id="td_data_<?= $rowcount; ?>_11"
+					class="form-control text-right no-padding only_currency text-center"
+					value="<?= store_number_format($item_tax_amt, 0); ?>" readonly>
+			</td>
 
-    <!-- Tax Details -->
-    <td id="td_<?= $rowcount; ?>_12">
-        <label class='form-control ' style='width:100%;padding-left:0px;padding-right:0px;'>
-            <a id="td_data_<?= $rowcount; ?>_12" href="javascript:void()" data-toggle="tooltip" title='Click to Change'
-                onclick="show_sales_item_modal(<?= $rowcount; ?>)" title=""><?= $item_tax_name; ?></a>
-        </label>
-    </td>
+			<!-- Tax Details -->
+			<td id="td_<?= $rowcount; ?>_12">
+				<label class='form-control ' style='width:100%;padding-left:0px;padding-right:0px;'>
+					<a id="td_data_<?= $rowcount; ?>_12" href="javascript:void()" data-toggle="tooltip" title='Click to Change'
+						onclick="show_sales_item_modal(<?= $rowcount; ?>)" title=""><?= $item_tax_name; ?></a>
+				</label>
+			</td>
 
-    <!-- Amount -->
-    <td id="td_<?= $rowcount; ?>_9"><input type="text" name="td_data_<?= $rowcount; ?>_9"
-            id="td_data_<?= $rowcount; ?>_9" class="form-control text-right no-padding only_currency text-center"
-            style="border-color: #f39c12;" readonly value="<?= store_number_format($item_amount, 0); ?>"></td>
+			<!-- Amount -->
+			<td id="td_<?= $rowcount; ?>_9"><input type="text" name="td_data_<?= $rowcount; ?>_9"
+					id="td_data_<?= $rowcount; ?>_9" class="form-control text-right no-padding only_currency text-center"
+					style="border-color: #f39c12;" readonly value="<?= store_number_format($item_amount, 0); ?>"></td>
 
-    <!-- ADD button -->
-    <td id="td_<?= $rowcount; ?>_16" style="text-align: center;">
-        <a class=" fa fa-fw fa-minus-square text-red" style="cursor: pointer;font-size: 34px;"
-            onclick="removerow(<?= $rowcount; ?>)" title="Delete ?" name="td_data_<?= $rowcount; ?>_16"
-            id="td_data_<?= $rowcount; ?>_16"></a>
-    </td>
-    <input type="hidden" id="td_data_<?= $rowcount; ?>_4" name="td_data_<?= $rowcount; ?>_4"
-        value="<?= $item_sales_price; ?>">
-    <input type="hidden" id="td_data_<?= $rowcount; ?>_15" name="td_data_<?= $rowcount; ?>_15"
-        value="<?= $item_tax_id; ?>">
-    <input type="hidden" id="td_data_<?= $rowcount; ?>_5" name="td_data_<?= $rowcount; ?>_5"
-        value="<?= $item_tax_amt; ?>">
-    <input type="hidden" id="tr_available_qty_<?= $rowcount; ?>_13" value="<?= $item_available_qty; ?>">
-    <input type="hidden" id="tr_item_id_<?= $rowcount; ?>" name="tr_item_id_<?= $rowcount; ?>" value="<?= $item_id; ?>">
+			<!-- ADD button -->
+			<td id="td_<?= $rowcount; ?>_16" style="text-align: center;">
+				<a class=" fa fa-fw fa-minus-square text-red" style="cursor: pointer;font-size: 34px;"
+					onclick="removerow(<?= $rowcount; ?>)" title="Delete ?" name="td_data_<?= $rowcount; ?>_16"
+					id="td_data_<?= $rowcount; ?>_16"></a>
+			</td>
+			<input type="hidden" id="td_data_<?= $rowcount; ?>_4" name="td_data_<?= $rowcount; ?>_4"
+				value="<?= $item_sales_price; ?>">
+			<input type="hidden" id="td_data_<?= $rowcount; ?>_15" name="td_data_<?= $rowcount; ?>_15"
+				value="<?= $item_tax_id; ?>">
+			<input type="hidden" id="td_data_<?= $rowcount; ?>_5" name="td_data_<?= $rowcount; ?>_5"
+				value="<?= $item_tax_amt; ?>">
+			<input type="hidden" id="tr_available_qty_<?= $rowcount; ?>_13" value="<?= $item_available_qty; ?>">
+			<input type="hidden" id="tr_item_id_<?= $rowcount; ?>" name="tr_item_id_<?= $rowcount; ?>" value="<?= $item_id; ?>">
 
-    <input type="hidden" id="tr_tax_type_<?= $rowcount; ?>" name="tr_tax_type_<?= $rowcount; ?>"
-        value="<?= $item_tax_type; ?>">
-    <input type="hidden" id="tr_tax_id_<?= $rowcount; ?>" name="tr_tax_id_<?= $rowcount; ?>"
-        value="<?= $item_tax_id; ?>">
-    <input type="hidden" id="tr_tax_value_<?= $rowcount; ?>" name="tr_tax_value_<?= $rowcount; ?>"
-        value="<?= $item_tax; ?>">
-    <input type="hidden" id="description_<?= $rowcount; ?>" name="description_<?= $rowcount; ?>"
-        value="<?= $description; ?>">
-    <input type="hidden" id="service_bit_<?= $rowcount; ?>" name="service_bit_<?= $rowcount; ?>"
-        value="<?= $service_bit; ?>">
+			<input type="hidden" id="tr_tax_type_<?= $rowcount; ?>" name="tr_tax_type_<?= $rowcount; ?>"
+				value="<?= $item_tax_type; ?>">
+			<input type="hidden" id="tr_tax_id_<?= $rowcount; ?>" name="tr_tax_id_<?= $rowcount; ?>"
+				value="<?= $item_tax_id; ?>">
+			<input type="hidden" id="tr_tax_value_<?= $rowcount; ?>" name="tr_tax_value_<?= $rowcount; ?>"
+				value="<?= $item_tax; ?>">
+			<input type="hidden" id="description_<?= $rowcount; ?>" name="description_<?= $rowcount; ?>"
+				value="<?= $description; ?>">
+			<input type="hidden" id="service_bit_<?= $rowcount; ?>" name="service_bit_<?= $rowcount; ?>"
+				value="<?= $service_bit; ?>">
 
-    <input type="hidden" id="item_discount_type_<?= $rowcount; ?>" name="item_discount_type_<?= $rowcount; ?>"
-        value="<?= $item_discount_type; ?>">
-    <input type="hidden" id="item_discount_input_<?= $rowcount; ?>" name="item_discount_input_<?= $rowcount; ?>"
-        value="<?= store_number_format($item_discount_input, 0); ?>">
-</tr>
-<?php
+			<input type="hidden" id="item_discount_type_<?= $rowcount; ?>" name="item_discount_type_<?= $rowcount; ?>"
+				value="<?= $item_discount_type; ?>">
+			<input type="hidden" id="item_discount_input_<?= $rowcount; ?>" name="item_discount_input_<?= $rowcount; ?>"
+				value="<?= store_number_format($item_discount_input, 0); ?>">
+		</tr>
+	<?php
 
 	}
 	public function delete_payment($payment_id)
@@ -1284,113 +1285,113 @@ class Sales_model extends CI_Model
 		}
 
 	?>
-<div class="modal fade" id="pay_now">
-    <div class="modal-dialog ">
-        <div class="modal-content">
-            <div class="modal-header header-custom">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title text-center"><?= $this->lang->line('payments'); ?></h4>
-            </div>
-            <div class="modal-body">
+		<div class="modal fade" id="pay_now">
+			<div class="modal-dialog ">
+				<div class="modal-content">
+					<div class="modal-header header-custom">
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+							<span aria-hidden="true">&times;</span></button>
+						<h4 class="modal-title text-center"><?= $this->lang->line('payments'); ?></h4>
+					</div>
+					<div class="modal-body">
 
-                <div class="row">
-                    <div class="col-md-12">
-                        <div class="row invoice-info">
-                            <div class="col-sm-4 invoice-col">
-                                <?= $this->lang->line('customer_details'); ?>
-                                <address>
-                                    <strong><?php echo  $customer_name; ?></strong><br>
-                                    <?php echo (!empty(trim($customer_mobile))) ? $this->lang->line('mobile') . ": " . $customer_mobile . "<br>" : ''; ?>
-                                    <?php echo (!empty(trim($customer_phone))) ? $this->lang->line('phone') . ": " . $customer_phone . "<br>" : ''; ?>
-                                    <?php echo (!empty(trim($customer_email))) ? $this->lang->line('email') . ": " . $customer_email . "<br>" : ''; ?>
-                                    <?php echo (!empty(trim($customer_gst_no))) ? $this->lang->line('gst_number') . ": " . $customer_gst_no . "<br>" : ''; ?>
-                                    <?php echo (!empty(trim($customer_tax_number))) ? $this->lang->line('tax_number') . ": " . $customer_tax_number . "<br>" : ''; ?>
+						<div class="row">
+							<div class="col-md-12">
+								<div class="row invoice-info">
+									<div class="col-sm-4 invoice-col">
+										<?= $this->lang->line('customer_details'); ?>
+										<address>
+											<strong><?php echo  $customer_name; ?></strong><br>
+											<?php echo (!empty(trim($customer_mobile))) ? $this->lang->line('mobile') . ": " . $customer_mobile . "<br>" : ''; ?>
+											<?php echo (!empty(trim($customer_phone))) ? $this->lang->line('phone') . ": " . $customer_phone . "<br>" : ''; ?>
+											<?php echo (!empty(trim($customer_email))) ? $this->lang->line('email') . ": " . $customer_email . "<br>" : ''; ?>
+											<?php echo (!empty(trim($customer_gst_no))) ? $this->lang->line('gst_number') . ": " . $customer_gst_no . "<br>" : ''; ?>
+											<?php echo (!empty(trim($customer_tax_number))) ? $this->lang->line('tax_number') . ": " . $customer_tax_number . "<br>" : ''; ?>
 
-                                </address>
-                            </div>
-                            <!-- /.col -->
-                            <div class="col-sm-4 invoice-col">
-                                <?= $this->lang->line('sales_details'); ?>
-                                <address>
-                                    <b><?= $this->lang->line('invoice'); ?> #<?php echo  $sales_code; ?></b><br>
-                                    <b><?= $this->lang->line('date'); ?> :<?php echo show_date($sales_date); ?></b><br>
-                                    <b><?= $this->lang->line('grand_total'); ?> :<?php echo $grand_total; ?></b><br>
-                                </address>
-                            </div>
-                            <!-- /.col -->
+										</address>
+									</div>
+									<!-- /.col -->
+									<div class="col-sm-4 invoice-col">
+										<?= $this->lang->line('sales_details'); ?>
+										<address>
+											<b><?= $this->lang->line('invoice'); ?> #<?php echo  $sales_code; ?></b><br>
+											<b><?= $this->lang->line('date'); ?> :<?php echo show_date($sales_date); ?></b><br>
+											<b><?= $this->lang->line('grand_total'); ?> :<?php echo $grand_total; ?></b><br>
+										</address>
+									</div>
+									<!-- /.col -->
 
-                            <div class="col-sm-4 invoice-col">
-                                <b><?= $this->lang->line('paid_amount'); ?>
-                                    :<span><?php echo number_format($paid_amount, 2, '.', ''); ?></span></b><br>
-                                <b><?= $this->lang->line('due_amount'); ?> :<span
-                                        id='due_amount_temp'><?php echo number_format($due_amount, 2, '.', ''); ?></span></b><br>
+									<div class="col-sm-4 invoice-col">
+										<b><?= $this->lang->line('paid_amount'); ?>
+											:<span><?php echo number_format($paid_amount, 2, '.', ''); ?></span></b><br>
+										<b><?= $this->lang->line('due_amount'); ?> :<span
+												id='due_amount_temp'><?php echo number_format($due_amount, 2, '.', ''); ?></span></b><br>
 
-                            </div>
-                            <!-- /.col -->
-                        </div>
-                        <!-- /.row -->
-                    </div>
-                    <div class="col-md-12">
-                        <div>
-                            <input type="hidden" name="payment_row_count" id='payment_row_count' value="1">
-                            <div class="col-md-12  payments_div">
-                                <div class="box box-solid bg-gray">
-                                    <div class="box-body">
-                                        <div class="row">
-                                            <div class="col-md-12">
-                                                <span for="">
-                                                    <label>
-                                                        <?= $this->lang->line('advance'); ?> :
-                                                        <label><?= store_number_format($customer_tot_advance) ?></label>
-                                                    </label>
-                                                </span>
-                                                <div class="checkbox">
-                                                    <label>
-                                                        <input type="checkbox" id="allow_tot_advance"
-                                                            name="allow_tot_advance">
-                                                        <?= $this->lang->line('adjust_advance_payment'); ?>
-                                                    </label>
-                                                </div>
-                                            </div>
-                                        </div>
+									</div>
+									<!-- /.col -->
+								</div>
+								<!-- /.row -->
+							</div>
+							<div class="col-md-12">
+								<div>
+									<input type="hidden" name="payment_row_count" id='payment_row_count' value="1">
+									<div class="col-md-12  payments_div">
+										<div class="box box-solid bg-gray">
+											<div class="box-body">
+												<div class="row">
+													<div class="col-md-12">
+														<span for="">
+															<label>
+																<?= $this->lang->line('advance'); ?> :
+																<label><?= store_number_format($customer_tot_advance) ?></label>
+															</label>
+														</span>
+														<div class="checkbox">
+															<label>
+																<input type="checkbox" id="allow_tot_advance"
+																	name="allow_tot_advance">
+																<?= $this->lang->line('adjust_advance_payment'); ?>
+															</label>
+														</div>
+													</div>
+												</div>
 
-                                        <div class="row">
-                                            <div class="col-md-6">
-                                                <div class="">
-                                                    <label for="payment_date"><?= $this->lang->line('date'); ?></label>
-                                                    <div class="input-group date">
-                                                        <div class="input-group-addon">
-                                                            <i class="fa fa-calendar"></i>
-                                                        </div>
-                                                        <input type="text" class="form-control pull-right datepicker"
-                                                            value="<?= show_date(date("d-m-Y")); ?>" id="payment_date"
-                                                            name="payment_date" readonly>
-                                                    </div>
-                                                    <span id="payment_date_msg" style="display:none"
-                                                        class="text-danger"></span>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <div class="">
-                                                    <label for="amount"><?= $this->lang->line('amount'); ?></label>
-                                                    <input type="text" class="form-control text-right paid_amt"
-                                                        id="amount" name="amount" placeholder=""
-                                                        value="<?= $due_amount; ?>">
-                                                    <span id="amount_msg" style="display:none"
-                                                        class="text-danger"></span>
-                                                </div>
-                                            </div>
+												<div class="row">
+													<div class="col-md-6">
+														<div class="">
+															<label for="payment_date"><?= $this->lang->line('date'); ?></label>
+															<div class="input-group date">
+																<div class="input-group-addon">
+																	<i class="fa fa-calendar"></i>
+																</div>
+																<input type="text" class="form-control pull-right datepicker"
+																	value="<?= show_date(date("d-m-Y")); ?>" id="payment_date"
+																	name="payment_date" readonly>
+															</div>
+															<span id="payment_date_msg" style="display:none"
+																class="text-danger"></span>
+														</div>
+													</div>
+													<div class="col-md-6">
+														<div class="">
+															<label for="amount"><?= $this->lang->line('amount'); ?></label>
+															<input type="text" class="form-control text-right paid_amt"
+																id="amount" name="amount" placeholder=""
+																value="<?= $due_amount; ?>">
+															<span id="amount_msg" style="display:none"
+																class="text-danger"></span>
+														</div>
+													</div>
 
 
 
-                                            <div class="col-md-6">
-                                                <div class="">
-                                                    <label
-                                                        for="payment_type"><?= $this->lang->line('payment_type'); ?></label>
-                                                    <select class="form-control" id='payment_type' name="payment_type"
-                                                        onchange="show_cheque_details()">
-                                                        <?php
+													<div class="col-md-6">
+														<div class="">
+															<label
+																for="payment_type"><?= $this->lang->line('payment_type'); ?></label>
+															<select class="form-control" id='payment_type' name="payment_type"
+																onchange="show_cheque_details()">
+																<?php
 																$q1 = $this->db->query("select * from db_paymenttypes where status=1 and store_id=" . get_current_store_id());
 																if ($q1->num_rows() > 0) {
 																	foreach ($q1->result() as $res1) {
@@ -1400,83 +1401,83 @@ class Sales_model extends CI_Model
 																	echo "No Records Found";
 																}
 																?>
-                                                    </select>
-                                                    <span id="payment_type_msg" style="display:none"
-                                                        class="text-danger"></span>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <div class="">
-                                                    <label for="account_id"><?= $this->lang->line('account'); ?></label>
-                                                    <select class="form-control" id='account_id' name="account_id">
-                                                        <?php
+															</select>
+															<span id="payment_type_msg" style="display:none"
+																class="text-danger"></span>
+														</div>
+													</div>
+													<div class="col-md-6">
+														<div class="">
+															<label for="account_id"><?= $this->lang->line('account'); ?></label>
+															<select class="form-control" id='account_id' name="account_id">
+																<?php
 																echo '<option value="">-None-</option>';
 																echo get_accounts_select_list();
 																?>
-                                                    </select>
-                                                    <span id="account_id_msg" style="display:none"
-                                                        class="text-danger"></span>
-                                                </div>
-                                            </div>
+															</select>
+															<span id="account_id_msg" style="display:none"
+																class="text-danger"></span>
+														</div>
+													</div>
 
-                                            <div class="cheque_div" style="display: none;">
-                                                <div class="col-md-6">
-                                                    <label
-                                                        for="cheque_number"><?= $this->lang->line('cheque_number'); ?></label>
-                                                    <input type="text" class="form-control" id="cheque_number"
-                                                        name="cheque_number">
-                                                    <span id="cheque_number_msg" style="display:none"
-                                                        class="text-danger"></span>
-                                                </div>
-                                                <div class="col-md-6">
-                                                    <label
-                                                        for="cheque_period"><?= $this->lang->line('cheque_period'); ?></label>
-                                                    <input type="text" class="form-control" id="cheque_period"
-                                                        name="cheque_period">
-                                                    <span id="cheque_period_msg" style="display:none"
-                                                        class="text-danger"></span>
-                                                </div>
-                                            </div><!-- cheque_div -->
+													<div class="cheque_div" style="display: none;">
+														<div class="col-md-6">
+															<label
+																for="cheque_number"><?= $this->lang->line('cheque_number'); ?></label>
+															<input type="text" class="form-control" id="cheque_number"
+																name="cheque_number">
+															<span id="cheque_number_msg" style="display:none"
+																class="text-danger"></span>
+														</div>
+														<div class="col-md-6">
+															<label
+																for="cheque_period"><?= $this->lang->line('cheque_period'); ?></label>
+															<input type="text" class="form-control" id="cheque_period"
+																name="cheque_period">
+															<span id="cheque_period_msg" style="display:none"
+																class="text-danger"></span>
+														</div>
+													</div><!-- cheque_div -->
 
 
 
-                                            <div class="clearfix"></div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-md-12">
-                                                <div class="">
-                                                    <label
-                                                        for="payment_note"><?= $this->lang->line('payment_note'); ?></label>
-                                                    <textarea type="text" class="form-control" id="payment_note"
-                                                        name="payment_note" placeholder=""></textarea>
-                                                    <span id="payment_note_msg" style="display:none"
-                                                        class="text-danger"></span>
-                                                </div>
-                                            </div>
+													<div class="clearfix"></div>
+												</div>
+												<div class="row">
+													<div class="col-md-12">
+														<div class="">
+															<label
+																for="payment_note"><?= $this->lang->line('payment_note'); ?></label>
+															<textarea type="text" class="form-control" id="payment_note"
+																name="payment_note" placeholder=""></textarea>
+															<span id="payment_note_msg" style="display:none"
+																class="text-danger"></span>
+														</div>
+													</div>
 
-                                            <div class="clearfix"></div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div><!-- col-md-12 -->
-                        </div>
-                    </div><!-- col-md-9 -->
-                    <!-- RIGHT HAND -->
-                </div>
-            </div>
-            <div class="modal-footer">
-                <input type="hidden" id="customer_id" value="<?= $customer_id ?>">
-                <button type="button" class="btn btn-default btn-lg" data-dismiss="modal">Close</button>
-                <button type="button" onclick="save_payment(<?= $sales_id; ?>)"
-                    class="btn bg-green btn-lg place_order btn-lg payment_save">Save<i
-                        class="fa  fa-check "></i></button>
-            </div>
-        </div>
-        <!-- /.modal-content -->
-    </div>
-    <!-- /.modal-dialog -->
-</div>
-<?php
+													<div class="clearfix"></div>
+												</div>
+											</div>
+										</div>
+									</div><!-- col-md-12 -->
+								</div>
+							</div><!-- col-md-9 -->
+							<!-- RIGHT HAND -->
+						</div>
+					</div>
+					<div class="modal-footer">
+						<input type="hidden" id="customer_id" value="<?= $customer_id ?>">
+						<button type="button" class="btn btn-default btn-lg" data-dismiss="modal">Close</button>
+						<button type="button" onclick="save_payment(<?= $sales_id; ?>)"
+							class="btn bg-green btn-lg place_order btn-lg payment_save">Save<i
+								class="fa  fa-check "></i></button>
+					</div>
+				</div>
+				<!-- /.modal-content -->
+			</div>
+			<!-- /.modal-dialog -->
+		</div>
+	<?php
 	}
 
 	public function save_payment()
@@ -1607,72 +1608,72 @@ class Sales_model extends CI_Model
 		}
 
 	?>
-<div class="modal fade" id="view_payments_modal">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header header-custom">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title text-center"><?= $this->lang->line('payments'); ?></h4>
-            </div>
-            <div class="modal-body">
+		<div class="modal fade" id="view_payments_modal">
+			<div class="modal-dialog modal-lg">
+				<div class="modal-content">
+					<div class="modal-header header-custom">
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+							<span aria-hidden="true">&times;</span></button>
+						<h4 class="modal-title text-center"><?= $this->lang->line('payments'); ?></h4>
+					</div>
+					<div class="modal-body">
 
-                <div class="row">
-                    <div class="col-md-12">
-                        <div class="row invoice-info">
-                            <div class="col-sm-4 invoice-col">
-                                <?= $this->lang->line('customer_details'); ?>
-                                <address>
-                                    <strong><?php echo  $customer_name; ?></strong><br>
-                                    <?php echo (!empty(trim($customer_mobile))) ? $this->lang->line('mobile') . ": " . $customer_mobile . "<br>" : ''; ?>
-                                    <?php echo (!empty(trim($customer_phone))) ? $this->lang->line('phone') . ": " . $customer_phone . "<br>" : ''; ?>
-                                    <?php echo (!empty(trim($customer_email))) ? $this->lang->line('email') . ": " . $customer_email . "<br>" : ''; ?>
-                                    <?php echo (!empty(trim($customer_gst_no))) ? $this->lang->line('gst_number') . ": " . $customer_gst_no . "<br>" : ''; ?>
-                                    <?php echo (!empty(trim($customer_tax_number))) ? $this->lang->line('tax_number') . ": " . $customer_tax_number . "<br>" : ''; ?>
-                                </address>
-                            </div>
-                            <!-- /.col -->
-                            <div class="col-sm-4 invoice-col">
-                                <?= $this->lang->line('sales_details'); ?>
-                                <address>
-                                    <b><?= $this->lang->line('invoice'); ?> #<?php echo  $sales_code; ?></b><br>
-                                    <b><?= $this->lang->line('date'); ?> :<?php echo show_date($sales_date); ?></b><br>
-                                    <b><?= $this->lang->line('grand_total'); ?> :<?php echo $grand_total; ?></b><br>
-                                </address>
-                            </div>
-                            <!-- /.col -->
-                            <div class="col-sm-4 invoice-col">
-                                <b><?= $this->lang->line('paid_amount'); ?>
-                                    :<span><?php echo number_format($paid_amount, 2, '.', ''); ?></span></b><br>
-                                <b><?= $this->lang->line('due_amount'); ?> :<span
-                                        id='due_amount_temp'><?php echo number_format($due_amount, 2, '.', ''); ?></span></b><br>
+						<div class="row">
+							<div class="col-md-12">
+								<div class="row invoice-info">
+									<div class="col-sm-4 invoice-col">
+										<?= $this->lang->line('customer_details'); ?>
+										<address>
+											<strong><?php echo  $customer_name; ?></strong><br>
+											<?php echo (!empty(trim($customer_mobile))) ? $this->lang->line('mobile') . ": " . $customer_mobile . "<br>" : ''; ?>
+											<?php echo (!empty(trim($customer_phone))) ? $this->lang->line('phone') . ": " . $customer_phone . "<br>" : ''; ?>
+											<?php echo (!empty(trim($customer_email))) ? $this->lang->line('email') . ": " . $customer_email . "<br>" : ''; ?>
+											<?php echo (!empty(trim($customer_gst_no))) ? $this->lang->line('gst_number') . ": " . $customer_gst_no . "<br>" : ''; ?>
+											<?php echo (!empty(trim($customer_tax_number))) ? $this->lang->line('tax_number') . ": " . $customer_tax_number . "<br>" : ''; ?>
+										</address>
+									</div>
+									<!-- /.col -->
+									<div class="col-sm-4 invoice-col">
+										<?= $this->lang->line('sales_details'); ?>
+										<address>
+											<b><?= $this->lang->line('invoice'); ?> #<?php echo  $sales_code; ?></b><br>
+											<b><?= $this->lang->line('date'); ?> :<?php echo show_date($sales_date); ?></b><br>
+											<b><?= $this->lang->line('grand_total'); ?> :<?php echo $grand_total; ?></b><br>
+										</address>
+									</div>
+									<!-- /.col -->
+									<div class="col-sm-4 invoice-col">
+										<b><?= $this->lang->line('paid_amount'); ?>
+											:<span><?php echo number_format($paid_amount, 2, '.', ''); ?></span></b><br>
+										<b><?= $this->lang->line('due_amount'); ?> :<span
+												id='due_amount_temp'><?php echo number_format($due_amount, 2, '.', ''); ?></span></b><br>
 
-                            </div>
-                            <!-- /.col -->
-                        </div>
-                        <!-- /.row -->
-                    </div>
-                    <div class="col-md-12">
+									</div>
+									<!-- /.col -->
+								</div>
+								<!-- /.row -->
+							</div>
+							<div class="col-md-12">
 
 
-                        <div class="row">
-                            <div class="col-md-12">
+								<div class="row">
+									<div class="col-md-12">
 
-                                <table class="table table-bordered">
-                                    <thead>
-                                        <tr class="bg-primary">
-                                            <th>#</th>
-                                            <th><?= $this->lang->line('payment_date'); ?></th>
-                                            <th><?= $this->lang->line('payment'); ?></th>
-                                            <th><?= $this->lang->line('payment_type'); ?></th>
-                                            <th><?= $this->lang->line('account'); ?></th>
-                                            <th><?= $this->lang->line('payment_note'); ?></th>
-                                            <th><?= $this->lang->line('created_by'); ?></th>
-                                            <th><?= $this->lang->line('action'); ?></th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <?php
+										<table class="table table-bordered">
+											<thead>
+												<tr class="bg-primary">
+													<th>#</th>
+													<th><?= $this->lang->line('payment_date'); ?></th>
+													<th><?= $this->lang->line('payment'); ?></th>
+													<th><?= $this->lang->line('payment_type'); ?></th>
+													<th><?= $this->lang->line('account'); ?></th>
+													<th><?= $this->lang->line('payment_note'); ?></th>
+													<th><?= $this->lang->line('created_by'); ?></th>
+													<th><?= $this->lang->line('action'); ?></th>
+												</tr>
+											</thead>
+											<tbody>
+												<?php
 												$q1 = $this->db->query("select * from db_salespayments where sales_id=$sales_id");
 												$i = 1;
 												$str = '';
@@ -1703,28 +1704,28 @@ class Sales_model extends CI_Model
 													echo "<tr><td colspan='7' class='text-danger text-center'>No Records Found</td></tr>";
 												}
 												?>
-                                    </tbody>
-                                </table>
+											</tbody>
+										</table>
 
-                            </div>
-                            <div class="clearfix"></div>
-                        </div>
+									</div>
+									<div class="clearfix"></div>
+								</div>
 
 
 
-                    </div><!-- col-md-9 -->
-                    <!-- RIGHT HAND -->
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default btn-lg" data-dismiss="modal">Close</button>
+							</div><!-- col-md-9 -->
+							<!-- RIGHT HAND -->
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default btn-lg" data-dismiss="modal">Close</button>
 
-            </div>
-        </div>
-        <!-- /.modal-content -->
-    </div>
-    <!-- /.modal-dialog -->
-</div>
+					</div>
+				</div>
+				<!-- /.modal-content -->
+			</div>
+			<!-- /.modal-dialog -->
+		</div>
 <?php
 	}
 }
