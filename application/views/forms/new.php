@@ -74,7 +74,7 @@
                                     <label for="form_link">Form Link *</label>
                                     <div class="input-group date">
                                         <div class="input-group-addon">
-                                            <?php echo base_url('f/') ?>
+                                            <?php echo base_url('form/') ?>
                                         </div>
                                         <input type="text" class="form-control pull-right" id="form_link" name="form_link" value="<?php echo $form_link; ?>" placeholder="customize the form link">
                                     </div>
@@ -363,7 +363,7 @@
                             <div class="col-sm-5">
                                 <div class="form-group">
                                     <label>Select Bundles:</label>
-                                    <select name="form_bundles" class="form-control select2" id="form_bundles">
+                                    <select name="form_bundles" class="form-control select2" id="form_bundles" multiple>
                                         <option value="">All</option>
                                         <?php foreach ($bundles ?? [] as $bundle): ?>
                                             <option value="<?= $bundle->id; ?>">
@@ -575,7 +575,7 @@
                         }).then((result) => {
                             if (result.isConfirmed) {
                                 // User clicked 'View Form'
-                                window.location.href = "<?php echo base_url('f/') ?>/" + data.form_id;
+                                window.location.href = "<?php echo base_url('form/') ?>/" + data.form_id;
                             } else if (result.isDismissed && result.dismiss === Swal.DismissReason.cancel) {
                                 // User clicked 'Create New Form'
                                 window.location.reload(); // This can be replaced with logic to reset the form

@@ -2,7 +2,7 @@
 
     <li class="index-form-li new-form-li   treeview">
         <a href="#">
-            <i class=" fa fa-shopping-cart text-aqua"></i> <span>Forms</span>
+            <i class=" fa fa-shopping-cart text-aqua"></i> <span>Form Builder</span>
             <span class="pull-right-container">
                 <i class="fa fa-angle-left pull-right"></i>
             </span>
@@ -11,17 +11,16 @@
 
             <li class="index-form-li">
                 <a href="<?php echo $base_url; ?>forms">
-                    <i class="fa fa-list"></i><span>All Form </span>
-
+                    <i class="fa fa-list"></i><span>Forms </span>
                 </a>
             </li>
 
-            <li class="new-form-li">
+            <!-- <li class="new-form-li">
                 <a href="<?php echo $base_url; ?>forms/new">
                     <i class="fa fa-plus-square-o"></i><span>New Form </span>
 
                 </a>
-            </li>
+            </li> -->
 
             <li class="new-active-li">
                 <a href="<?php echo $base_url; ?>forms/bundles">

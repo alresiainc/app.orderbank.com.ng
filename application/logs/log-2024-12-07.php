@@ -74,3 +74,29 @@ ERROR - 2024-12-07 23:32:25 --> Severity: Warning --> Undefined variable $order_
 ERROR - 2024-12-07 23:32:25 --> Severity: Warning --> Undefined array key "length" /Applications/AMPPS/www/backend.myproda.test/application/models/Orders_model.php 187
 ERROR - 2024-12-07 23:32:25 --> Severity: Warning --> Undefined array key "length" /Applications/AMPPS/www/backend.myproda.test/application/models/Orders_model.php 188
 ERROR - 2024-12-07 23:32:25 --> Severity: Warning --> Undefined array key "start" /Applications/AMPPS/www/backend.myproda.test/application/models/Orders_model.php 188
+ERROR - 2024-12-07 23:36:35 --> Severity: Warning --> Undefined variable $other_charges_input /Applications/AMPPS/www/backend.myproda.test/application/models/Sales_model.php 262
+ERROR - 2024-12-07 23:36:35 --> Severity: Warning --> Undefined variable $other_charges_tax_id /Applications/AMPPS/www/backend.myproda.test/application/models/Sales_model.php 265
+ERROR - 2024-12-07 23:36:35 --> Severity: Warning --> Undefined variable $discount_to_all_input /Applications/AMPPS/www/backend.myproda.test/application/models/Sales_model.php 271
+ERROR - 2024-12-07 23:36:35 --> Severity: Warning --> Undefined variable $invoice_terms /Applications/AMPPS/www/backend.myproda.test/application/models/Sales_model.php 313
+ERROR - 2024-12-07 23:36:35 --> Severity: Warning --> Undefined variable $discount_to_all_type /Applications/AMPPS/www/backend.myproda.test/application/models/Sales_model.php 335
+ERROR - 2024-12-07 23:36:35 --> Severity: Warning --> Undefined variable $sales_note /Applications/AMPPS/www/backend.myproda.test/application/models/Sales_model.php 342
+ERROR - 2024-12-07 23:36:42 --> Severity: Warning --> Undefined array key "order_number" /Applications/AMPPS/www/backend.myproda.test/application/views/sal-invoice.php 311
+ERROR - 2024-12-07 23:36:42 --> Severity: Warning --> Undefined array key "state" /Applications/AMPPS/www/backend.myproda.test/application/views/sal-invoice.php 311
+ERROR - 2024-12-07 23:36:42 --> Severity: Warning --> Undefined array key "order_number" /Applications/AMPPS/www/backend.myproda.test/application/views/sal-invoice.php 311
+ERROR - 2024-12-07 23:36:42 --> Severity: Warning --> Undefined array key "state" /Applications/AMPPS/www/backend.myproda.test/application/views/sal-invoice.php 311
+ERROR - 2024-12-07 23:40:32 --> order_status:  Received Via Api
+ERROR - 2024-12-07 23:40:32 --> Severity: Warning --> Undefined array key "length" /Applications/AMPPS/www/backend.myproda.test/application/models/Orders_model.php 187
+ERROR - 2024-12-07 23:40:32 --> Severity: Warning --> Undefined array key "length" /Applications/AMPPS/www/backend.myproda.test/application/models/Orders_model.php 188
+ERROR - 2024-12-07 23:40:32 --> Severity: Warning --> Undefined array key "start" /Applications/AMPPS/www/backend.myproda.test/application/models/Orders_model.php 188
+ERROR - 2024-12-07 23:40:32 --> order_status:  Received Via Api
+ERROR - 2024-12-07 23:40:32 --> Severity: Warning --> Undefined array key "length" /Applications/AMPPS/www/backend.myproda.test/application/models/Orders_model.php 187
+ERROR - 2024-12-07 23:40:32 --> Severity: Warning --> Undefined array key "length" /Applications/AMPPS/www/backend.myproda.test/application/models/Orders_model.php 188
+ERROR - 2024-12-07 23:40:32 --> Severity: Warning --> Undefined array key "start" /Applications/AMPPS/www/backend.myproda.test/application/models/Orders_model.php 188
+ERROR - 2024-12-07 23:42:07 --> Severity: Warning --> Undefined variable $length /Applications/AMPPS/www/backend.myproda.test/application/views/forms/new.php 30
+ERROR - 2024-12-07 23:42:07 --> Severity: Warning --> Undefined variable $string /Applications/AMPPS/www/backend.myproda.test/application/views/forms/new.php 33
+ERROR - 2024-12-07 23:43:38 --> Severity: Warning --> Undefined variable $length /Applications/AMPPS/www/backend.myproda.test/application/views/forms/new.php 30
+ERROR - 2024-12-07 23:43:38 --> Severity: Warning --> Undefined variable $string /Applications/AMPPS/www/backend.myproda.test/application/views/forms/new.php 33
+ERROR - 2024-12-07 23:54:57 --> Severity: Warning --> Undefined variable $length /Applications/AMPPS/www/backend.myproda.test/application/views/forms/new.php 30
+ERROR - 2024-12-07 23:54:57 --> Severity: Warning --> Undefined variable $string /Applications/AMPPS/www/backend.myproda.test/application/views/forms/new.php 33
+ERROR - 2024-12-07 23:59:11 --> Severity: Warning --> Undefined variable $length /Applications/AMPPS/www/backend.myproda.test/application/views/forms/new.php 30
+ERROR - 2024-12-07 23:59:11 --> Severity: Warning --> Undefined variable $string /Applications/AMPPS/www/backend.myproda.test/application/views/forms/new.php 33

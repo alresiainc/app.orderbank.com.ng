@@ -75,7 +75,7 @@
                                     <label for="form_link">Form Link *</label>
                                     <div class="input-group date">
                                         <div class="input-group-addon">
-                                            <?php echo base_url('f/') ?>
+                                            <?php echo base_url('form/') ?>
                                         </div>
                                         <input type="text" class="form-control pull-right" id="form_link" name="form_link" value="<?= $form->form_link; ?>" placeholder="Customize the form link">
                                     </div>
