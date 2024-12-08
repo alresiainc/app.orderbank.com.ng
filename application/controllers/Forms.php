@@ -469,6 +469,17 @@ class Forms extends MY_Controller
             // Fetch product bundles
             $data['bundles'] = $this->form_bundles->get_all_bundles();
 
+            // Loop through bundles and format prices with currency
+            foreach ($data['bundles'] as $bundle) {
+                if (isset($bundle->price)) { // Ensure 'price' exists
+                    // print_r($bundle->price);
+
+                    $bundle->price = $this->currency($bundle->price, TRUE);
+                }
+            }
+
+            // die;
+
             $this->load->view('forms/show', $data);
         } else {
             // Show a 404 error if the form doesn't exist
@@ -580,7 +591,8 @@ class Forms extends MY_Controller
             $row[] = $bundle->description ?? '<em>-</em>';
 
 
-            $row[] = store_number_format($bundle->price);
+            // $row[] = store_number_format($bundle->price);
+            $row[] = $this->currency($bundle->price, TRUE);
 
 
 
