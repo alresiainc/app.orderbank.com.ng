@@ -4,6 +4,20 @@
  * Function to get the count of new orders in the 'db_orders' table.
  * @return int The count of new orders.
  */
+function orders_count($status = 'All')
+{
+    $CI = &get_instance();
+    if ($status == 'All') {
+        return $CI->db->from('db_orders')->count_all_results();
+    } else {
+        return $CI->db->from('db_orders')->where("status", $status)->count_all_results();
+    }
+}
+
+/**
+ * Function to get the count of new orders in the 'db_orders' table.
+ * @return int The count of new orders.
+ */
 function new_orders_count()
 {
     $CI = &get_instance();

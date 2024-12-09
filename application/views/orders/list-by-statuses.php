@@ -24,6 +24,7 @@
 
         }
     </style>
+    <meta name="current-order-status" content=" <?= $order_status; ?>">
 </head>
 
 
@@ -38,6 +39,7 @@
             <!-- **********************MODALS***************** -->
 
             <?php $this->load->view('orders/modals/modal_new_order.php'); ?>
+            <?php $this->load->view('orders/modals/modal_update_order.php'); ?>
             <?php $this->load->view('orders/modals/modal_process_order.php'); ?>
 
 
@@ -45,12 +47,11 @@
             <!-- Content Header (Page header) -->
             <section class="content-header">
                 <h1>
-                    Orders
-                    <small> - <?= $page_title; ?></small>
+                    <?= $page_title; ?>
+                    <small>Add/Update Orders</small>
                 </h1>
                 <ol class="breadcrumb">
                     <li><a href="<?php echo $base_url; ?>dashboard"><i class="fa fa-dashboard"></i> Home</a></li>
-                    <li class="active">Orders</li>
                     <li class="active"><?= $page_title; ?></li>
                 </ol>
             </section>
@@ -86,17 +87,11 @@
                                                 <div class="box-header">
                                                     <div class="col-md-8 col-md-offset-2 d-flex justify-content">
                                                         <div class="input-group">
-                                                            <span class="input-group-addon" title="Search Items"><i
-                                                                    class="fa fa-barcode"></i></span>
-                                                            <input type="text" class="form-control "
-                                                                placeholder="Search Product Name/Shopify ID/Fulfilment ID"
-                                                                autofocus id="order_search">
+                                                            <span class="input-group-addon" title="Search Items"><i class="fa fa-barcode"></i></span>
+                                                            <input type="text" class="form-control " placeholder="Search Product Name/Shopify ID" autofocus id="order_search">
 
 
-                                                            <span class="input-group-addon pointer text-green"
-                                                                data-toggle="modal" data-target="#new-order-modal"
-                                                                title="Click to Create Order"><i
-                                                                    class="fa fa-plus"></i></span>
+                                                            <span class="input-group-addon pointer text-green" data-toggle="modal" data-target="#new-order-modal" title="Click to Create Order"><i class="fa fa-plus"></i></span>
 
 
 
@@ -106,18 +101,20 @@
                                                 </div>
                                                 <div class="box-body">
                                                     <div class="table-responsive" style="width: 100%">
-                                                        <table id="order_table" class="table custom_hover "
-                                                            width="100%">
+                                                        <table id="order_table" class="table custom_hover " width="100%">
                                                             <thead class="bg-gray ">
                                                                 <tr>
-                                                                    <th>S/N</th>
-                                                                    <th>ORDER IMAGE</th>
-                                                                    <th>ORDER DATE AND TIME</th>
+                                                                    <th class="text-center">
+                                                                        <!-- <input type="checkbox" class="bulk_checkbox checkbox"> -->
+                                                                        S/N
+                                                                    </th>
+                                                                    <th>ORDER</th>
+                                                                    <!-- <th>CUSTOMER EMAIL</th> -->
+                                                                    <th style="text-wrap: wrap; word-wrap: break-word;  margin-top: 5px; text-align: center; width: 150px;">ORDER DATE AND TIME</th>
                                                                     <th>ORDER DETAILS</th>
-                                                                    <th>DELIVERY DATE</th>
-                                                                    <th>STATUS</th>
+                                                                    <th style="text-wrap: wrap; word-wrap: break-word;  margin-top: 5px; text-align: center; width: 150px;">DELIVERY DATE</th>
+                                                                    <th style="text-align: center;">STATUS</th>
                                                                     <th>ACTION</th>
-
                                                                 </tr>
                                                             </thead>
                                                             <tbody>
@@ -127,10 +124,10 @@
                                                                 <tr class="bg-gray" id="overdiv">
                                                                     <th></th>
                                                                     <th></th>
+                                                                    <!-- <th></th> -->
                                                                     <th></th>
                                                                     <th></th>
-                                                                    <th></th>
-                                                                    <th style="text-align:right">Total</th>
+                                                                    <th style="text-align:right">Total Orders: </th>
                                                                     <th></th>
                                                                     <th></th>
                                                                 </tr>
@@ -168,7 +165,8 @@
         <?php $this->load->view('comman/code_js_sound.php'); ?>
         <!-- GENERAL CODE -->
         <?php $this->load->view('comman/code_js.php'); ?>
-
+        <!-- New Order Modal  CODE -->
+        <?php $this->load->view('orders/js/new-order-modal_js.php'); ?>
         <!-- Add the sidebar's background. This div must be placed
        immediately after the control sidebar -->
         <div class="control-sidebar-bg"></div>
@@ -211,8 +209,11 @@
         });
 
         function check_field(id) {
-            if (!$("#" + id).val() || $("#" + id).val() == '') //Also check Others????
+            var field = $("#" + id);
+
+            if (!field || field.val().trim() == '') //Also check Others????
             {
+                console.log("#" + id + "true");
                 console.log($("#" + id).val());
                 $('#' + id + '_msg').fadeIn(200).show().html('Required Field').addClass('required');
                 $('#' + id).css({
@@ -221,6 +222,8 @@
                 // flag = false;
                 return true;
             } else {
+                console.log("#" + id + "false");
+                console.log($("#" + id).val());
                 $('#' + id + '_msg').fadeOut(200).hide();
                 $('#' + id).css({
                     'background-color': '#FFFFFF'
@@ -251,6 +254,161 @@
             } //end confirmation
         }
 
+        function update_order_model(id) {
+
+            $.ajax({
+                type: 'GET',
+                url: "<?php echo site_url('orders/orders_details_json_data/') ?>" + id,
+                contentType: 'JSON',
+                success: function(result) {
+                    if (result) {
+                        $('#update-order-form')[0].reset();
+
+                        console.log(result);
+
+                        var orderDetails = jQuery.parseJSON(result)[0];
+
+                        console.log(orderDetails);
+
+                        // Replace these lines with the actual properties you receive in the response
+                        // var productType = result.product_type;
+                        var productType = orderDetails.service_bit == 1 ? 'Services' : 'Items';
+                        var productId = orderDetails.product_id;
+                        var shopifyId = orderDetails.ref;
+                        var country = orderDetails.country_id;
+                        var orderDate = orderDetails.order_date;
+                        var customerName = orderDetails.customer_name;
+                        var customerEmail = orderDetails.customer_email;
+                        var customerPhone = orderDetails.customer_phone;
+
+                        $('#current_product_type').select2().val(productType)
+                            .trigger(
+                                'change');
+
+
+                        // Define options for both 'Services' and 'Items'
+                        var servicesOptions = <?= json_encode(get_items_select_list('', '', 'Services')) ?>;
+                        var itemsOptions = <?= json_encode(get_items_select_list('', '', 'Items')) ?>;
+
+                        var productSelect = $('#current_product_id');
+
+
+                        // Clear existing options
+                        productSelect.empty();
+
+                        // Populate options based on the selected product_type
+                        if (productType === 'Services') {
+                            productSelect.html(servicesOptions);
+                        } else if (productType === 'Items') {
+                            productSelect.html(itemsOptions);
+                        }
+
+
+                        $('#current_shopify_id').val(shopifyId);
+                        $('#current_order_date').val(orderDate);
+
+                        $('#current_customer_name').val(customerName);
+                        $('#current_customer_email').val(customerEmail);
+                        $('#current_customer_phone').val(customerPhone);
+
+
+                        // Update the Select2 elements
+                        $('#current_product_id').select2().val(productId).trigger(
+                            'change');
+                        $('#current_country').select2().val(country).trigger(
+                            'change');
+                        $('#update-order-modal').modal('toggle');
+
+                        $('#update-order-form-button').click(function(e) {
+                            e.preventDefault();
+
+                            var flag = true;
+
+                            //Validate Input box or selection box should not be blank or empty
+
+                            if (check_field("current_customer_name") == true) {
+                                var flag = false;
+                            }
+
+                            if (check_field("current_customer_email") == true) {
+                                var flag = false;
+                            }
+
+                            if (check_field("current_customer_phone") == true) {
+                                var flag = false;
+                            }
+
+                            if (check_field("current_shopify_id") == true) {
+                                var flag = false;
+                            }
+
+                            if (check_field("current_product_id") == true) {
+                                var flag = false;
+                            }
+
+                            if (check_field("current_country") == true) {
+                                var flag = false;
+                            }
+
+                            if (check_field("current_order_date") == true) {
+                                var flag = false;
+                            }
+                            if (check_field("current_product_type") == true) {
+                                var flag = false;
+                            }
+
+                            if (flag == false) {
+                                toastr["warning"]("You have Missed Something to Fillup!");
+                                return;
+                            }
+                            data = new FormData($('#update-order-form')[0]); //form name
+                            /*Check XSS Code*/
+                            if (!xss_validation(data)) {
+                                return false;
+                            }
+                            $(".box").append(
+                                '<div class="overlay"><i class="fa fa-refresh fa-spin"></i></div>');
+                            $("#update-order-form-button").attr('disabled',
+                                true); //Enable Save or Update button
+                            $.ajax({
+                                type: 'POST',
+                                url: "<?php echo site_url('orders/update_order/') ?>" + id,
+                                data: data,
+                                cache: false,
+                                contentType: false,
+                                processData: false,
+                                success: function(result) {
+                                    if (result == "success") {
+                                        toastr["success"]("Record Updated Successfully!");
+                                        $('#order_table').DataTable().ajax.reload();
+
+                                        $('#update-order-modal').modal('toggle');
+
+                                    } else if (result == "failed") {
+                                        toastr["error"]("Failed to Update .Try again!");
+                                    } else {
+                                        toastr["error"](result);
+                                    }
+                                    $(".overlay").remove();
+                                    $("#update-order-form-button").attr('disabled',
+                                        false); //Enable Save or Update button
+                                    return false;
+
+                                },
+                                error: function(xhr) {
+                                    console.log(xhr);
+                                    $("#update-order-form-button").attr('disabled',
+                                        false);
+                                }
+                            });
+
+                        })
+
+                    }
+                }
+            });
+        }
+
         function process_order(id) {
 
             $('#process-order-modal').modal('show');
@@ -261,7 +419,7 @@
             $('#process-order-form-button').click(function(e) {
                 e.preventDefault();
 
-                if (check_field("tracking_id")) {
+                if (check_field("fulfilment_id") == true) {
                     toastr["warning"]("You have Missed Something to Fillup!");
                     return;
                 }
@@ -286,38 +444,30 @@
                             $('#order_table').DataTable().ajax.reload();
 
                             $('#process-order-modal').modal('toggle');
+                            $("#process-order-form-button").attr('disabled', false);
 
                         } else if (result == "failed") {
                             toastr["error"]("Failed to Update .Try again!");
+                            $("#process-order-form-button").attr('disabled', false);
                         } else {
                             toastr["error"](result);
+                            $("#process-order-form-button").attr('disabled', false);
                         }
                         $(".overlay").remove();
+                        $("#process-order-form-button").attr('disabled', false);
                         return false;
 
+                    },
+                    error: function(xhr) {
+                        console.log(xhr);
+                        $("#update-order-form-button").attr('disabled',
+                            false);
                     }
                 });
 
             })
 
-            // if (confirm("Do You Wants to Process this order ?")) {
-            //     $(".box").append('<div class="overlay"><i class="fa fa-refresh fa-spin"></i></div>');
-            //     $.post("<?php echo site_url('orders/process_order') ?>", {
-            //         id: id
-            //     }, function(result) {
-            //         //alert(result);return;
-            //         if (result == "success") {
-            //             toastr["success"]("Record Updated Successfully!");
-            //             $('#order_table').DataTable().ajax.reload();
-            //         } else if (result == "failed") {
-            //             toastr["error"]("Failed to Update .Try again!");
-            //         } else {
-            //             toastr["error"](result);
-            //         }
-            //         $(".overlay").remove();
-            //         return false;
-            //     });
-            // } //end confirmation
+
         }
 
 
@@ -449,12 +599,13 @@
                                 multi_delete();
                             }
                         },
+
                         {
                             extend: 'copy',
                             className: 'btn bg-teal color-palette btn-flat',
                             footer: true,
                             exportOptions: {
-                                columns: [1, 2, 3, 4, 5, 6, 7]
+                                columns: [1, 2, 3, 4, 5, 6]
                             }
                         },
                         {
@@ -462,7 +613,7 @@
                             className: 'btn bg-teal color-palette btn-flat',
                             footer: true,
                             exportOptions: {
-                                columns: [1, 2, 3, 4, 5, 6, 7]
+                                columns: [1, 2, 3, 4, 5, 6]
                             }
                         },
                         {
@@ -470,7 +621,7 @@
                             className: 'btn bg-teal color-palette btn-flat',
                             footer: true,
                             exportOptions: {
-                                columns: [1, 2, 3, 4, 5, 6, 7]
+                                columns: [1, 2, 3, 4, 5, 6]
                             }
                         },
                         {
@@ -478,7 +629,7 @@
                             className: 'btn bg-teal color-palette btn-flat',
                             footer: true,
                             exportOptions: {
-                                columns: [1, 2, 3, 4, 5, 6, 7]
+                                columns: [1, 2, 3, 4, 5, 6]
                             }
                         },
                         {
@@ -486,7 +637,7 @@
                             className: 'btn bg-teal color-palette btn-flat',
                             footer: true,
                             exportOptions: {
-                                columns: [1, 2, 3, 4, 5, 6, 7]
+                                columns: [1, 2, 3, 4, 5, 6]
                             }
                         },
                         {
@@ -494,7 +645,7 @@
                             className: 'btn bg-teal color-palette btn-flat',
                             footer: true,
                             text: 'Columns',
-                            columns: [1, 2, 3, 4, 5, 6, 7],
+                            columns: [1, 2, 3, 4, 5, 6],
                         },
 
                     ]
@@ -511,12 +662,14 @@
                 },
                 // Load data for the table's content from an Ajax source
                 "ajax": {
-                    "url": "<?php echo site_url('orders/all_order_json_data') ?>",
+                    "url": "<?php echo site_url('orders/order_json_data') ?>",
                     "type": "POST",
                     "data": {
                         search_table: search_table,
+                        status: document.querySelector('meta[name="current-order-status"]').getAttribute('content'),
                     },
                     complete: function(data) {
+
 
                         $('.single_checkbox').iCheck({
                             checkboxClass: 'icheckbox_square-orange',
@@ -533,7 +686,7 @@
 
                 // Set column definition initialisation properties.
                 "columnDefs": [{
-                        "targets": [0], //first column / numbering column
+                        "targets": [0, 6], //first column / numbering column
                         "orderable": false, //set not orderable
                     },
                     {
@@ -556,7 +709,7 @@
 
                     var total = api
                         .rows().count();
-                    $(api.column(6).footer()).html(total);
+                    $(api.column(5).footer()).html(total);
 
                 },
                 /*End Footer Total*/
@@ -603,9 +756,37 @@
 
                 //Validate Input box or selection box should not be blank or empty
 
+                if (check_field("customer_name") == true) {
+                    var flag = false;
+                }
 
-                if (check_field("shopify_id") == false || check_field("product_id") == false || check_field(
-                        "country") == false || check_field("order_date") == false) {
+                if (check_field("customer_email") == true) {
+                    var flag = false;
+                }
+
+                if (check_field("customer_phone") == true) {
+                    var flag = false;
+                }
+                if (check_field("shopify_id") == true) {
+                    var flag = false;
+                }
+
+                if (check_field("product_id") == true) {
+                    var flag = false;
+                }
+
+                if (check_field("country") == true) {
+                    var flag = false;
+                }
+
+                if (check_field("order_date") == true) {
+                    var flag = false;
+                }
+                if (check_field("product_type") == true) {
+                    var flag = false;
+                }
+
+                if (flag == false) {
                     toastr["warning"]("You have Missed Something to Fillup!");
                     return;
                 }
@@ -711,7 +892,7 @@
 
     <!-- Make sidebar menu hughlighter/selector -->
     <script>
-        $(".<?php echo basename(__FILE__, '.php'); ?>-active-li").addClass("active");
+        $(".order-<?php echo basename(__FILE__, '.php'); ?>-active-li").addClass("active");
     </script>
 </body>
 

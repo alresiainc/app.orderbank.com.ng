@@ -104,15 +104,16 @@
                                                             <thead class="bg-gray ">
                                                                 <tr>
                                                                     <th class="text-center">
-                                                                        <input type="checkbox" class="bulk_checkbox checkbox">
+                                                                        <!-- <input type="checkbox" class="bulk_checkbox checkbox"> -->
+                                                                        S/N
                                                                     </th>
-                                                                    <th>Customer Details</th>
-                                                                    <th>Order Date</th>
-                                                                    <th>Product Name</th>
-                                                                    <th>Shopify ID</th>
-                                                                    <th>Country</th>
-                                                                    <th>Input at</th>
-                                                                    <th><?= $this->lang->line('action'); ?></th>
+                                                                    <th>ORDER</th>
+                                                                    <!-- <th>CUSTOMER EMAIL</th> -->
+                                                                    <th style="text-wrap: wrap; word-wrap: break-word;  margin-top: 5px; text-align: center; width: 150px;">ORDER DATE AND TIME</th>
+                                                                    <th>ORDER DETAILS</th>
+                                                                    <th style="text-wrap: wrap; word-wrap: break-word;  margin-top: 5px; text-align: center; width: 150px;">DELIVERY DATE</th>
+                                                                    <th style="text-align: center;">STATUS</th>
+                                                                    <th>ACTION</th>
                                                                 </tr>
                                                             </thead>
                                                             <tbody>
@@ -122,10 +123,10 @@
                                                                 <tr class="bg-gray" id="overdiv">
                                                                     <th></th>
                                                                     <th></th>
+                                                                    <!-- <th></th> -->
                                                                     <th></th>
                                                                     <th></th>
-                                                                    <th></th>
-                                                                    <th style="text-align:right">Total</th>
+                                                                    <th style="text-align:right">Total Orders: </th>
                                                                     <th></th>
                                                                     <th></th>
                                                                 </tr>
@@ -597,25 +598,7 @@
                                 multi_delete();
                             }
                         },
-                        // {
-                        //     extend: 'collection',
-                        //     className: 'btn bg-primary color-palette btn-flat bulk_action_btn hidden pull-left',
-                        //     text: 'Bulk Options',
-                        //     buttons: [{
-                        //             text: 'Delete',
-                        //             className: 'text-danger',
-                        //             action: function(e, dt, node, config) {
-                        //                 multi_delete();
-                        //             }
-                        //         },
-                        //         {
-                        //             text: 'Process',
-                        //             action: function(e, dt, node, config) {
-                        //                 process_selected();
-                        //             }
-                        //         }
-                        //     ]
-                        // },
+
                         {
                             extend: 'copy',
                             className: 'btn bg-teal color-palette btn-flat',
@@ -684,6 +667,7 @@
                         search_table: search_table,
                     },
                     complete: function(data) {
+                        console.log("data:", data);
 
                         $('.single_checkbox').iCheck({
                             checkboxClass: 'icheckbox_square-orange',
@@ -700,7 +684,7 @@
 
                 // Set column definition initialisation properties.
                 "columnDefs": [{
-                        "targets": [0, 7], //first column / numbering column
+                        "targets": [0, 6], //first column / numbering column
                         "orderable": false, //set not orderable
                     },
                     {
@@ -723,7 +707,7 @@
 
                     var total = api
                         .rows().count();
-                    $(api.column(6).footer()).html(total);
+                    $(api.column(5).footer()).html(total);
 
                 },
                 /*End Footer Total*/
@@ -906,7 +890,7 @@
 
     <!-- Make sidebar menu hughlighter/selector -->
     <script>
-        $(".<?php echo basename(__FILE__, '.php'); ?>-active-li").addClass("active");
+        $(".order-<?php echo basename(__FILE__, '.php'); ?>-active-li").addClass("active");
     </script>
 </body>
 

@@ -12,14 +12,50 @@ class Orders extends MY_Controller
         parent::__construct();
         $this->load_global();
         $this->load->model('Orders_model', 'orders');
+        $this->load->config('order_status');
     }
 
-    public function index()
+
+    public function _remap($method)
     {
 
+        $params = str_replace('_', '-', $method);
+
+        if (!in_array($params, array_keys($this->config->item('order_status')))) {
+            if (method_exists($this, $method)) {
+                $this->$method();
+            } else {
+                show_404();
+            }
+        } else {
+            $this->index($params);
+        }
+    }
+
+    public function index($get = "all")
+    {
+        // Define the available order statuses
+        $statuses = $this->config->item('order_status');
+
+        // Check if the passed status exists in the array, if not default to 'all'
+        if (!array_key_exists($get, $statuses)) {
+            $get = 'all'; // Default to 'all' if status is invalid
+        }
+
+        // Set the page title and status
+        $page_title = $statuses[$get]['label'];
+        $status = $get;
+
+        // Fetch orders based on the status
         $data = $this->data;
-        $data['page_title'] = "All Orders";
-        $this->load->view('orders/index', $data);
+        $data['page_title'] = $page_title;
+        $data['order_status'] = $status;
+
+        // You may want to fetch the orders based on status here
+        // $data['orders'] = $this->order_model->get_orders_by_status($status);
+
+        // Load the view and pass the data
+        $this->load->view('orders/list-by-statuses', $data);
     }
 
     public function reports()
@@ -28,78 +64,6 @@ class Orders extends MY_Controller
         $data = $this->data;
         $data['page_title'] = "Orders Report";
         $this->load->view('orders/reports', $data);
-    }
-
-    public function new()
-    {
-
-        $data = $this->data;
-        $data['page_title'] = "New Orders";
-        $this->load->view('orders/new', $data);
-    }
-
-    // Controller method for "Not Answering Call"
-    public function not_answering_call()
-    {
-        $data = $this->data;
-        $data['page_title'] = "Not Answering Call";
-        $this->load->view('orders/not-answering-call', $data);
-    }
-
-    // Controller method for "Out for Delivery"
-    public function out_for_delivery()
-    {
-        $data = $this->data;
-        $data['page_title'] = "Out for Delivery";
-        $this->load->view('orders/out-for-delivery', $data);
-    }
-
-    // Controller method for "Delivered"
-    public function delivered()
-    {
-        $data = $this->data;
-        $data['page_title'] = "Delivered Orders";
-        $this->load->view('orders/delivered', $data);
-    }
-
-    // Controller method for "Returned"
-    public function returned()
-    {
-        $data = $this->data;
-        $data['page_title'] = "Returned Orders";
-        $this->load->view('orders/returned', $data);
-    }
-
-    // Controller method for "Out of Area"
-    public function out_of_area()
-    {
-        $data = $this->data;
-        $data['page_title'] = "Out of Area Orders";
-        $this->load->view('orders/out-of-area', $data);
-    }
-
-    // Controller method for "Duplicated"
-    public function duplicated()
-    {
-        $data = $this->data;
-        $data['page_title'] = "Duplicated Orders";
-        $this->load->view('orders/duplicated', $data);
-    }
-
-    // Controller method for "Canceled"
-    public function cancelled()
-    {
-        $data = $this->data;
-        $data['page_title'] = "Cancelled Orders";
-        $this->load->view('orders/cancelled', $data);
-    }
-
-    // Controller method for "View All"
-    public function view_all()
-    {
-        $data = $this->data;
-        $data['page_title'] = "All Orders";
-        $this->load->view('orders/view-all', $data);
     }
 
 
@@ -194,65 +158,231 @@ class Orders extends MY_Controller
 
     public function new_order_json_data()
     {
-        $list = $this->orders->get_orders_by_status('New Order');
-        $data = array();
+        $status = $_POST['status'] ?? 'new';
+        $list = $this->orders->get_orders_by_status($status);
+        $data = [];
+        log_message('debug', "Requested status: $status");
         $no = $_POST['start'];
 
-        foreach ($list as $orders) {
-            // Check if the search value matches any column data
-            // if (strtolower($search)) {
+        foreach ($list as $order) {
             $no++;
-            $row = array();
-            $row[] = '<input type="checkbox" name="checkbox[]" value=' . $orders->id . ' class="checkbox single_checkbox" >';
-            // $row[] = '<div class="" style="font-weight:700;"><i class="fa fa-fw fa-user"></i>' . $orders->customer_name . '</div>
-            // <small style="display:block"><i class="fa fa-fw fa-envelope"></i>' . $orders->customer_email . ' </small>
-            // <small style="display:block"><i class="fa fa-fw fa-phone"></i>' . $orders->customer_phone . ' </small>';
-            $row[] = '<div class="" style="font-weight:600;">' . $orders->customer_name . '</div>
-            <small class="">' . $orders->customer_email . ' - ' . $orders->customer_phone . ' </small>';
+            $row = [];
 
-            $row[] = show_date($orders->order_date);
-            $row[] = $orders->item_name;
-            $row[] = $orders->ref;
-            $row[] = $orders->country;
-            $row[] = show_date($orders->created_at);
+            // Column 1: Serial number
+            $row[] = $no;
 
-            $str2 = '<div class="btn-group" title="View Account">
-                            <a class="btn btn-primary btn-o dropdown-toggle" data-toggle="dropdown" href="#">
-                                Action <span class="caret"></span>
-                            </a>
-                            <ul role="menu" class="dropdown-menu dropdown-light pull-right">
-                                <li>
-                                    <a title="View Invoice"  onclick="process_order(\'' . $orders->id . '\')">
-                                        <i class="fa fa-fw fa-hourglass-half text-blue"></i>Process Order
-                                    </a>
-                                </li>
-                                <li>
-                                    <a title="View Invoice"  onclick="update_order_model(\'' . $orders->id . '\')">
-                                        <i class="fa fa-fw fa-edit text-blue"></i>Update Order
-                                    </a>
-                                </li>
-                                <li>
-                                    <a style="cursor:pointer" title="Delete Record ?" onclick="delete_order(\'' . $orders->id . '\')">
-                                        <i class="fa fa-fw fa-trash text-red"></i>Delete
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>';
+            // Column 2: Customer email with image
+            $row[] = $this->formatCustomerColumn($order);
 
-            $row[] = $str2;
+            // Column 3: Order date
+            $row[] = $order->order_date ? '<div style="text-wrap: wrap; word-wrap: break-word;  margin-top: 5px; text-align: center; width: 150px;">' . date('jS \of M, Y \a\t g:ia', strtotime($order->order_date)) . '</div>' : '<div style="text-wrap: wrap; word-wrap: break-word;  margin-top: 5px; text-align: center; width: 150px;">-</div>';
+
+            // Column 4: Customer details
+            $row[] = $this->formatCustomerDetails($order);
+
+            // Column 5: Delivery date
+            $row[] = $this->formatDeliveryDate($order->delivery_date);
+
+            // Column 6: Status
+            $row[] = $this->formatStatusColumn($order);
+
+            // Column 7: Actions
+            $row[] = $this->formatActions($order->id);
+
             $data[] = $row;
         }
-        // }
 
-        $output = array(
+        // Output JSON
+        $output = [
             "draw" => $_POST['draw'],
-            "recordsTotal" => $this->orders->count_orders_by_status('New Order'),
-            "recordsFiltered" => $this->orders->filtered_orders_count_by_status('New Order'), // Count of filtered rows
+            "recordsTotal" => $this->orders->count_orders_by_status($status),
+            "recordsFiltered" => $this->orders->filtered_orders_count_by_status($status),
             "data" => $data,
-        );
+        ];
 
         echo json_encode($output);
     }
+
+    public function order_json_data()
+    {
+        $status = trim($_POST['status'] ?? 'new');
+
+
+        $list = $this->orders->get_orders_by_status($status);
+        $data = [];
+        log_message('debug', "Requested status: $status");
+        $no = $_POST['start'];
+
+        foreach ($list as $order) {
+            $no++;
+            $row = [];
+
+            // Column 1: Serial number
+            $row[] = $no;
+
+            // Column 2: Customer email with image
+            $row[] = $this->formatCustomerColumn($order);
+
+            // Column 3: Order date
+            $row[] = $order->order_date ? '<div style="text-wrap: wrap; word-wrap: break-word;  margin-top: 5px; text-align: center; width: 150px;">' . date('jS \of M, Y \a\t g:ia', strtotime($order->order_date)) . '</div>' : '<div style="text-wrap: wrap; word-wrap: break-word;  margin-top: 5px; text-align: center; width: 150px;">-</div>';
+
+            // Column 4: Customer details
+            $row[] = $this->formatCustomerDetails($order);
+
+            // Column 5: Delivery date
+            $row[] = $this->formatDeliveryDate($order->delivery_date);
+
+            // Column 6: Status
+            $row[] = $this->formatStatusColumn($order);
+
+            // Column 7: Actions
+            $row[] = $this->formatActions($order->id);
+
+            $data[] = $row;
+        }
+
+        // Output JSON
+        $output = [
+            "draw" => $_POST['draw'],
+            "recordsTotal" => $this->orders->count_orders_by_status($status),
+            "recordsFiltered" => $this->orders->filtered_orders_count_by_status($status),
+            "data" => $data,
+            "status" => $status,
+        ];
+
+        echo json_encode($output);
+    }
+
+    // Helper: Format the customer column
+    private function formatCustomerColumn($order)
+    {
+        $image = !empty($order->bundle_image)
+            ? "<a title='Click for Bigger!' href='" . base_url($order->bundle_image) . "' data-toggle='lightbox'>
+                   <img style='border:1px #72afd2 solid; height: 35px; width: 35px;' 
+                        src='" . base_url(return_item_image_thumb($order->bundle_image)) . "' alt='Image'> 
+               </a>"
+            : "<img style='border:1px #72afd2 solid; height: 35px; width: 35px;' 
+                     src='" . base_url() . "theme/images/no_image.png' title='No Image!' alt='No Image'>";
+
+        return "<div style='display:flex; align-items:center; justify-content:start; gap:5px;'>
+                    <div>{$image}</div>
+                    <div style='font-weight:600;'>{$order->customer_email}</div>
+                </div>";
+    }
+
+    // Helper: Format customer details
+    private function formatCustomerDetails($order)
+    {
+        return "<ul style='margin:0; padding:0;'>
+                    <li><strong>Customer Name:</strong> {$order->customer_name}</li>
+                    <li><strong>Address:</strong> {$order->address}</li>
+                    <li><strong>State:</strong> {$order->state}</li>
+                    <li><strong>Customer Phone:</strong> {$order->customer_phone}</li>
+                    <li><strong>WhatsApp Number:</strong> {$order->customer_whatsapp}</li>
+                    <li><strong>Order Number:</strong> {$order->order_number}</li>
+                    <li><strong>Bundle:</strong> {$order->bundle_name}</li>
+                    <li><strong>Amount:</strong> {$order->bundle_price}</li>
+                </ul>";
+    }
+
+    // Helper: Format delivery date
+    private function formatDeliveryDate($delivery_date)
+    {
+        if (!$delivery_date) {
+            return '<div style="text-wrap: wrap; word-wrap: break-word;  margin-top: 5px; text-align: center; width: 150px;">-</div>';
+        }
+
+        $date = new DateTime($delivery_date);
+        $today = new DateTime('today');
+        $tomorrow = new DateTime('tomorrow');
+
+        if ($date->format('Y-m-d') == $today->format('Y-m-d')) {
+            return 'Today, ' . $date->format('jS F, Y');
+        } elseif ($date->format('Y-m-d') == $tomorrow->format('Y-m-d')) {
+            return 'Tomorrow, ' . $date->format('jS F, Y');
+        }
+
+        return '<div style="text-wrap: wrap; word-wrap: break-word;  margin-top: 5px; text-align: center; width: 150px;">' . $date->format('l, jS F, Y') . '</div>';
+    }
+
+
+    private function formatStatusColumn($order)
+    {
+
+        $order_status = $this->config->item('order_status');
+        $last_updated = $order->order_date ? date('jS M, Y \a\t g:ia', strtotime($order->order_date)) : '-';
+        $id = $order->id;
+        $current_status = $order->status;
+
+
+        // Get the appropriate button class
+
+
+        $buttonClass = $order_status[$current_status] ? 'btn-' . $order_status[$current_status] : 'btn-default';
+        $label = $order_status[$current_status] ? $order_status[$current_status]['label'] : 'Unknown';
+
+        // Dropdown for changing status
+        $dropdownOptions = '';
+        foreach ($order_status as $status => $item) {
+            $statusName = $item['label'];
+
+            if ($status != 'all' && ($status != $current_status)) {
+                $dropdownOptions .= "<li>
+                    <a style='cursor:pointer' onclick=\"change_status('{$id}', '{$statusName}')\">
+                        {$statusName}
+                    </a>
+                 </li>";
+            }
+        }
+
+        return "<div style='text-align: center; width: 100px;'><div class='btn-group'>
+                    <button type='button' class='btn btn-sm {$buttonClass} dropdown-toggle' data-toggle='dropdown'>
+                        {$label} <span class='caret'></span>
+                    </button>
+                    <ul class='dropdown-menu dropdown-light pull-right'>
+                        {$dropdownOptions}
+                    </ul>
+                </div><div style='text-wrap: wrap; word-wrap: break-word; font-size: 12px; margin-top: 5px; text-align: center'>" . $last_updated . "</div></div>";
+    }
+
+
+    // Helper: Format action buttons
+    private function formatActions($id)
+    {
+        return '<div class="btn-group" title="View Account">
+                    <a class="btn btn-sm btn-primary btn-o dropdown-toggle" data-toggle="dropdown" href="#">
+                        Action <span class="caret"></span>
+                    </a>
+                    <ul role="menu" class="dropdown-menu dropdown-light pull-right">
+                        <li>
+                            <a title="Copy Order Details" onclick="copy_order_details(\'' . $id . '\')">
+                                <i class="fa fa-fw fa-clipboard text-blue"></i>Copy
+                            </a>
+                        </li>
+                        <li>
+                            <a title="Edit Order" onclick="update_order_model(\'' . $id . '\')">
+                                <i class="fa fa-fw fa-edit text-blue"></i>Edit
+                            </a>
+                        </li>
+                        <li>
+                            <a title="Print Receipt" onclick="print_receipt(\'' . $id . '\')">
+                                <i class="fa fa-fw fa-newspaper-o text-blue"></i>Receipt
+                            </a>
+                        </li>
+                        <li>
+                            <a title="View Order History" onclick="view_order_history(\'' . $id . '\')">
+                                <i class="fa fa-fw fa-history text-blue"></i>History
+                            </a>
+                        </li>
+                        <li>
+                            <a style="cursor:pointer" title="Delete Record?" onclick="delete_order(\'' . $id . '\')">
+                                <i class="fa fa-fw fa-trash text-red"></i>Delete
+                            </a>
+                        </li>
+                    </ul>
+                </div>';
+    }
+
 
     public function order_reports_json_data()
     {
@@ -342,13 +472,46 @@ class Orders extends MY_Controller
             $no++;
             $row = array();
             $row[] = $no;
-            $row[] = '<div class="" style="font-weight:600;">' . $orders->customer_name . '</div>
-            <small class="">' . $orders->customer_email . ' - ' . $orders->customer_phone . ' </small>';
-            $row[] = show_date($orders->order_date);
-            $row[] = $orders->item_name;
-            $row[] = $orders->ref;
-            $row[] = $orders->fulfilment_id ?? '<em>unproccessed</em>';
-            $row[] = $orders->country;
+            $row[] = "<div style='display:flex; align-items:center; justify-content:start; gap:5px;'>
+                <div>
+                " . (!empty($orders->bundle_image) ? "
+                <a title='Click for Bigger!' href='" . base_url($orders->bundle_image) . "' data-toggle='lightbox'>
+                    <img style='border:1px #72afd2 solid; height: 75px; width: 75px;' 
+                        src='" . base_url(return_item_image_thumb($orders->bundle_image)) . "' alt='Image'> 
+                </a>" : "
+                <img style='border:1px #72afd2 solid; height: 75px; width: 75px;' 
+                    src='" . base_url() . "theme/images/no_image.png' title='No Image!' alt='No Image'>") . "
+                </div>
+                
+            </div>";
+            $row[] = '<div class="" style="font-weight:600;">' . $orders->customer_email . '</div>';
+            $row[] = $orders->order_date ? date('jS \of M, Y \a\t g:ia', strtotime($orders->order_date)) : '-';
+            $customer_details = "<ul style='margin:0; padding:0;'>
+            <li><strong>Customer Name:</strong> " . $orders->customer_name . "</li>
+            <li><strong>Address:</strong> " . $orders->address . "</li>
+             <li><strong>State:</strong> " . $orders->state . "</li>
+            <li><strong>Customer Phone:</strong> " . $orders->customer_phone . " </li>
+             <li><strong>WhatsApp number:</strong> " . $orders->customer_whatsapp . "</li>
+             <li><strong>Order number:</strong> " . $orders->order_number . "</li>
+              <li><strong>Bundle:</strong> " . $orders->bundle_name . "</li>
+               <li><strong>Amount:</strong> " . $orders->bundle_price . "</li>
+            </ul>"; // $orders->customer_name . ' - ' . $orders->customer_email . ' - ' . $orders->customer_phone;
+
+            $row[] = $customer_details;
+
+            $date = new DateTime($orders->delivery_date);
+            $today = new DateTime('today');
+            $tomorrow = new DateTime('tomorrow');
+            if ($date->format('Y-m-d') == $today->format('Y-m-d')) {
+                $delivery_date = 'Today, ' . $date->format('jS F, Y');
+            } elseif ($date->format('Y-m-d') == $tomorrow->format('Y-m-d')) {
+                $delivery_date = 'Tomorrow, ' . $date->format('jS F, Y');
+            } else {
+                $delivery_date = $date->format('l, jS F, Y');
+            }
+
+            $row[] = $orders->delivery_date ? $delivery_date : '-';
+
             $str = "<span class='label bg-teal' style='cursor:pointer'>" . $orders->status . " </span>";
             if ($orders->status == 'Delivered')
                 $str = "<span class='label label-primary' style='cursor:pointer'>" . $orders->status . " </span>";
@@ -356,6 +519,10 @@ class Orders extends MY_Controller
                 $str = "<span class='label label-success' style='cursor:pointer'>" . $orders->status . " </span>";
 
             $row[] = $str;
+
+
+            $row[] = $orders->fulfilment_id ?? '<em>unproccessed</em>';
+            // $row[] = $orders->country;
 
             $data[] = $row;
         }

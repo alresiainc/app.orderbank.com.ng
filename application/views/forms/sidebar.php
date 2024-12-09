@@ -2,7 +2,7 @@
 
     <li class="index-form-li new-form-li   treeview">
         <a href="#">
-            <i class=" fa fa-shopping-cart text-aqua"></i> <span>Form Builder</span>
+            <i class=" fa fa-align-justify fa-receipt text-aqua"></i> <span>Form Builder</span>
             <span class="pull-right-container">
                 <i class="fa fa-angle-left pull-right"></i>
             </span>

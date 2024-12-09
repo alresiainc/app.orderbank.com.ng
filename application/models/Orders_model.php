@@ -13,6 +13,8 @@ class Orders_model extends CI_Model
         'a.customer_whatsapp',
         'a.address',
         'a.order_date',
+        'a.order_number',
+        'a.delivery_date',
         'a.ref',
         'b.item_name',
         'b.item_code',
@@ -30,9 +32,15 @@ class Orders_model extends CI_Model
         'a.amount',
         'a.fees',
         'a.form_bundle_id',
+        'e.name as bundle_name',
+        'e.image as bundle_image',
+        'e.description as bundle_description',
+        'e.price as bundle_price',
         'a.created_at',
         'a.updated_at',
     );
+
+
 
     var $column_search = array(
         'a.id',
@@ -42,6 +50,8 @@ class Orders_model extends CI_Model
         'a.customer_whatsapp',
         'a.address',
         'a.order_date',
+        'a.order_number',
+        'a.delivery_date',
         'a.ref',
         'b.item_name',
         'b.item_code',
@@ -56,6 +66,10 @@ class Orders_model extends CI_Model
         'a.quantity',
         'a.amount',
         'a.fees',
+        'e.name',
+        'e.image',
+        'e.description',
+        'e.price',
         'a.created_at',
         'a.updated_at',
 
@@ -76,6 +90,7 @@ class Orders_model extends CI_Model
         $this->db->join('db_items as b', 'b.id = a.product_id', 'left');
         $this->db->join('db_country as c', 'c.id = a.country', 'left');
         $this->db->join('db_states as d', 'd.id = a.state', 'left');
+        $this->db->join('db_form_bundles as e', 'e.id = a.form_bundle_id', 'left');
 
         // ... other existing joins and conditions ...
 
@@ -182,7 +197,12 @@ class Orders_model extends CI_Model
     public function get_orders_by_status($status)
     {
         $this->_get_datatables_query();
-        $this->db->where("a.status", $status);
+
+        if ($status != "all") {
+            $this->db->where("a.status", $status);
+        }
+
+
 
         if ($_POST['length'] != -1) {
             $this->db->limit($_POST['length'], $_POST['start']);
@@ -195,7 +215,9 @@ class Orders_model extends CI_Model
     public function count_orders_by_status($status)
     {
         $this->db->from($this->table);
-        $this->db->where("a.status", $status);
+        if ($status != "all") {
+            $this->db->where("a.status", $status);
+        }
 
         return $this->db->count_all_results();
     }
@@ -203,7 +225,9 @@ class Orders_model extends CI_Model
     public function filtered_orders_count_by_status($status)
     {
         $this->_get_datatables_query();
-        $this->db->where("a.status", $status);
+        if ($status != "all") {
+            $this->db->where("a.status", $status);
+        }
 
         $query = $this->db->get();
         return $query->num_rows();

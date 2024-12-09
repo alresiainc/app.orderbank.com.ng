@@ -50,6 +50,8 @@ defined('BASEPATH') or exit('No direct script access allowed');
 |		my-controller/my-method	-> my_controller/my_method
 */
 $route['form/(:any)'] = 'forms/show_form/$1';
+// $route['orders/(:any)'] = 'orders/index/$1';
+
 $route['default_controller'] = 'login';
 $route['404_override'] = '';
 $route['translate_uri_dashes'] = TRUE;

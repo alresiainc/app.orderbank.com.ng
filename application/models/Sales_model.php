@@ -345,7 +345,7 @@ class Sales_model extends CI_Model
 
 				// Update order status
 				$order_data = [
-					'status' => 'delivered',
+					'status' => 'Delivered',
 					'id' => $order_id,
 					// 'fees' => '',
 					// 'amount' => '',
@@ -468,7 +468,7 @@ class Sales_model extends CI_Model
 				$q2 = $this->db->insert('db_salesitems', $salesitems_entry);
 
 				$order_data = [
-					'status' => 'Received',
+					'status' => 'Payment Received',
 					'id' => $order_id,
 					'fees' => '',
 					'amount' => $purchase_price,
