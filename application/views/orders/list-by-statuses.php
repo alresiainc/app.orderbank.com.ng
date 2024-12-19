@@ -88,7 +88,7 @@
                                                     <div class="col-md-8 col-md-offset-2 d-flex justify-content">
                                                         <div class="input-group">
                                                             <span class="input-group-addon" title="Search Items"><i class="fa fa-barcode"></i></span>
-                                                            <input type="text" class="form-control " placeholder="Search Product Name/Shopify ID" autofocus id="order_search">
+                                                            <input type="text" class="form-control " placeholder="Search Product Name/Order Number" autofocus id="order_search">
 
 
                                                             <span class="input-group-addon pointer text-green" data-toggle="modal" data-target="#new-order-modal" title="Click to Create Order"><i class="fa fa-plus"></i></span>
