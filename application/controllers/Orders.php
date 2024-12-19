@@ -12,25 +12,31 @@ class Orders extends MY_Controller
         parent::__construct();
         $this->load_global();
         $this->load->model('Orders_model', 'orders');
+        $this->load->model('Form_model', 'forms');
         $this->load->config('order_status');
     }
 
-
-    public function _remap($method)
+    public function _remap($method, $arguments = [])
     {
-
+        // Replace underscores with hyphens for URL formatting
         $params = str_replace('_', '-', $method);
 
+        // Check if the method corresponds to an order status
         if (!in_array($params, array_keys($this->config->item('order_status')))) {
+            // If method exists in the current controller
             if (method_exists($this, $method)) {
-                $this->$method();
+                // Call the method dynamically with arguments
+                call_user_func_array([$this, $method], $arguments);
             } else {
+                // Show a 404 error if the method does not exist
                 show_404();
             }
         } else {
+            // If it's a predefined order status, call the index method with $params
             $this->index($params);
         }
     }
+
 
     public function index($get = "all")
     {
@@ -65,7 +71,6 @@ class Orders extends MY_Controller
         $data['page_title'] = "Orders Report";
         $this->load->view('orders/reports', $data);
     }
-
 
     public function store()
     {
@@ -118,26 +123,89 @@ class Orders extends MY_Controller
 
     public function update_order($id)
     {
-        $this->form_validation->set_rules('shopify_id', 'Shopify ID', 'trim|required');
-        $this->form_validation->set_rules('product_id', 'Product ID', 'trim|required');
-        $this->form_validation->set_rules('country', 'Country', 'trim|required');
-        $this->form_validation->set_rules('order_date', 'Order Date', 'trim|required');
-        $this->form_validation->set_rules('customer_name', 'Customer Name', 'trim|required');
-        $this->form_validation->set_rules('customer_email', 'Customer Email', 'trim|required');
-        $this->form_validation->set_rules('customer_phone', 'Customer Phone', 'trim|required');
+
+        $this->form_validation->set_rules('order_number', 'Order Number', 'trim|required');
+        $this->form_validation->set_rules('amount', 'Amount', 'trim|required');
+        $this->form_validation->set_rules('form_bundle_id', 'Bundle', 'trim|required');
+
+        $form_id = $this->input->post('form_id');
+        // Fetch form configuration
+        $form_data = $this->forms->get_form_by_id($form_id);
+        if ($form_data) {
+
+
+            // Dynamically apply validation rules based on form configuration
+            if ($form_data->show_customer_name) {
+                $this->form_validation->set_rules(
+                    'customer_name',
+                    $form_data->customer_name_label ?? 'Customer Name',
+                    'trim|required'
+                );
+            }
+
+            if ($form_data->show_email) {
+                $this->form_validation->set_rules(
+                    'customer_email',
+                    $form_data->email_label ?? 'Customer Email',
+                    'trim|valid_email|required'
+                );
+            }
+
+            if ($form_data->show_whatsapp) {
+                $this->form_validation->set_rules(
+                    'customer_whatsapp',
+                    $form_data->whatsapp_label ?? 'Customer WhatsApp',
+                    'trim|numeric|required'
+                );
+            }
+
+            if ($form_data->show_phone) {
+                $this->form_validation->set_rules(
+                    'customer_phone',
+                    $form_data->phone_label ?? 'Customer Phone',
+                    'trim|numeric|required'
+                );
+            }
+
+            if ($form_data->show_address) {
+                $this->form_validation->set_rules(
+                    'address',
+                    $form_data->address_label ?? 'Address',
+                    'trim|required'
+                );
+            }
+
+            if ($form_data->show_states) {
+                $this->form_validation->set_rules(
+                    'state',
+                    $form_data->states_label ?? 'State',
+                    'trim|required'
+                );
+            }
+
+            if ($form_data->show_delivery) {
+                $this->form_validation->set_rules(
+                    'delivery_date',
+                    $form_data->delivery_label ?? 'Delivery Date',
+                    'trim|required'
+                );
+            }
+        }
 
         if ($this->form_validation->run() == TRUE) {
 
-            log_message('info', '$orderData');
             $formData = $this->input->post();
             $orderData = [
-                'ref' => $formData['shopify_id'],
-                'product_id' => $formData['product_id'],
-                'country' => $formData['country'],
-                'order_date' => date("Y-m-d", strtotime($formData['order_date'])),
-                'customer_name' => $formData['customer_name'],
-                'customer_email' => $formData['customer_email'],
-                'customer_phone' => $formData['customer_phone'],
+                'order_number' => $formData['order_number'],
+                'form_bundle_id' => $formData['form_bundle_id'] ?? null,
+                'delivery_date' => $form_data->show_delivery ? date("Y-m-d", strtotime($formData['delivery_date'])) : null,
+                'customer_name' => $formData['customer_name'] ?? null,
+                'customer_email' => $formData['customer_email'] ?? null,
+                'customer_phone' => $formData['customer_phone'] ?? null,
+                'customer_whatsapp' => $formData['customer_whatsapp'] ?? null,
+                'address' => $formData['address'] ?? null,
+                'state' => $formData['state'] ?? null,
+                'amount' => $formData['amount'] ?? null
             ];
 
 
@@ -154,53 +222,6 @@ class Orders extends MY_Controller
 
             echo 'Please Fill Compulsory(* marked) Fields.';
         }
-    }
-
-    public function new_order_json_data()
-    {
-        $status = $_POST['status'] ?? 'new';
-        $list = $this->orders->get_orders_by_status($status);
-        $data = [];
-        log_message('debug', "Requested status: $status");
-        $no = $_POST['start'];
-
-        foreach ($list as $order) {
-            $no++;
-            $row = [];
-
-            // Column 1: Serial number
-            $row[] = $no;
-
-            // Column 2: Customer email with image
-            $row[] = $this->formatCustomerColumn($order);
-
-            // Column 3: Order date
-            $row[] = $order->order_date ? '<div style="text-wrap: wrap; word-wrap: break-word;  margin-top: 5px; text-align: center; width: 150px;">' . date('jS \of M, Y \a\t g:ia', strtotime($order->order_date)) . '</div>' : '<div style="text-wrap: wrap; word-wrap: break-word;  margin-top: 5px; text-align: center; width: 150px;">-</div>';
-
-            // Column 4: Customer details
-            $row[] = $this->formatCustomerDetails($order);
-
-            // Column 5: Delivery date
-            $row[] = $this->formatDeliveryDate($order->delivery_date);
-
-            // Column 6: Status
-            $row[] = $this->formatStatusColumn($order);
-
-            // Column 7: Actions
-            $row[] = $this->formatActions($order->id);
-
-            $data[] = $row;
-        }
-
-        // Output JSON
-        $output = [
-            "draw" => $_POST['draw'],
-            "recordsTotal" => $this->orders->count_orders_by_status($status),
-            "recordsFiltered" => $this->orders->filtered_orders_count_by_status($status),
-            "data" => $data,
-        ];
-
-        echo json_encode($output);
     }
 
     public function order_json_data()
@@ -297,20 +318,19 @@ class Orders extends MY_Controller
         $tomorrow = new DateTime('tomorrow');
 
         if ($date->format('Y-m-d') == $today->format('Y-m-d')) {
-            return 'Today, ' . $date->format('jS F, Y');
+            return '<div style="text-wrap: wrap; word-wrap: break-word;  margin-top: 5px; text-align: center; width: 150px;">Today, ' . $date->format('jS F, Y') . '</div>';
         } elseif ($date->format('Y-m-d') == $tomorrow->format('Y-m-d')) {
-            return 'Tomorrow, ' . $date->format('jS F, Y');
+            return '<div style="text-wrap: wrap; word-wrap: break-word;  margin-top: 5px; text-align: center; width: 150px;">Tomorrow, ' . $date->format('jS F, Y') . '</div>';
         }
 
         return '<div style="text-wrap: wrap; word-wrap: break-word;  margin-top: 5px; text-align: center; width: 150px;">' . $date->format('l, jS F, Y') . '</div>';
     }
 
-
     private function formatStatusColumn($order)
     {
 
         $order_status = $this->config->item('order_status');
-        $last_updated = $order->order_date ? date('jS M, Y \a\t g:ia', strtotime($order->order_date)) : '-';
+        $last_updated = $order->last_update_date ? date('jS M, Y \a\t g:ia', strtotime($order->last_update_date)) : ($order->order_date ? date('jS M, Y \a\t g:ia', strtotime($order->order_date)) : '-');
         $id = $order->id;
         $current_status = $order->status;
 
@@ -328,7 +348,7 @@ class Orders extends MY_Controller
 
             if ($status != 'all' && ($status != $current_status)) {
                 $dropdownOptions .= "<li>
-                    <a style='cursor:pointer' onclick=\"change_status('{$id}', '{$statusName}')\">
+                    <a style='cursor:pointer' onclick=\"change_status('{$id}', '{$status}')\">
                         {$statusName}
                     </a>
                  </li>";
@@ -344,7 +364,6 @@ class Orders extends MY_Controller
                     </ul>
                 </div><div style='text-wrap: wrap; word-wrap: break-word; font-size: 12px; margin-top: 5px; text-align: center'>" . $last_updated . "</div></div>";
     }
-
 
     // Helper: Format action buttons
     private function formatActions($id)
@@ -382,7 +401,6 @@ class Orders extends MY_Controller
                     </ul>
                 </div>';
     }
-
 
     public function order_reports_json_data()
     {
@@ -460,413 +478,6 @@ class Orders extends MY_Controller
         echo json_encode($output);
     }
 
-    public function all_order_json_data()
-    {
-        $list = $this->orders->get_orders();
-        $data = array();
-        $no = $_POST['start'];
-
-        foreach ($list as $orders) {
-            // Check if the search value matches any column data
-            // if (strtolower($search)) {
-            $no++;
-            $row = array();
-            $row[] = $no;
-            $row[] = "<div style='display:flex; align-items:center; justify-content:start; gap:5px;'>
-                <div>
-                " . (!empty($orders->bundle_image) ? "
-                <a title='Click for Bigger!' href='" . base_url($orders->bundle_image) . "' data-toggle='lightbox'>
-                    <img style='border:1px #72afd2 solid; height: 75px; width: 75px;' 
-                        src='" . base_url(return_item_image_thumb($orders->bundle_image)) . "' alt='Image'> 
-                </a>" : "
-                <img style='border:1px #72afd2 solid; height: 75px; width: 75px;' 
-                    src='" . base_url() . "theme/images/no_image.png' title='No Image!' alt='No Image'>") . "
-                </div>
-                
-            </div>";
-            $row[] = '<div class="" style="font-weight:600;">' . $orders->customer_email . '</div>';
-            $row[] = $orders->order_date ? date('jS \of M, Y \a\t g:ia', strtotime($orders->order_date)) : '-';
-            $customer_details = "<ul style='margin:0; padding:0;'>
-            <li><strong>Customer Name:</strong> " . $orders->customer_name . "</li>
-            <li><strong>Address:</strong> " . $orders->address . "</li>
-             <li><strong>State:</strong> " . $orders->state . "</li>
-            <li><strong>Customer Phone:</strong> " . $orders->customer_phone . " </li>
-             <li><strong>WhatsApp number:</strong> " . $orders->customer_whatsapp . "</li>
-             <li><strong>Order number:</strong> " . $orders->order_number . "</li>
-              <li><strong>Bundle:</strong> " . $orders->bundle_name . "</li>
-               <li><strong>Amount:</strong> " . $orders->bundle_price . "</li>
-            </ul>"; // $orders->customer_name . ' - ' . $orders->customer_email . ' - ' . $orders->customer_phone;
-
-            $row[] = $customer_details;
-
-            $date = new DateTime($orders->delivery_date);
-            $today = new DateTime('today');
-            $tomorrow = new DateTime('tomorrow');
-            if ($date->format('Y-m-d') == $today->format('Y-m-d')) {
-                $delivery_date = 'Today, ' . $date->format('jS F, Y');
-            } elseif ($date->format('Y-m-d') == $tomorrow->format('Y-m-d')) {
-                $delivery_date = 'Tomorrow, ' . $date->format('jS F, Y');
-            } else {
-                $delivery_date = $date->format('l, jS F, Y');
-            }
-
-            $row[] = $orders->delivery_date ? $delivery_date : '-';
-
-            $str = "<span class='label bg-teal' style='cursor:pointer'>" . $orders->status . " </span>";
-            if ($orders->status == 'Delivered')
-                $str = "<span class='label label-primary' style='cursor:pointer'>" . $orders->status . " </span>";
-            if ($orders->status == 'New Order')
-                $str = "<span class='label label-success' style='cursor:pointer'>" . $orders->status . " </span>";
-
-            $row[] = $str;
-
-
-            $row[] = $orders->fulfilment_id ?? '<em>unproccessed</em>';
-            // $row[] = $orders->country;
-
-            $data[] = $row;
-        }
-        // }
-
-        $output = array(
-            "draw" => $_POST['draw'],
-            "recordsTotal" => $this->orders->count_all(),
-            "recordsFiltered" => $this->orders->filtered_all(), // Count of filtered rows
-            "data" => $data,
-        );
-
-        echo json_encode($output);
-    }
-
-    public function returned_order_json_data()
-    {
-        $list = $this->orders->get_orders_by_status('Returned');
-        $data = array();
-        $no = $_POST['start'];
-
-        foreach ($list as $orders) {
-            // Check if the search value matches any column data
-            // if (strtolower($search)) {
-            $no++;
-            $row = array();
-            $row[] = $no;
-            $row[] = '<div class="" style="font-weight:600;">' . $orders->customer_name . '</div>
-            <small class="">' . $orders->customer_email . ' - ' . $orders->customer_phone . ' </small>';
-            $row[] = show_date($orders->order_date);
-            $row[] = $orders->item_name;
-            $row[] = $orders->ref;
-            $row[] = $orders->fulfilment_id ?? '<em>unproccessed</em>';
-            $row[] = $orders->country;
-            $row[] = store_number_format($orders->fees);
-            $row[] = show_date($orders->updated_at);
-
-            $data[] = $row;
-        }
-        // }
-
-        $output = array(
-            "draw" => $_POST['draw'],
-            "recordsTotal" => $this->orders->count_orders_by_status('Returned'),
-            "recordsFiltered" => $this->orders->filtered_orders_count_by_status('Returned'), // Count of filtered rows
-            "data" => $data,
-        );
-
-        echo json_encode($output);
-    }
-
-    public function delivered_order_json_data()
-    {
-        $list = $this->orders->get_orders_by_status('Delivered');
-        $data = array();
-        $no = $_POST['start'];
-
-        foreach ($list as $orders) {
-            // Check if the search value matches any column data
-            // if (strtolower($search)) {
-            $no++;
-            $row = array();
-            $row[] = $no;
-            $row[] = '<div class="" style="font-weight:600;">' . $orders->customer_name . '</div>
-            <small class="">' . $orders->customer_email . ' - ' . $orders->customer_phone . ' </small>';
-            $row[] = show_date($orders->order_date);
-            $row[] = $orders->item_name;
-            $row[] = $orders->ref;
-            $row[] = $orders->fulfilment_id ?? '<em>unproccessed</em>';
-            $row[] = $orders->country;
-            $row[] = store_number_format($orders->fees);
-            $row[] = store_number_format($orders->amount);
-            $row[] = $orders->quantity;
-            $row[] = show_date($orders->updated_at);
-
-
-            $data[] = $row;
-        }
-        // }
-
-        $output = array(
-            "draw" => $_POST['draw'],
-            "recordsTotal" => $this->orders->count_orders_by_status('Delivered'),
-            "recordsFiltered" => $this->orders->filtered_orders_count_by_status('Delivered'), // Count of filtered rows
-            "data" => $data,
-        );
-
-        echo json_encode($output);
-    }
-
-    public function out_for_delivery_order_json_data()
-    {
-        $list = $this->orders->get_orders_by_status('Out for Delivery');
-        $data = array();
-        $no = $_POST['start'];
-
-        foreach ($list as $orders) {
-            // Check if the search value matches any column data
-            // if (strtolower($search)) {
-            $no++;
-            $row = array();
-            $row[] = $no;
-            $row[] = '<div class="" style="font-weight:600;">' . $orders->customer_name . '</div>
-            <small class="">' . $orders->customer_email . ' - ' . $orders->customer_phone . ' </small>';
-
-            $row[] = show_date($orders->order_date);
-            $row[] = $orders->item_name;
-            $row[] = $orders->ref;
-            $row[] = $orders->fulfilment_id ?? '<em>unproccessed</em>';
-            $row[] = $orders->country;
-            $row[] = show_date($orders->updated_at);
-
-            $str2 = '<div class="btn-group" title="View Account">
-                            <a class="btn btn-primary btn-o dropdown-toggle" data-toggle="dropdown" href="#">
-                                Action <span class="caret"></span>
-                            </a>
-                            <ul role="menu" class="dropdown-menu dropdown-light pull-right">
-                                <li>
-                                    <a title="Not Answering Call" onclick="handleStatus(\'not_answering_call\', \'' . $orders->id . '\')">
-                                        <i class="fa fa-fw fa-microphone-slash text-primary"></i>Not Answering Call
-                                    </a>
-                                </li>
-                                <li>
-                                    <a title="Delivered" onclick="handleStatus(\'delivered\', \'' . $orders->id . '\')">
-                                        <i class="fa fa-fw fa-check-circle text-primary"></i>Delivered
-                                    </a>
-                                </li>
-                                <li>
-                                    <a title="Returned" onclick="handleStatus(\'returned\', \'' . $orders->id . '\')">
-                                        <i class="fa fa-fw fa-undo text-primary"></i>Returned
-                                    </a>
-                                </li>
-                                <li>
-                                    <a title="Out of Area" onclick="handleStatus(\'out_of_area\', \'' . $orders->id . '\')">
-                                        <i class="fa fa-fw fa-map-marker text-primary"></i>Out of Area
-                                    </a>
-                                </li>
-                                <li>
-                                    <a title="Duplicated" onclick="handleStatus(\'duplicated\', \'' . $orders->id . '\')">
-                                        <i class="fa fa-fw fa-clone text-primary"></i>Duplicated
-                                    </a>
-                                </li>
-                                <li>
-                                    <a title="Canceled" onclick="handleStatus(\'cancelled\', \'' . $orders->id . '\')">
-                                        <i class="fa fa-fw fa-ban text-primary"></i>Cancel
-                                    </a>
-                                </li>
-                                <li>
-                            </li>
-                            </ul>
-                        </div>';
-
-            $row[] = $str2;
-
-            $data[] = $row;
-        }
-        // }
-
-        $output = array(
-            "draw" => $_POST['draw'],
-            "recordsTotal" => $this->orders->count_orders_by_status('Out for Delivery'),
-            "recordsFiltered" => $this->orders->filtered_orders_count_by_status('Out for Delivery'), // Count of filtered rows
-            "data" => $data,
-        );
-
-        echo json_encode($output);
-    }
-
-    public function out_of_area_order_json_data()
-    {
-        $list = $this->orders->get_orders_by_status('Out of Area');
-        $data = array();
-        $no = $_POST['start'];
-
-        foreach ($list as $orders) {
-            // Check if the search value matches any column data
-            // if (strtolower($search)) {
-            $no++;
-            $row = array();
-            $row[] = $no;
-            $row[] = '<div class="" style="font-weight:600;">' . $orders->customer_name . '</div>
-            <small class="">' . $orders->customer_email . ' - ' . $orders->customer_phone . ' </small>';
-            $row[] = show_date($orders->order_date);
-            $row[] = $orders->item_name;
-            $row[] = $orders->ref;
-            $row[] = $orders->fulfilment_id ?? '<em>unproccessed</em>';
-            $row[] = $orders->country;
-            $row[] = show_date($orders->updated_at);
-            $data[] = $row;
-        }
-        // }
-
-        $output = array(
-            "draw" => $_POST['draw'],
-            "recordsTotal" => $this->orders->count_orders_by_status('Out of Area'),
-            "recordsFiltered" => $this->orders->filtered_orders_count_by_status('Out of Area'), // Count of filtered rows
-            "data" => $data,
-        );
-
-        echo json_encode($output);
-    }
-
-    public function duplicated_order_json_data()
-    {
-        $list = $this->orders->get_orders_by_status('Duplicated');
-        $data = array();
-        $no = $_POST['start'];
-
-        foreach ($list as $orders) {
-            // Check if the search value matches any column data
-            // if (strtolower($search)) {
-            $no++;
-            $row = array();
-            $row[] = $no;
-            $row[] = '<div class="" style="font-weight:600;">' . $orders->customer_name . '</div>
-            <small class="">' . $orders->customer_email . ' - ' . $orders->customer_phone . ' </small>';
-            $row[] = show_date($orders->order_date);
-            $row[] = $orders->item_name;
-            $row[] = $orders->ref;
-            $row[] = $orders->fulfilment_id ?? '<em>unproccessed</em>';
-            $row[] = $orders->country;
-            $row[] = show_date($orders->updated_at);
-            $data[] = $row;
-        }
-        // }
-
-        $output = array(
-            "draw" => $_POST['draw'],
-            "recordsTotal" => $this->orders->count_orders_by_status('Duplicated'),
-            "recordsFiltered" => $this->orders->filtered_orders_count_by_status('Duplicated'), // Count of filtered rows
-            "data" => $data,
-        );
-
-        echo json_encode($output);
-    }
-    public function not_answering_call_order_json_data()
-    {
-        $list = $this->orders->get_orders_by_status('Not Answering Call');
-        $data = array();
-        $no = $_POST['start'];
-
-        foreach ($list as $orders) {
-            // Check if the search value matches any column data
-            // if (strtolower($search)) {
-            $no++;
-            $row = array();
-            $row[] = $no;
-            $row[] = '<div class="" style="font-weight:600;">' . $orders->customer_name . '</div>
-            <small class="">' . $orders->customer_email . ' - ' . $orders->customer_phone . ' </small>';
-
-            $row[] = show_date($orders->order_date);
-            $row[] = $orders->item_name;
-            $row[] = $orders->ref;
-            $row[] = $orders->fulfilment_id ?? '<em>unproccessed</em>';
-            $row[] = $orders->country;
-
-            $row[] = show_date($orders->updated_at);
-            $str2 = '<div class="btn-group" title="View Account">
-            <a class="btn btn-primary btn-o dropdown-toggle" data-toggle="dropdown" href="#">
-                Action <span class="caret"></span>
-            </a>
-            <ul role="menu" class="dropdown-menu dropdown-light pull-right">
-               <li>
-                    <a title="Delivered" onclick="handleStatus(\'delivered\', \'' . $orders->id . '\')">
-                        <i class="fa fa-fw fa-check-circle text-primary"></i>Delivered
-                    </a>
-                </li>
-                <li>
-                    <a title="Returned" onclick="handleStatus(\'returned\', \'' . $orders->id . '\')">
-                        <i class="fa fa-fw fa-undo text-primary"></i>Returned
-                    </a>
-                </li>
-                <li>
-                    <a title="Out of Area" onclick="handleStatus(\'out_of_area\', \'' . $orders->id . '\')">
-                        <i class="fa fa-fw fa-map-marker text-primary"></i>Out of Area
-                    </a>
-                </li>
-                <li>
-                    <a title="Duplicated" onclick="handleStatus(\'duplicated\', \'' . $orders->id . '\')">
-                        <i class="fa fa-fw fa-clone text-primary"></i>Duplicated
-                    </a>
-                </li>
-                <li>
-                    <a title="Canceled" onclick="handleStatus(\'cancelled\', \'' . $orders->id . '\')">
-                        <i class="fa fa-fw fa-ban text-primary"></i>Cancel
-                    </a>
-                </li>
-                <li>
-            </li>
-            </ul>
-        </div>';
-
-            $row[] = $str2;
-
-            $data[] = $row;
-        }
-        // }
-
-        $output = array(
-            "draw" => $_POST['draw'],
-            "recordsTotal" => $this->orders->count_orders_by_status('Not Answering Call'),
-            "recordsFiltered" => $this->orders->filtered_orders_count_by_status('Not Answering Call'), // Count of filtered rows
-            "data" => $data,
-        );
-
-        echo json_encode($output);
-    }
-
-    public function cancelled_order_json_data()
-    {
-        $list = $this->orders->get_orders_by_status('Cancelled');
-        $data = array();
-        $no = $_POST['start'];
-
-        foreach ($list as $orders) {
-            // Check if the search value matches any column data
-            // if (strtolower($search)) {
-            $no++;
-            $row = array();
-            $row[] = $no;
-            $row[] = '<div class="" style="font-weight:600;">' . $orders->customer_name . '</div>
-            <small class="">' . $orders->customer_email . ' - ' . $orders->customer_phone . ' </small>';
-            $row[] = show_date($orders->order_date);
-            $row[] = $orders->item_name;
-            $row[] = $orders->ref;
-            $row[] = $orders->fulfilment_id ?? '<em>unproccessed</em>';
-            $row[] = $orders->country;
-            $row[] = show_date($orders->updated_at);
-
-            $data[] = $row;
-        }
-        // }
-
-        $output = array(
-            "draw" => $_POST['draw'],
-            "recordsTotal" => $this->orders->count_orders_by_status('Cancelled'),
-            "recordsFiltered" => $this->orders->filtered_orders_count_by_status('Cancelled'), // Count of filtered rows
-            "data" => $data,
-        );
-
-        echo json_encode($output);
-    }
-
-
     public function multi_delete()
     {
         $ids = implode(",", $_POST['checkbox']);
@@ -906,6 +517,67 @@ class Orders extends MY_Controller
             echo $errorMessages;
         }
     }
+
+    public function update_order_status()
+    {
+        $statuses = $this->config->item('order_status');
+        $this->form_validation->set_rules('status', 'Status', 'trim|required');
+        $this->form_validation->set_rules('order_id', 'Order ID', 'trim|required');
+
+        if ($this->form_validation->run() == TRUE) {
+
+            $formData = $this->input->post();
+            $id = $formData['order_id'];
+            $status = $formData['status'];
+
+            $orderData = [
+                'status' => $status,
+            ];
+
+            // Build the history description dynamically based on the status
+            $historyDescription = '';
+
+            if ($status == 'discount-sales') {
+                // For discount-sales, add details about the discount
+                $orderData['discount_type'] = $formData['discount_type'];
+                $orderData['discount_amount'] = $formData['discount_amount'];
+                $historyDescription = 'The order was put on discount with type: ' . $formData['discount_type'] . ' and amount: ' . $formData['discount_amount'];
+            }
+
+            if ($status == 'rescheduled') {
+                // For rescheduled, add the new delivery date
+                $orderData['delivery_date'] = date("Y-m-d", strtotime($formData['delivery_date']));
+                $historyDescription = 'The delivery date has been rescheduled to: ' . $orderData['delivery_date'];
+            }
+
+            // If no specific status-related action, just update status
+            if (empty($historyDescription)) {
+                $historyDescription = 'The Order status was changed to ' . $statuses[$status]['label'];
+            }
+
+            // Call the model method to store the order
+            $result = $this->orders->update_orders_by_id($id, $orderData);
+
+            // Send any necessary order message
+            $this->send_order_message($status);
+
+            // Add the order history with the dynamically built description
+            $this->orders->add_order_history(
+                $id, // order_id
+                'Status Changed', // action
+                $historyDescription, // dynamic description
+                null, // user_id (optional)
+                null // performed_by (optional)
+            );
+
+            echo $result;
+        } else {
+            // Validation failed, return the error messages
+            $errorMessages = validation_errors();
+            echo $errorMessages;
+        }
+    }
+
     public function change_order_status()
     {
         $this->form_validation->set_rules('status', 'Status', 'trim|required');
@@ -936,5 +608,10 @@ class Orders extends MY_Controller
 
         print_r($data);
         // $this->load->view('test', $data);
+    }
+
+    public function send_order_message($status, $type = 'whatsapp')
+    {
+        $message =  $this->orders->get_message($status, $type);
     }
 }

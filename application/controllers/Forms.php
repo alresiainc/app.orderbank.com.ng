@@ -156,7 +156,7 @@ class Forms extends MY_Controller
             $this->form_validation->set_rules(
                 'customer_name',
                 $form_data->customer_name_label ?? 'Customer Name',
-                'trim' . ($form_data->show_customer_name ? '|required' : '')
+                'trim|required'
             );
         }
 
@@ -164,7 +164,7 @@ class Forms extends MY_Controller
             $this->form_validation->set_rules(
                 'customer_email',
                 $form_data->email_label ?? 'Customer Email',
-                'trim|valid_email' . ($form_data->show_email ? '|required' : '')
+                'trim|valid_email|required'
             );
         }
 
@@ -172,7 +172,7 @@ class Forms extends MY_Controller
             $this->form_validation->set_rules(
                 'customer_whatsapp',
                 $form_data->whatsapp_label ?? 'Customer WhatsApp',
-                'trim|numeric' . ($form_data->show_whatsapp ? '|required' : '')
+                'trim|numeric|required'
             );
         }
 
@@ -180,7 +180,7 @@ class Forms extends MY_Controller
             $this->form_validation->set_rules(
                 'customer_phone',
                 $form_data->phone_label ?? 'Customer Phone',
-                'trim|numeric' . ($form_data->show_phone ? '|required' : '')
+                'trim|numeric|required'
             );
         }
 
@@ -188,7 +188,7 @@ class Forms extends MY_Controller
             $this->form_validation->set_rules(
                 'address',
                 $form_data->address_label ?? 'Address',
-                'trim' . ($form_data->show_address ? '|required' : '')
+                'trim|required'
             );
         }
 
@@ -196,7 +196,7 @@ class Forms extends MY_Controller
             $this->form_validation->set_rules(
                 'state',
                 $form_data->states_label ?? 'State',
-                'trim' . ($form_data->show_states ? '|required' : '')
+                'trim|required'
             );
         }
 
@@ -204,46 +204,55 @@ class Forms extends MY_Controller
             $this->form_validation->set_rules(
                 'delivery_date',
                 $form_data->delivery_label ?? 'Delivery Date',
-                'trim' . ($form_data->show_delivery ? '|required' : '')
+                'trim|required'
             );
         }
 
         // Run validation
-        if ($this->form_validation->run() == TRUE) {
-            $formData = $this->input->post(); // Still an associative array
+        if ($this->form_validation->run() === TRUE) {
+            $formData = $this->input->post(); // Retrieve form data as associative array
+
+            // Generate order number (8 digits) and set current date with time
+            $orderNumber = sprintf('%08d', mt_rand(1, 99999999));
+            $currentDateTime = date("Y-m-d H:i:s");
+
             $orderData = [
                 'form_id' => $form_id,
+                'order_number' => $orderNumber,
                 'form_bundle_id' => $formData['form_bundle_id'] ?? null,
-                'order_date' => $form_data->show_delivery ? date("Y-m-d", strtotime($formData['delivery_date'])) : null,
+                'order_date' => $currentDateTime,
+                'delivery_date' => $form_data->show_delivery ? date("Y-m-d", strtotime($formData['delivery_date'])) : null,
                 'customer_name' => $formData['customer_name'] ?? null,
                 'customer_email' => $formData['customer_email'] ?? null,
                 'customer_phone' => $formData['customer_phone'] ?? null,
                 'customer_whatsapp' => $formData['customer_whatsapp'] ?? null,
                 'address' => $formData['address'] ?? null,
                 'state' => $formData['state'] ?? null,
+                'amount' => $form_data->price
             ];
+
 
             // Check if an order with the same data already exists
             $existingOrder = $this->forms->check_existing_order($orderData);
 
             if ($existingOrder) {
-                $orderData['status'] = 'Duplicate'; // Add status for the new order
-                $orderId = $this->forms->create_order($orderData);
-                echo json_encode(['success' => true, 'message' => 'Form submitted successfully.']);
-                // echo json_encode(['success' => false, 'message' => 'An order with the same details already exists.']);
+                $orderData['status'] = 'duplicated';
+                $this->forms->create_order($orderData); // Save the duplicate order for tracking
+                echo json_encode(['success' => true, 'message' => 'Form submitted successfully']);
                 return;
             }
 
-            // Save the order
-            $orderData['status'] = 'New Order'; // Add status for the new order
+            // Save the new order
+            $orderData['status'] = 'new';
             $orderId = $this->forms->create_order($orderData);
 
-            echo json_encode(['success' => true, 'message' => 'Form submitted successfully.']);
+            echo json_encode(['success' => true, 'message' => 'Form submitted successfully.', 'order_id' => $orderId]);
         } else {
             // Validation errors
             echo json_encode(['success' => false, 'message' => validation_errors()]);
         }
     }
+
 
 
 

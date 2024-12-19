@@ -6,39 +6,54 @@ class Orders_model extends CI_Model
 
     var $table = 'db_orders as a';
     var $column_order = array(
-        'a.id',
-        'a.customer_name',
-        'a.customer_email',
-        'a.customer_phone',
-        'a.customer_whatsapp',
-        'a.address',
-        'a.order_date',
-        'a.order_number',
-        'a.delivery_date',
-        'a.ref',
-        'b.item_name',
-        'b.item_code',
-        'a.status',
-        'a.fulfilment_id',
-        'a.form_id',
-        'a.product_id',
-        'a.country as country_id',
-        'a.state as state_id',
-        'b.service_bit',
-        'c.country',
-        'd.state',
-        'a.status',
-        'a.quantity',
-        'a.amount',
-        'a.fees',
-        'a.form_bundle_id',
-        'e.name as bundle_name',
-        'e.image as bundle_image',
-        'e.description as bundle_description',
-        'e.price as bundle_price',
-        'a.created_at',
+        'a.id',                     // Order ID
+        'a.customer_name',          // Customer name
+        'a.customer_email',         // Customer email
+        'a.customer_phone',         // Customer phone
+        'a.customer_whatsapp',      // Customer WhatsApp
+        'a.address',                // Customer address
+        'a.order_date',             // Order date
+        'a.order_number',           // Order number
+        'a.delivery_date',          // Delivery date
+        'a.ref',                    // Reference
+        'b.item_name',              // Item name from products or related table
+        'b.item_code',              // Item code
+        'a.status',                 // Order status
+        'a.fulfilment_id',          // Fulfillment ID
+        'a.form_id',                // Form ID
+        'a.product_id',             // Product ID
+        'a.country as country_id',  // Country ID
+        'a.state as state_id',      // State ID
+        'b.service_bit',            // Service-related data from products table
+        'c.country',                // Country name
+        'c.id as country_id',       // Country ID
+        'd.state',                  // State name
+        'd.id as state_id',         // State ID
+        'a.quantity',               // Quantity of items in order
+        'a.amount',                 // Order amount
+        'a.fees',                   // Additional fees
+        'a.form_bundle_id',         // Bundle ID
+        'f.show_customer_name as form_has_customer_name',
+        'f.show_email as form_has_email',
+        'f.show_phone as form_has_phone',
+        'f.show_whatsapp as form_has_whatsapp',
+        'f.show_address as form_has_address',
+        'f.show_states as form_has_states',
+        'f.show_delivery as form_has_delivery',
+        'f.delivery_choices as form_delivery_choices',
+        'f.form_bundles',
+        'e.name as bundle_name',    // Bundle name
+        'e.image as bundle_image',  // Bundle image
+        'e.description as bundle_description', // Bundle description
+        'e.price as bundle_price',  // Bundle price
+        'a.created_at',             // Record creation timestamp
         'a.updated_at',
+        //Get the last updated history date (last update of the order)
+        'MAX(g.updated_at) AS last_update_date',
+        //Concatenate all history descriptions
+        'GROUP_CONCAT(DISTINCT g.action ORDER BY g.updated_at DESC SEPARATOR "; ") AS history_description'
     );
+
 
 
 
@@ -91,6 +106,8 @@ class Orders_model extends CI_Model
         $this->db->join('db_country as c', 'c.id = a.country', 'left');
         $this->db->join('db_states as d', 'd.id = a.state', 'left');
         $this->db->join('db_form_bundles as e', 'e.id = a.form_bundle_id', 'left');
+        $this->db->join('db_forms as f', 'f.id = a.form_id', 'left');
+        $this->db->join('db_order_histories as g', 'g.order_id = a.id', 'left');
 
         // ... other existing joins and conditions ...
 
@@ -329,8 +346,118 @@ class Orders_model extends CI_Model
                 'status' => $data['status'],
             ]);
         }
+
+
         $this->db->trans_commit();
 
         return "success";
+    }
+
+    public function get_message($status, $type = 'whatsapp')
+    {
+        $this->db->select('*'); // Explicitly select columns
+        $this->db->from('db_order_messages');
+        $this->db->where('status', $status);
+        $this->db->where('type', $type);
+        $query = $this->db->get();
+        return $query->result(); // Returns all matching rows as an array of objects
+    }
+
+    public function upsert_message($status, $type, $message)
+    {
+        // Check if a record exists with the given status and type
+        $this->db->select('id');
+        $this->db->from('db_order_messages');
+        $this->db->where('status', $status);
+        $this->db->where('type', $type);
+        $query = $this->db->get();
+
+        if ($query->num_rows() > 0) {
+            // Record exists, update it
+            $row = $query->row();
+            $this->db->where('id', $row->id);
+            $updated = $this->db->update('db_order_messages', ['message' => $message]);
+
+            return $updated ? 'updated' : false;
+        } else {
+            // Record does not exist, insert a new one
+            $data = [
+                'status' => $status,
+                'type' => $type,
+                'message' => $message,
+            ];
+
+            $inserted = $this->db->insert('db_order_messages', $data);
+
+            return $inserted ? 'created' : false;
+        }
+    }
+
+    public function delete_message_by_id($id)
+    {
+        // Check if the record exists
+        $this->db->select('id');
+        $this->db->from('db_order_messages');
+        $this->db->where('id', $id);
+        $query = $this->db->get();
+
+        if ($query->num_rows() > 0) {
+            // Record exists, perform soft delete
+            $this->db->where('id', $id);
+            $deleted = $this->db->update('db_order_messages', ['deleted_at' => date('Y-m-d H:i:s')]);
+
+            return $deleted ? 'deleted' : false;
+        } else {
+            // Record not found
+            return 'not_found';
+        }
+    }
+
+    public function hard_delete_message_by_id($id)
+    {
+        // Check if the record exists
+        $this->db->select('id');
+        $this->db->from('db_order_messages');
+        $this->db->where('id', $id);
+        $query = $this->db->get();
+
+        if ($query->num_rows() > 0) {
+            // Record exists, perform hard delete
+            $this->db->where('id', $id);
+            $deleted = $this->db->delete('db_order_messages');
+
+            return $deleted ? 'deleted' : false;
+        } else {
+            // Record not found
+            return 'not_found';
+        }
+    }
+
+    public function add_order_history($order_id, $action, $description = null, $user_id = null, $performed_by = null)
+    {
+        // Check if the order exists by order_id
+        $this->db->select('id');
+        $this->db->from('db_orders'); // Assuming the order table is named 'orders'
+        $this->db->where('id', $order_id);
+        $query = $this->db->get();
+
+        if ($query->num_rows() > 0) {
+            // Order exists, add history
+            $data = [
+                'order_id' => $order_id,
+                'action' => $action,
+                'description' => $description,
+                'user_id' => $user_id,
+                'performed_by' => $performed_by,
+                'created_at' => date('Y-m-d H:i:s')
+            ];
+
+            $inserted = $this->db->insert('db_order_histories', $data);
+
+            return $inserted ? 'created' : false;
+        } else {
+            // Order not found
+            return 'order_not_found';
+        }
     }
 }

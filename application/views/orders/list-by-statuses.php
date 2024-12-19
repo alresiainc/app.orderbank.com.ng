@@ -40,7 +40,7 @@
 
             <?php $this->load->view('orders/modals/modal_new_order.php'); ?>
             <?php $this->load->view('orders/modals/modal_update_order.php'); ?>
-            <?php $this->load->view('orders/modals/modal_process_order.php'); ?>
+            <?php $this->load->view('orders/modals/modal_change_order_status.php'); ?>
 
 
             <!-- **********************MODALS END***************** -->
@@ -211,10 +211,12 @@
         function check_field(id) {
             var field = $("#" + id);
 
+
+
             if (!field || field.val().trim() == '') //Also check Others????
             {
-                console.log("#" + id + "true");
-                console.log($("#" + id).val());
+                // console.log("#" + id + "true");
+                // console.log($("#" + id).val());
                 $('#' + id + '_msg').fadeIn(200).show().html('Required Field').addClass('required');
                 $('#' + id).css({
                     'background-color': '#E8E2E9'
@@ -222,8 +224,8 @@
                 // flag = false;
                 return true;
             } else {
-                console.log("#" + id + "false");
-                console.log($("#" + id).val());
+                // console.log("#" + id + "false");
+                // console.log($("#" + id).val());
                 $('#' + id + '_msg').fadeOut(200).hide();
                 $('#' + id).css({
                     'background-color': '#FFFFFF'
@@ -264,60 +266,53 @@
                     if (result) {
                         $('#update-order-form')[0].reset();
 
-                        console.log(result);
+
 
                         var orderDetails = jQuery.parseJSON(result)[0];
-
-                        console.log(orderDetails);
-
-                        // Replace these lines with the actual properties you receive in the response
-                        // var productType = result.product_type;
-                        var productType = orderDetails.service_bit == 1 ? 'Services' : 'Items';
-                        var productId = orderDetails.product_id;
-                        var shopifyId = orderDetails.ref;
+                        var formId = orderDetails.form_id;
+                        var formBundleId = orderDetails.form_bundle_id;
                         var country = orderDetails.country_id;
                         var orderDate = orderDetails.order_date;
                         var customerName = orderDetails.customer_name;
                         var customerEmail = orderDetails.customer_email;
                         var customerPhone = orderDetails.customer_phone;
+                        var customerWhatsapp = orderDetails.customer_whatsapp;
+                        var orderNumber = orderDetails.order_number;
+                        var deliveryDate = orderDetails.delivery_date;
+                        var address = orderDetails.address;
+                        var state = orderDetails.state_id;
+                        var orderAmount = orderDetails.amount;
+                        var bundlePrice = orderDetails.bundle_price;
 
-                        $('#current_product_type').select2().val(productType)
-                            .trigger(
-                                'change');
-
-
-                        // Define options for both 'Services' and 'Items'
-                        var servicesOptions = <?= json_encode(get_items_select_list('', '', 'Services')) ?>;
-                        var itemsOptions = <?= json_encode(get_items_select_list('', '', 'Items')) ?>;
-
-                        var productSelect = $('#current_product_id');
-
-
-                        // Clear existing options
-                        productSelect.empty();
-
-                        // Populate options based on the selected product_type
-                        if (productType === 'Services') {
-                            productSelect.html(servicesOptions);
-                        } else if (productType === 'Items') {
-                            productSelect.html(itemsOptions);
-                        }
+                        var form_has_customer_name = orderDetails.form_has_customer_name == '1' ? true : false;
+                        var form_has_email = orderDetails.form_has_email == '1' ? true : false;
+                        var form_has_phone = orderDetails.form_has_phone == '1' ? true : false;
+                        var form_has_whatsapp = orderDetails.form_has_whatsapp == '1' ? true : false;
+                        var form_has_address = orderDetails.form_has_address == '1' ? true : false;
+                        var form_has_states = orderDetails.form_has_states == '1' ? true : false;
+                        var form_has_delivery = orderDetails.form_has_delivery == '1' ? true : false;
+                        var form_delivery_choices = orderDetails.form_delivery_choices;
+                        var form_bundles = orderDetails.form_bundles;
 
 
-                        $('#current_shopify_id').val(shopifyId);
-                        $('#current_order_date').val(orderDate);
 
+                        $('#current_form_id').val(formId);
                         $('#current_customer_name').val(customerName);
                         $('#current_customer_email').val(customerEmail);
                         $('#current_customer_phone').val(customerPhone);
+                        $('#current_customer_whatsapp').val(customerWhatsapp);
+                        $('#current_order_number').val(orderNumber);
+                        $('#current_order_amount').val(orderAmount || bundlePrice);
+                        $('#current_delivery_date').val(deliveryDate);
+                        $('#current_address').val(address);
 
+                        $('#current_form_bundle_id').select2().val(formBundleId)
+                            .trigger('change');
 
-                        // Update the Select2 elements
-                        $('#current_product_id').select2().val(productId).trigger(
+                        $('#current_state').select2().val(state).trigger(
                             'change');
-                        $('#current_country').select2().val(country).trigger(
-                            'change');
-                        $('#update-order-modal').modal('toggle');
+
+                        $('#update-order-modal').modal('show');
 
                         $('#update-order-form-button').click(function(e) {
                             e.preventDefault();
@@ -325,37 +320,54 @@
                             var flag = true;
 
                             //Validate Input box or selection box should not be blank or empty
-
-                            if (check_field("current_customer_name") == true) {
+                            if (form_has_customer_name && check_field("current_customer_name")) {
                                 var flag = false;
-                            }
 
-                            if (check_field("current_customer_email") == true) {
-                                var flag = false;
                             }
 
-                            if (check_field("current_customer_phone") == true) {
+                            if (form_has_email && check_field("current_customer_email")) {
                                 var flag = false;
+
                             }
 
-                            if (check_field("current_shopify_id") == true) {
+                            if (form_has_phone && check_field("current_customer_phone")) {
                                 var flag = false;
+
                             }
 
-                            if (check_field("current_product_id") == true) {
+                            if (form_has_whatsapp && check_field("current_customer_whatsapp")) {
                                 var flag = false;
+
                             }
 
-                            if (check_field("current_country") == true) {
+                            if (form_has_address && check_field("current_address")) {
                                 var flag = false;
+
                             }
 
-                            if (check_field("current_order_date") == true) {
+
+
+                            if (form_has_states && check_field("current_state")) {
                                 var flag = false;
+
                             }
-                            if (check_field("current_product_type") == true) {
+
+                            if (form_has_delivery && check_field("current_delivery_date")) {
                                 var flag = false;
+
                             }
+
+                            if (check_field("current_order_amount")) {
+                                var flag = false;
+
+                            }
+
+                            if (check_field("current_order_number")) {
+                                var flag = false;
+
+                            }
+
+
 
                             if (flag == false) {
                                 toastr["warning"]("You have Missed Something to Fillup!");
@@ -382,7 +394,7 @@
                                         toastr["success"]("Record Updated Successfully!");
                                         $('#order_table').DataTable().ajax.reload();
 
-                                        $('#update-order-modal').modal('toggle');
+                                        $('#update-order-modal').modal('hide');
 
                                     } else if (result == "failed") {
                                         toastr["error"]("Failed to Update .Try again!");
@@ -395,8 +407,26 @@
                                     return false;
 
                                 },
-                                error: function(xhr) {
-                                    console.log(xhr);
+
+                                error: function(jqXHR, textStatus, errorThrown) {
+                                    console.log("AJAX Error: ", jqXHR, textStatus, errorThrown);
+
+                                    // Try parsing the error message from the server response
+                                    let errorMessage = "An error occurred. Please try again.";
+
+                                    // Attempt to parse error message from JSON response
+                                    if (jqXHR.responseText) {
+                                        try {
+                                            let response = JSON.parse(jqXHR.responseText);
+                                            errorMessage = response.message || errorMessage; // Use the server-provided message if available
+                                        } catch (e) {
+                                            console.error("Error parsing server error response: ", e);
+                                        }
+                                    }
+
+                                    // Display the error using toastr
+                                    toastr["error"](errorMessage);
+                                    // Enable the button and remove the overlay after an error
                                     $("#update-order-form-button").attr('disabled',
                                         false);
                                 }
@@ -409,31 +439,67 @@
             });
         }
 
-        function process_order(id) {
+        function update_status_fields(status) {
 
-            $('#process-order-modal').modal('show');
-            $('#process-order-form')[0].reset();
-            $('#order_id_field').val(id)
+            $('#discount_type, #discount_amount, #order_delivery_date').parents('.form-row').hide()
+            // $('#discount_type, $discount_amount').parents('.form-row').hide()
+            if (status == 'discount-sales') {
+                $('#discount_type, #discount_amount').parents('.form-row').show()
+            }
+
+            if (status == 'rescheduled') {
+                $('#order_delivery_date').parents('.form-row').show()
+            }
+        }
+
+        function change_status(id, status) {
+            update_status_fields(status)
+
+            $('#change-order-status-modal').modal('show');
+            $('#change-order-status-form')[0].reset();
+            $('#order_id_value').val(id)
 
 
-            $('#process-order-form-button').click(function(e) {
+            $('#update_status_value').val(status).trigger('change')
+
+
+            $('#update_status_value').on('change', function(e) {
+                let changed_status = $(this).val();
+                update_status_fields(changed_status)
+
+            })
+
+
+            $('#change-order-status-form-button').click(function(e) {
                 e.preventDefault();
+                let status = $('#update_status_value').val();
 
-                if (check_field("fulfilment_id") == true) {
+
+                if (check_field("update_status_value") == true) {
                     toastr["warning"]("You have Missed Something to Fillup!");
                     return;
                 }
 
-                data = new FormData($('#process-order-form')[0]); //form name
+                if (status == 'discount-sales' && (check_field("discount_type") == true || check_field("discount_amount") == true)) {
+                    toastr["warning"]("You have Missed Something to Fillup!");
+                    return;
+                }
+
+                if (status == 'rescheduled' && check_field("order_delivery_date") == true) {
+                    toastr["warning"]("You have Missed Something to Fillup!");
+                    return;
+                }
+
+                data = new FormData($('#change-order-status-form')[0]); //form name
                 /*Check XSS Code*/
                 if (!xss_validation(data)) {
                     return false;
                 }
                 $(".box").append('<div class="overlay"><i class="fa fa-refresh fa-spin"></i></div>');
-                $("#process-order-form-button").attr('disabled', true); //Enable Save or Update button
+                $("#change-order-status-form-button").attr('disabled', true); //Enable Save or Update button
                 $.ajax({
                     type: 'POST',
-                    url: "<?php echo site_url('orders/process_order') ?>",
+                    url: "<?php echo site_url('orders/update_order_status') ?>",
                     data: data,
                     cache: false,
                     contentType: false,
@@ -443,24 +509,42 @@
                             toastr["success"]("Record Updated Successfully!");
                             $('#order_table').DataTable().ajax.reload();
 
-                            $('#process-order-modal').modal('toggle');
-                            $("#process-order-form-button").attr('disabled', false);
+                            $('#change-order-status-modal').modal('hide');
+                            $("#change-order-status-form-button").attr('disabled', false);
 
                         } else if (result == "failed") {
                             toastr["error"]("Failed to Update .Try again!");
-                            $("#process-order-form-button").attr('disabled', false);
+                            $("#change-order-status-form-button").attr('disabled', false);
                         } else {
                             toastr["error"](result);
-                            $("#process-order-form-button").attr('disabled', false);
+                            $("#change-order-status-form-button").attr('disabled', false);
                         }
                         $(".overlay").remove();
-                        $("#process-order-form-button").attr('disabled', false);
-                        return false;
+                        $("#change-order-status-form-button").attr('disabled', false);
+                        // return false;
 
                     },
-                    error: function(xhr) {
-                        console.log(xhr);
-                        $("#update-order-form-button").attr('disabled',
+
+                    error: function(jqXHR, textStatus, errorThrown) {
+                        console.log("AJAX Error: ", jqXHR, textStatus, errorThrown);
+
+                        // Try parsing the error message from the server response
+                        let errorMessage = "An error occurred. Please try again.";
+
+                        // Attempt to parse error message from JSON response
+                        if (jqXHR.responseText) {
+                            try {
+                                let response = JSON.parse(jqXHR.responseText);
+                                errorMessage = response.message || errorMessage; // Use the server-provided message if available
+                            } catch (e) {
+                                console.error("Error parsing server error response: ", e);
+                            }
+                        }
+
+                        // Display the error using toastr
+                        toastr["error"](errorMessage);
+                        // Enable the button and remove the overlay after an error
+                        $("#change-order-status-form-button").attr('disabled',
                             false);
                     }
                 });
