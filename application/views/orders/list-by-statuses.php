@@ -268,6 +268,82 @@
             } //end confirmation
         }
 
+        function copy_order_details(id) {
+            $.ajax({
+                type: 'GET',
+                url: "<?php echo site_url('orders/orders_details_json_data/') ?>" + id,
+                contentType: 'application/json',
+                success: function(result) {
+                    try {
+                        if (result) {
+                            // Parse the JSON result
+                            const orderDetails = JSON.parse(result)[0];
+
+                            // Extract required order details
+                            const {
+                                form_id,
+                                form_bundle_id,
+                                country_id: country,
+                                order_date: orderDate,
+                                customer_name: customerName,
+                                customer_email: customerEmail,
+                                customer_phone: customerPhone,
+                                customer_whatsapp: customerWhatsapp,
+                                order_number: orderNumber,
+                                delivery_date: deliveryDate,
+                                address,
+                                state_id: state,
+                                amount: orderAmount,
+                                bundle_price: bundlePrice,
+                                form_has_customer_name,
+                                form_has_email,
+                                form_has_phone,
+                                form_has_whatsapp,
+                                form_has_address,
+                                form_has_states,
+                                form_has_delivery,
+                                form_delivery_choices,
+                                form_bundles,
+                                bundle_name,
+                            } = orderDetails;
+
+                            // Generate data string for copying
+                            const copyData = `
+                        ${form_has_customer_name == '1' ? `Customer Name: ${customerName}` : ''} \n
+                        ${form_has_email == '1' ? `Email: ${customerEmail}` : ''} \n
+                        ${form_has_address == '1' ? `Address: ${address}` : ''} \n
+                        ${form_has_states == '1' ? `State: ${state}` : ''} \n
+                        ${form_has_phone == '1' ? `Customer Phone: ${customerPhone}` : ''} \n
+                        ${form_has_whatsapp == '1' ? `WhatsApp Number: ${customerWhatsapp}` : ''} \n
+                        Order Number: ${orderNumber} \n
+                        Bundle: ${bundle_name || 'N/A'} \n
+                        Amount: ${orderAmount || bundlePrice || 'N/A'} \n
+                    `.trim();
+
+                            // Create a temporary textarea element for copying text
+                            const tempTextarea = $('<textarea>');
+                            $('body').append(tempTextarea);
+                            tempTextarea.val(copyData).select();
+                            document.execCommand('copy');
+                            tempTextarea.remove();
+
+                            // Notify user
+                            toastr["success"]("Order details copied to the clipboard");
+                        }
+                    } catch (error) {
+                        console.error("Error parsing order details:", error);
+                        toastr["error"]("Failed to copy order details.");
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error("AJAX Error:", error);
+                    toastr["error"]("Failed to fetch order details.");
+                },
+            });
+        }
+
+
+
         function update_order_model(id) {
 
             $.ajax({
@@ -450,6 +526,7 @@
                 }
             });
         }
+
 
         function update_status_fields(status) {
 
