@@ -309,16 +309,16 @@
 
                             // Generate data string for copying
                             const copyData = `
-                        ${form_has_customer_name == '1' ? `Customer Name: ${customerName}` : ''} \n
-                        ${form_has_email == '1' ? `Email: ${customerEmail}` : ''} \n
-                        ${form_has_address == '1' ? `Address: ${address}` : ''} \n
-                        ${form_has_states == '1' ? `State: ${state}` : ''} \n
-                        ${form_has_phone == '1' ? `Customer Phone: ${customerPhone}` : ''} \n
-                        ${form_has_whatsapp == '1' ? `WhatsApp Number: ${customerWhatsapp}` : ''} \n
-                        Order Number: ${orderNumber} \n
-                        Bundle: ${bundle_name || 'N/A'} \n
-                        Amount: ${orderAmount || bundlePrice || 'N/A'} \n
-                    `.trim();
+Customer Name: ${form_has_customer_name == '1' ? customerName.trim() : ''} 
+Email:         ${form_has_email == '1' ? customerEmail.trim() : ''} 
+Address:       ${form_has_address == '1' ? address.trim() : ''} 
+State:         ${form_has_states == '1' ? state.trim() : ''} 
+Customer Phone:${form_has_phone == '1' ? customerPhone.trim() : ''} 
+WhatsApp:      ${form_has_whatsapp == '1' ? customerWhatsapp.trim() : ''} 
+Order Number:  ${orderNumber.trim()} 
+Bundle:        ${bundle_name ? bundle_name.trim() : 'N/A'} 
+Amount:        ${orderAmount || bundlePrice || 'N/A'} 
+`.trim();
 
                             // Create a temporary textarea element for copying text
                             const tempTextarea = $('<textarea>');
