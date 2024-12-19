@@ -1,7 +1,4 @@
-ERROR - 2024-12-19 13:04:09 --> Severity: error --> Exception: Unable to locate the model you have specified: Order_model /Applications/AMPPS/www/backend.myproda.test/system/core/Loader.php 348
-ERROR - 2024-12-19 13:05:05 --> Severity: Warning --> Undefined property: stdClass::$price /Applications/AMPPS/www/backend.myproda.test/application/controllers/Forms.php 232
-ERROR - 2024-12-19 13:05:05 --> Severity: Warning --> Undefined variable $CUR_USERNAME /Applications/AMPPS/www/backend.myproda.test/application/controllers/Forms.php 251
-ERROR - 2024-12-19 13:06:29 --> Severity: Warning --> Undefined property: stdClass::$price /Applications/AMPPS/www/backend.myproda.test/application/controllers/Forms.php 232
-ERROR - 2024-12-19 13:08:09 --> Severity: Warning --> Undefined variable $CUR_USERNAME /Applications/AMPPS/www/backend.myproda.test/application/controllers/Orders.php 617
-ERROR - 2024-12-19 13:17:27 --> 404 Page Not Found: 
-ERROR - 2024-12-19 13:17:58 --> Could not find the language line "company_address"
+ERROR - 2024-12-19 13:33:17 --> Severity: Warning --> Undefined variable $order_items /Applications/AMPPS/www/backend.myproda.test/application/views/orders/receipt.php 166
+ERROR - 2024-12-19 13:33:17 --> Severity: Warning --> foreach() argument must be of type array|object, null given /Applications/AMPPS/www/backend.myproda.test/application/views/orders/receipt.php 166
+ERROR - 2024-12-19 12:36:04 --> 404 Page Not Found: Faviconico/index
+ERROR - 2024-12-19 13:39:07 --> Severity: error --> Exception: syntax error, unexpected token "=", expecting end of file /Applications/AMPPS/www/backend.myproda.test/application/views/orders/receipt.php 85

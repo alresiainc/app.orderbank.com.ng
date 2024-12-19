@@ -81,6 +81,15 @@ class Orders extends MY_Controller
         $this->load->view('orders/history', $data);
     }
 
+    public function receipt($order_id)
+    {
+
+        $data = $this->data;
+        $data['page_title'] = "Orders Receipt";
+        $data['order_id'] = $order_id;
+        $this->load->view('orders/receipt', $data);
+    }
+
     public function store()
     {
         $this->form_validation->set_rules('shopify_id', 'Shopify ID', 'trim|required');
