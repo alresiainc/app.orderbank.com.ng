@@ -8,7 +8,7 @@ $order_status = $ci->config->item('order_status');
 
 $current_segment = $this->uri->segment(2); // Get the current URI segment
 $active_classes = implode(' ', array_map(function ($key, $item) use ($current_segment) {
-    return ($key == $current_segment) ? 'active' : 'order-' . $key . '-active-li';
+    return ($key == $current_segment || $current_segment == 'history' || $current_segment == 'receipt') ? 'active' : 'order-' . $key . '-active-li';
 }, array_keys($order_status), $order_status));
 
 

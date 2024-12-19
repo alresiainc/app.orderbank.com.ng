@@ -48,13 +48,9 @@ class Orders_model extends CI_Model
         'e.price as bundle_price',  // Bundle price
         'a.created_at',             // Record creation timestamp
         'a.updated_at',
-        //Get the last updated history date (last update of the order)
         'MAX(g.updated_at) AS last_update_date',
-        //Concatenate all history descriptions
-        'GROUP_CONCAT(DISTINCT g.action ORDER BY g.updated_at DESC SEPARATOR "; ") AS history_description'
+
     );
-
-
 
 
     var $column_search = array(
@@ -107,9 +103,11 @@ class Orders_model extends CI_Model
         $this->db->join('db_states as d', 'd.id = a.state', 'left');
         $this->db->join('db_form_bundles as e', 'e.id = a.form_bundle_id', 'left');
         $this->db->join('db_forms as f', 'f.id = a.form_id', 'left');
+        // $this->db->join('db_order_histories as g', 'g.order_id = a.id', 'left');
+        // Join to get all order history entries
         $this->db->join('db_order_histories as g', 'g.order_id = a.id', 'left');
-
-        // ... other existing joins and conditions ...
+        // Group by order id to avoid duplicating rows
+        $this->db->group_by('a.id'); // Grouping by the order ID, as the main focus is on each order
 
         $i = 0;
 
@@ -219,7 +217,7 @@ class Orders_model extends CI_Model
             $this->db->where("a.status", $status);
         }
 
-
+        // print_r($_POST['length']);
 
         if ($_POST['length'] != -1) {
             $this->db->limit($_POST['length'], $_POST['start']);
@@ -459,5 +457,39 @@ class Orders_model extends CI_Model
             // Order not found
             return 'order_not_found';
         }
+    }
+
+    public function get_order_history($order_id)
+    {
+        // Check if the order exists by order_id
+        $this->db->select('*');
+        $this->db->from('db_order_histories'); // Assuming the order table is named 'orders'
+        $this->db->where('order_id', $order_id);
+
+        // $country = $this->input->post('country');
+        // if (!empty($country) && is_array($country)) {
+        //     $this->db->where_in('a.country', $country);
+        // }
+
+        if ($_POST['length'] != -1)
+            $this->db->limit($_POST['length'], $_POST['start']);
+        $query = $this->db->get();
+        return $query->result();
+    }
+
+    public function count_order_history_by_id($order_id)
+    {
+        $this->db->from('db_order_histories'); // Assuming the order table is named 'orders'
+        $this->db->where('order_id', $order_id);
+        return $this->db->count_all_results();
+    }
+
+    public function filtered_order_history_count_by_id($order_id)
+    {
+        $this->db->from('db_order_histories'); // Assuming the order table is named 'orders'
+        $this->db->where('order_id', $order_id);
+
+        $query = $this->db->get();
+        return $query->num_rows();
     }
 }

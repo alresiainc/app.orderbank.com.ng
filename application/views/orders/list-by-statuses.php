@@ -208,6 +208,18 @@
             increaseArea: '10%'
         });
 
+        function view_order_history(id) {
+            var base_url = "<?php echo base_url('/orders/history/'); ?>";
+
+            window.location.href = base_url + id
+        }
+
+        function print_receipt(id) {
+            var base_url = "<?php echo base_url('/orders/history/'); ?>";
+
+            window.location.href = base_url + id
+        }
+
         function check_field(id) {
             var field = $("#" + id);
 
@@ -740,7 +752,7 @@
                 "serverSide": true, //Feature control DataTables' server-side processing mode.
                 "order": [], //Initial no order.
                 "responsive": true,
-                length: 2,
+                // length: 2,
                 language: {
                     processing: '<div class="text-primary bg-primary" style="position: relative;z-index:100;overflow: visible;">Processing...</div>'
                 },
@@ -763,7 +775,7 @@
                         });
                         $("#order_search").removeClass('ui-autocomplete-loading');
                         // call_code();
-                        show_bulk_option_btn();
+                        // show_bulk_option_btn();
                     },
 
                 },
@@ -934,27 +946,27 @@
             });
 
 
-            $(document).on('ifChanged', '.single_checkbox', function(event) {
+            // $(document).on('ifChanged', '.single_checkbox', function(event) {
 
-                if (event.target.checked) {
-                    var bulk_checkbox = $(document).find(".bulk_checkbox").prop("checked") ? 1 : 0;
-                    var all_checkbox_count = $('#order_table').find('input[type=checkbox]:checked')
-                        .length - parseInt(bulk_checkbox);
-                    var single_checkbox = $(document).find(".single_checkbox").length
+            //     if (event.target.checked) {
+            //         var bulk_checkbox = $(document).find(".bulk_checkbox").prop("checked") ? 1 : 0;
+            //         var all_checkbox_count = $('#order_table').find('input[type=checkbox]:checked')
+            //             .length - parseInt(bulk_checkbox);
+            //         var single_checkbox = $(document).find(".single_checkbox").length
 
-                    if (parseInt(all_checkbox_count) == parseInt(single_checkbox)) {
-                        $(".bulk_checkbox").prop("checked", true).iCheck('update');
-                        // $(".bulk_action_btn").removeClass('hidden').show();
-                    } else {
-                        $(".bulk_action_btn").addClass('hidden').hide();
-                    }
-                } else {
-                    $(".bulk_checkbox").prop("checked", false).iCheck('update');
-                }
+            //         if (parseInt(all_checkbox_count) == parseInt(single_checkbox)) {
+            //             $(".bulk_checkbox").prop("checked", true).iCheck('update');
+            //             // $(".bulk_action_btn").removeClass('hidden').show();
+            //         } else {
+            //             $(".bulk_action_btn").addClass('hidden').hide();
+            //         }
+            //     } else {
+            //         $(".bulk_checkbox").prop("checked", false).iCheck('update');
+            //     }
 
 
-                show_bulk_option_btn();
-            });
+            //     show_bulk_option_btn();
+            // });
 
 
             function call_code() {

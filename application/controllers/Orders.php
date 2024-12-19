@@ -72,6 +72,15 @@ class Orders extends MY_Controller
         $this->load->view('orders/reports', $data);
     }
 
+    public function history($order_id)
+    {
+
+        $data = $this->data;
+        $data['page_title'] = "Orders History";
+        $data['order_id'] = $order_id;
+        $this->load->view('orders/history', $data);
+    }
+
     public function store()
     {
         $this->form_validation->set_rules('shopify_id', 'Shopify ID', 'trim|required');
@@ -234,6 +243,9 @@ class Orders extends MY_Controller
         log_message('debug', "Requested status: $status");
         $no = $_POST['start'];
 
+        // print_r($list);
+        // die;
+
         foreach ($list as $order) {
             $no++;
             $row = [];
@@ -269,6 +281,45 @@ class Orders extends MY_Controller
             "recordsFiltered" => $this->orders->filtered_orders_count_by_status($status),
             "data" => $data,
             "status" => $status,
+        ];
+
+        echo json_encode($output);
+    }
+
+    public function order_history_json_data($id)
+    {
+
+
+
+        $list = $this->orders->get_order_history($id);
+        $data = [];
+        $no = $_POST['start'];
+        foreach ($list as $history) {
+            $no++;
+            $row = [];
+
+
+            $row[] = $no;
+
+
+            $row[] = '<div><div> ' . $history->action . ' </div> <small style="opacity: 0.5;"> Performed by ' . $history->performed_by . ' </small></div>';
+
+
+            $row[] = '<p> ' . $history->description . '</p>';
+
+
+            $row[] = $history->created_at ? '<div style="text-wrap: wrap; word-wrap: break-word;  margin-top: 5px;">' . date('jS \of M, Y \a\t g:ia', strtotime($history->created_at)) . '</div>' : '<div style="text-wrap: wrap; word-wrap: break-word;  margin-top: 5px; text-align: center; width: 150px;">-</div>';
+
+            $data[] = $row;
+        }
+
+        // Output JSON
+        $output = [
+            "draw" => $_POST['draw'],
+            "recordsTotal" => $this->orders->count_order_history_by_id($id),
+            "recordsFiltered" => $this->orders->filtered_order_history_count_by_id($id),
+            "data" => $data,
+            "id" => $id,
         ];
 
         echo json_encode($output);
@@ -338,7 +389,7 @@ class Orders extends MY_Controller
         // Get the appropriate button class
 
 
-        $buttonClass = $order_status[$current_status] ? 'btn-' . $order_status[$current_status] : 'btn-default';
+        $buttonClass = $order_status[$current_status] ? 'btn-' . $order_status[$current_status]['color'] : 'btn-default';
         $label = $order_status[$current_status] ? $order_status[$current_status]['label'] : 'Unknown';
 
         // Dropdown for changing status
@@ -384,12 +435,12 @@ class Orders extends MY_Controller
                             </a>
                         </li>
                         <li>
-                            <a title="Print Receipt" onclick="print_receipt(\'' . $id . '\')">
+                            <a title="Print Receipt" href="' . base_url('/orders/receipt/' . $id) . '">
                                 <i class="fa fa-fw fa-newspaper-o text-blue"></i>Receipt
                             </a>
                         </li>
                         <li>
-                            <a title="View Order History" onclick="view_order_history(\'' . $id . '\')">
+                            <a title="View Order History" href="' . base_url('/orders/history/' . $id) . '">
                                 <i class="fa fa-fw fa-history text-blue"></i>History
                             </a>
                         </li>
@@ -567,7 +618,7 @@ class Orders extends MY_Controller
                 'Status Changed', // action
                 $historyDescription, // dynamic description
                 null, // user_id (optional)
-                null // performed_by (optional)
+                $this->session->userdata('inv_username')
             );
 
             echo $result;

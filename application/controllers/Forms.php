@@ -16,6 +16,7 @@ class Forms extends MY_Controller
             $this->load_global();
         }
         $this->load->model('Form_model', 'forms');
+        $this->load->model('Orders_model', 'orders');
         $this->load->model('Form_bundles_model', 'form_bundles');
         $this->load->model('State_model', 'states');
         $this->load->library('wassenger');
@@ -245,6 +246,14 @@ class Forms extends MY_Controller
             // Save the new order
             $orderData['status'] = 'new';
             $orderId = $this->forms->create_order($orderData);
+
+            $this->orders->add_order_history(
+                $orderId, // order_id
+                'Created', // action
+                "Order was created", // dynamic description
+                null, // user_id (optional)
+                $formData['customer_name']
+            );
 
             echo json_encode(['success' => true, 'message' => 'Form submitted successfully.', 'order_id' => $orderId]);
         } else {
