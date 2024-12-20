@@ -317,6 +317,19 @@
             });
         }
 
+        $('#show-hide-placeholder').click(function(e) {
+            e.preventDefault(); // Prevent the default anchor behavior
+
+            const isVisible = $('.place-holder-container').is(':visible');
+
+            if (isVisible) {
+                $('.place-holder-container').slideUp();
+                $(this).text('Show Placeholder');
+            } else {
+                $('.place-holder-container').slideDown();
+                $(this).text('Hide Placeholder');
+            }
+        });
 
         function load_datatable() {
             //datatables

@@ -808,7 +808,7 @@ class Orders extends MY_Controller
     public function send_order_message($order, $status, $type = 'whatsapp')
     {
         $template =  $this->orders->get_message($status, $type);
-        $message = $template[0]->message;
+        $message = $this->resolveTemplate($order, $template[0]->message);
 
         $imageUrl = !empty($order->bundle_image)
             ? base_url(return_item_image_thumb($order->bundle_image))
@@ -873,5 +873,47 @@ class Orders extends MY_Controller
         } else {
             return $newSring . '...';
         }
+    }
+
+    public function resolveTemplate($order, $template)
+    {
+        // Map placeholders to their corresponding order properties
+        $placeholders = [
+            '[order_number]' => $order->order_number,
+            '[customer_name]' => $order->customer_name,
+            '[customer_phone]' => $order->customer_phone,
+            '[customer_whatsapp]' => $order->customer_whatsapp,
+            '[customer_email]' => $order->customer_email,
+            '[customer_address]' => $order->address,
+            '[order_date]' => $order->order_date,
+            '[rescheduled_date]' => $order->rescheduled_date,
+            '[delivery_date]' => $order->delivery_date,
+            '[status]' => $order->status,
+            '[country]' => $order->country,
+            '[state]' => $order->state,
+            '[quantity]' => $order->quantity,
+            '[amount]' => $order->amount,
+            '[bundle_name]' => $order->bundle_name,
+            '[bundle_image]' => $order->bundle_image,
+            '[bundle_description]' => $order->bundle_description,
+            '[bundle_price]' => $order->bundle_price,
+            '[discount_type]' => $order->discount_type,
+            '[discount_amount]' => $order->discount_amount,
+        ];
+
+        // Calculate the discount price
+        if ($order->discount_type === 'percentage') {
+            $discount_price = $order->amount - ($order->amount * ($order->discount_amount / 100));
+        } else {
+            $discount_price = $order->amount - $order->discount_amount;
+        }
+        $placeholders['[discount_price]'] = $discount_price;
+
+        // Replace all placeholders in the template
+        foreach ($placeholders as $placeholder => $value) {
+            $template = str_replace($placeholder, $value, $template);
+        }
+
+        return $template;
     }
 }
