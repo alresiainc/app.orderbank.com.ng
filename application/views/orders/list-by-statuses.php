@@ -401,6 +401,7 @@ Amount:        ${orderAmount || bundlePrice || 'N/A'}
                             'change');
 
                         $('#update-order-modal').modal('show');
+                        $('#update-order-form-button').off('click');
 
                         $('#update-order-form-button').click(function(e) {
                             e.preventDefault();
@@ -558,7 +559,7 @@ Amount:        ${orderAmount || bundlePrice || 'N/A'}
 
             })
 
-
+            $('#change-order-status-form-button').off('click');
             $('#change-order-status-form-button').click(function(e) {
                 e.preventDefault();
                 let status = $('#update_status_value').val();
@@ -594,6 +595,8 @@ Amount:        ${orderAmount || bundlePrice || 'N/A'}
                     contentType: false,
                     processData: false,
                     success: function(result) {
+                        console.log("result:", result);
+
                         if (result == "success") {
                             toastr["success"]("Record Updated Successfully!");
                             $('#order_table').DataTable().ajax.reload();

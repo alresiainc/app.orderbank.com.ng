@@ -152,6 +152,7 @@ class MY_Controller extends CI_Controller
   //   }
   // }
 
+
   public function currency($value = '', $with_comma = false)
   {
     $value = trim($value);

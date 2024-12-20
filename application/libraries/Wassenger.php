@@ -26,29 +26,37 @@ class Wassenger
     /**
      * Magic method to pass method calls to the respective classes.
      */
-    public function __call($method, $arguments)
+    // public function __call($method, $arguments)
+    // {
+    //     // Forward call to Wassenger class
+    //     if (method_exists($this->wassenger, $method)) {
+    //         return call_user_func_array([$this->wassenger, $method], $arguments);
+    //     }
+
+    //     // Forward call to Messages class
+    //     if (method_exists($this->messages, $method)) {
+    //         return call_user_func_array([$this->messages, $method], $arguments);
+    //     }
+
+    //     // Forward call to Devices class
+    //     if (method_exists($this->devices, $method)) {
+    //         return call_user_func_array([$this->devices, $method], $arguments);
+    //     }
+
+    //     // Forward call to Session class
+    //     if (method_exists($this->session, $method)) {
+    //         return call_user_func_array([$this->session, $method], $arguments);
+    //     }
+
+    //     // If method is not found in any class, throw an exception
+    //     throw new \BadMethodCallException("Method {$method} not found in Wassenger classes.");
+    // }
+
+    public function sendMessage($phone, $message)
     {
-        // Forward call to Wassenger class
-        if (method_exists($this->wassenger, $method)) {
-            return call_user_func_array([$this->wassenger, $method], $arguments);
-        }
 
-        // Forward call to Messages class
-        if (method_exists($this->messages, $method)) {
-            return call_user_func_array([$this->messages, $method], $arguments);
+        if (WassengerClass::numberExist($phone)) {
+            Messages::message($phone, $message)->send();
         }
-
-        // Forward call to Devices class
-        if (method_exists($this->devices, $method)) {
-            return call_user_func_array([$this->devices, $method], $arguments);
-        }
-
-        // Forward call to Session class
-        if (method_exists($this->session, $method)) {
-            return call_user_func_array([$this->session, $method], $arguments);
-        }
-
-        // If method is not found in any class, throw an exception
-        throw new \BadMethodCallException("Method {$method} not found in Wassenger classes.");
     }
 }

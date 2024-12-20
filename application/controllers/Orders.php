@@ -3,6 +3,11 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
 use Dompdf\Dompdf;
 use Dompdf\Options;
+use Alresia\LaravelWassenger\Wassenger;
+use Alresia\LaravelWassenger\Messages;
+use Alresia\LaravelWassenger\Devices;
+use Alresia\LaravelWassenger\Exceptions\LaravelWassengerException;
+use Alresia\LaravelWassenger\Session;
 
 
 class Orders extends MY_Controller
@@ -79,6 +84,15 @@ class Orders extends MY_Controller
         $data['page_title'] = "Orders History";
         $data['order_id'] = $order_id;
         $this->load->view('orders/history', $data);
+    }
+
+    public function message_settings()
+    {
+
+        $data = $this->data;
+        $data['page_title'] = "Orders Messages";
+
+        $this->load->view('orders/messages-settings', $data);
     }
 
     public function receipt($order_id)
@@ -305,6 +319,66 @@ class Orders extends MY_Controller
         ];
 
         echo json_encode($output);
+    }
+
+    public function order_message_json_data()
+    {
+        $type = trim($_POST['type'] ?? 'whatsapp');
+
+
+
+        $data = [];
+        log_message('debug', "Requested status: $type");
+        $no = $_POST['start'];
+
+
+        $list = $this->orders->get_or_create_messages_by_status($type);
+
+
+
+        foreach ($list as $message) {
+
+            $no++;
+            $row = [];
+
+            // Column 1: Serial number
+            $row[] = $no;
+
+            $messageCol =   "<div style='text-align:left;'>";
+            $messageCol .=   "<div style='font-weight:600;'>{$message->title}</div>";
+            $messageCol .=   "<small> {$this->break_text($message->subject, 50)} ... {$this->break_text($message->message, 100)}</small>";
+
+
+            $messageCol .=   "</div>";
+            $row[] = $messageCol;
+
+            $row[] = $message->created_at ? date('jS \of M, Y', strtotime($message->created_at)) : '-';
+
+            $row[] = "
+                    <a style='cursor:pointer' onclick=\"update_message_template('{$message->id}')\" class='btn btn-sm btn-primary'>
+                       Edit Template 
+                    </a>
+                    ";
+            $data[] = $row;
+        }
+
+
+
+        // Output JSON
+        $output = [
+            "draw" => $_POST['draw'],
+            "recordsTotal" => $this->orders->count_order_messages_by_type($type),
+            "recordsFiltered" => $this->orders->filtered_order_messages_count_by_type($type),
+            "data" => $data,
+            "type" => $type,
+        ];
+
+        echo json_encode($output);
+    }
+
+    public function message_json_data($id)
+    {
+        echo json_encode($this->orders->get_message_by_id($id));
     }
 
     public function order_history_json_data($id)
@@ -651,7 +725,9 @@ class Orders extends MY_Controller
             $result = $this->orders->update_orders_by_id($id, $orderData);
 
             // Send any necessary order message
-            $this->send_order_message($status);
+            $updatedOrder = $this->orders->get_orders_by_id($id);
+
+            $this->send_order_message($updatedOrder[0], $status);
 
             // Add the order history with the dynamically built description
             $this->orders->add_order_history(
@@ -661,6 +737,33 @@ class Orders extends MY_Controller
                 null, // user_id (optional)
                 $this->session->userdata('inv_username')
             );
+
+            echo $result;
+        } else {
+            // Validation failed, return the error messages
+            $errorMessages = validation_errors();
+            echo $errorMessages;
+        }
+    }
+
+    public function update_message_template($id)
+    {
+
+        $this->form_validation->set_rules('subject', 'Subject', 'trim|required');
+        $this->form_validation->set_rules('message', 'Content', 'trim|required');
+
+        if ($this->form_validation->run() == TRUE) {
+
+            $formData = $this->input->post();
+            $message = $formData['message'];
+            $subject = $formData['subject'];
+
+            $data = [
+                'subject' => $subject,
+                'message' => $message,
+            ];
+            // Call the model method to store the order
+            $result = $this->orders->update_message_by_id($id, $data);
 
             echo $result;
         } else {
@@ -702,8 +805,56 @@ class Orders extends MY_Controller
         // $this->load->view('test', $data);
     }
 
-    public function send_order_message($status, $type = 'whatsapp')
+    public function send_order_message($order, $status, $type = 'whatsapp')
     {
         $message =  $this->orders->get_message($status, $type);
+        $customer_whatsapp = $order->customer_whatsapp;
+        $imageUrl = !empty($order->bundle_image)
+            ? base_url(return_item_image_thumb($order->bundle_image))
+            : base_url() . "theme/images/no_image.png";
+
+        // if (Wassenger::numberExist($phone)) {
+        //     Messages::message($phone, $message)->send();
+        // }
+        try {
+            // Send WhatsApp message via Messages API 
+
+            Messages::message($this->toCountryCode($order->customer_whatsapp), $message)
+                ->media(['url', $imageUrl])
+                ->send();
+
+            if ($order->customer_whatsapp != $order->customer_phone) {
+                Messages::message($this->toCountryCode($order->customer_phone), $message)
+                    ->media(['url', $imageUrl])
+                    ->send();
+            }
+        } catch (LaravelWassengerException $e) {
+            // Handle exception
+            log_message('error', "LaravelWassengerException:" . json_encode($e));
+        }
+    }
+
+
+    public function toCountryCode($phone, $cCode = '+234', $nMax = 10)
+    {
+
+        //Get the last character.
+        $lastNum = $phone[strlen($phone) - 1];
+        $formatNum = $cCode . '' . substr($phone, -$nMax, -1) . '' . $lastNum;
+        return $formatNum;
+        // echo toCountryCode('2349022233344').'<br>'; //Must Result +2349022233344
+        // echo toCountryCode('09022233344').'<br>'; //Must Result +2349022233344
+        // echo toCountryCode('+23409022233344').'<br>'; //Must Result +2349022233344
+        // echo toCountryCode('23409022233344').'<br>'; //Must Result +2349022233344
+    }
+
+    public function break_text($text, $return = 10)
+    {
+        $newSring = substr($text, 0, $return);
+        if (strlen($text) < $return) {
+            return $newSring;
+        } else {
+            return $newSring . '...';
+        }
     }
 }

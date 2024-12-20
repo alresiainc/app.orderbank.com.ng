@@ -38,8 +38,8 @@
             <!-- **********************MODALS***************** -->
 
 
-            <?php $this->load->view('forms/modals/modal_update_bundle'); ?>
-            <?php $this->load->view('forms/modals/modal_new_bundle'); ?>
+            <?php $this->load->view('orders/modals/modal_update_message_template'); ?>
+
 
 
             <!-- **********************MODALS END***************** -->
@@ -104,14 +104,14 @@
                                                 </div> -->
                                                 <div class="box-body">
                                                     <div class="table-responsive" style="width: 100%">
-                                                        <table id="bundle_table" class="table custom_hover "
+                                                        <table id="message_table" class="table custom_hover "
                                                             width="100%">
                                                             <thead class="bg-gray ">
                                                                 <tr>
                                                                     <th>S/N</th>
+                                                                    <th>Message</th>
+                                                                    <th>Last Updated</th>
                                                                     <th>Action</th>
-                                                                    <th>Description</th>
-                                                                    <th>Date</th>
                                                                 </tr>
                                                             </thead>
                                                             <tbody>
@@ -123,6 +123,7 @@
                                                                     <th></th>
                                                                     <th></th>
                                                                     <th></th>
+
 
                                                                 </tr>
                                                             </tfoot>
@@ -213,18 +214,114 @@
         }
 
 
+        function update_message_template(id) {
+            $.ajax({
+                type: 'GET',
+                url: "<?php echo site_url('orders/message_json_data/') ?>" + id,
+                contentType: 'JSON',
+                success: function(result) {
+                    if (result) {
+                        console.log(result);
 
+                        // Reset the form
+                        $('#update-message-template-form')[0].reset();
 
+                        // Parse message details
+                        var messageDetails = jQuery.parseJSON(result)[0];
+                        var subject = messageDetails.subject;
+                        var message = messageDetails.message;
+                        var messageId = messageDetails.id;
 
+                        // Populate the form fields
+                        $('#message_subject').val(subject);
+                        $('#message_content').val(message);
 
+                        // Show the modal
+                        $('#update-message-template-modal').modal('show');
 
+                        // Remove any existing event handlers from the button
+                        $('#update-message-template-form-button').off('click');
 
+                        // Attach a new click event handler
+                        $('#update-message-template-form-button').click(function(e) {
+                            e.preventDefault();
+
+                            var flag = true;
+
+                            // Validate Input boxes
+                            if (check_field("message_subject")) {
+                                flag = false;
+                            }
+                            if (check_field("message_content")) {
+                                flag = false;
+                            }
+
+                            if (flag == false) {
+                                toastr["warning"]("You have Missed Something to Fill up!");
+                                return;
+                            }
+
+                            // Prepare the data for submission
+                            var data = new FormData($('#update-message-template-form')[0]);
+
+                            // Check XSS Code
+                            if (!xss_validation(data)) {
+                                return false;
+                            }
+
+                            // Show loading overlay and disable the button
+                            $(".box").append('<div class="overlay"><i class="fa fa-refresh fa-spin"></i></div>');
+                            $("#update-message-template-form-button").attr('disabled', true);
+
+                            // Perform the AJAX request to update the message
+                            $.ajax({
+                                type: 'POST',
+                                url: "<?php echo site_url('orders/update_message_template/') ?>" + messageId,
+                                data: data,
+                                cache: false,
+                                contentType: false,
+                                processData: false,
+                                success: function(result) {
+                                    if (result == "success") {
+                                        toastr["success"]("Record Updated Successfully!");
+                                        $('#message_table').DataTable().ajax.reload();
+                                        $('#update-message-template-modal').modal('hide');
+                                    } else if (result == "failed") {
+                                        toastr["error"]("Failed to Update. Try again!");
+                                    } else {
+                                        toastr["error"](result);
+                                    }
+                                    $(".overlay").remove();
+                                    $("#update-message-template-form-button").attr('disabled', false);
+                                },
+                                error: function(jqXHR, textStatus, errorThrown) {
+                                    console.log("AJAX Error: ", jqXHR, textStatus, errorThrown);
+
+                                    let errorMessage = "An error occurred. Please try again.";
+                                    if (jqXHR.responseText) {
+                                        try {
+                                            let response = JSON.parse(jqXHR.responseText);
+                                            errorMessage = response.message || errorMessage;
+                                        } catch (e) {
+                                            console.error("Error parsing server error response: ", e);
+                                        }
+                                    }
+                                    toastr["error"](errorMessage);
+                                    $(".overlay").remove();
+                                    $("#update-message-template-form-button").attr('disabled', false);
+                                }
+                            });
+                        });
+                    }
+                }
+            });
+        }
 
 
         function load_datatable() {
             //datatables
             var search_table = $('#order_search').val();
-            var table = $('#bundle_table').DataTable({
+            var table = $('#message_table').DataTable({
 
                 "aLengthMenu": [
                     [10, 25, 50, 100, 500],
@@ -241,10 +338,11 @@
                 },
                 // Load data for the table's content from an Ajax source
                 "ajax": {
-                    "url": "<?php echo site_url('orders/order_history_json_data/' . $order_id) ?>",
+                    "url": "<?php echo site_url('orders/order_message_json_data/') ?>",
                     "type": "POST",
                     "data": {
                         search_table: search_table,
+                        type: 'whatsapp',
                     },
                     complete: function(data) {
                         console.log("data:", data);
@@ -272,26 +370,6 @@
                     },
 
                 ],
-                /*Start Footer Total*/
-                // "footerCallback": function(row, data, start, end, display) {
-                //     var api = this.api(),
-                //         data;
-                //     // Remove the formatting to get integer data for summation
-                //     var intVal = function(i) {
-                //         return typeof i === 'string' ?
-                //             i.replace(/[\$,]/g, '') * 1 :
-                //             typeof i === 'number' ?
-                //             i : 0;
-                //     };
-
-                //     // var total = api
-                //     //     .rows().count();
-                //     // $(api.column(6).footer()).html(total);
-
-                // },
-                /*End Footer Total*/
-
-
 
                 "initComplete": function() {
                     $("#order_search").removeClass('ui-autocomplete-loading');

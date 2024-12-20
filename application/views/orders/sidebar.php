@@ -52,6 +52,11 @@ if (!is_user()) { ?>
                     <i class="fa fa-files-o "></i><span>Reports</span>
                 </a>
             </li>
+            <li class="reports-active-li">
+                <a href="<?php echo $base_url; ?>orders/message-settings">
+                    <i class="fa fa-gear "></i><span>Orders Message Settings</span>
+                </a>
+            </li>
         </ul>
     </li>
 <?php } ?>
