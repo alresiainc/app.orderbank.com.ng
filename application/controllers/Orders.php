@@ -265,8 +265,20 @@ class Orders extends MY_Controller
             // Column 2: Customer email with image
             $row[] = $this->formatCustomerColumn($order);
 
+            $order_date =  date('jS \of M, Y \a\t g:ia', strtotime($order->order_date));
+            $col3 =   "<div style='text-align:center;'>";
+            $col3 .=   "<div style='font-weight:600;'>{$order->customer_email}</div>";
+            $col3 .=   "<small>{$order_date}</small>";
+
+            if ($order->rescheduled_date) {
+                $rescheduled_date =  date('jS \of M, Y \a\t g:ia', strtotime($order->rescheduled_date));
+                $col3 .=   "<br><small><strong>Rescheduled date:</strong> <br> {$rescheduled_date}</small>";
+            }
+            $col3 .=   "</div>";
+            //rescheduled_date
             // Column 3: Order date
-            $row[] = $order->order_date ? '<div style="text-wrap: wrap; word-wrap: break-word;  margin-top: 5px; text-align: center; width: 150px;">' . date('jS \of M, Y \a\t g:ia', strtotime($order->order_date)) . '</div>' : '<div style="text-wrap: wrap; word-wrap: break-word;  margin-top: 5px; text-align: center; width: 150px;">-</div>';
+            $row[] = $col3;
+            // $row[] = $order->order_date ? '<div style="text-wrap: wrap; word-wrap: break-word;  margin-top: 5px; text-align: center; width: 150px;">' . date('jS \of M, Y \a\t g:ia', strtotime($order->order_date)) . '</div>' : '<div style="text-wrap: wrap; word-wrap: break-word;  margin-top: 5px; text-align: center; width: 150px;">-</div>';
 
             // Column 4: Customer details
             $row[] = $this->formatCustomerDetails($order);
@@ -278,7 +290,7 @@ class Orders extends MY_Controller
             $row[] = $this->formatStatusColumn($order);
 
             // Column 7: Actions
-            $row[] = $this->formatActions($order->id);
+            $row[] = $this->formatActions($order);
 
             $data[] = $row;
         }
@@ -339,30 +351,31 @@ class Orders extends MY_Controller
     {
         $image = !empty($order->bundle_image)
             ? "<a title='Click for Bigger!' href='" . base_url($order->bundle_image) . "' data-toggle='lightbox'>
-                   <img style='border:1px #72afd2 solid; height: 35px; width: 35px;' 
+                   <img style='border:1px #72afd2 solid; height: 75px; width: 75px;' 
                         src='" . base_url(return_item_image_thumb($order->bundle_image)) . "' alt='Image'> 
                </a>"
-            : "<img style='border:1px #72afd2 solid; height: 35px; width: 35px;' 
+            : "<img style='border:1px #72afd2 solid; height: 75px; width: 75px;' 
                      src='" . base_url() . "theme/images/no_image.png' title='No Image!' alt='No Image'>";
 
         return "<div style='display:flex; align-items:center; justify-content:start; gap:5px;'>
                     <div>{$image}</div>
-                    <div style='font-weight:600;'>{$order->customer_email}</div>
+                    
                 </div>";
     }
 
     // Helper: Format customer details
     private function formatCustomerDetails($order)
     {
+        $quantity = $order->quantity ?? 1;
         return "<ul style='margin:0; padding:0;'>
                     <li><strong>Customer Name:</strong> {$order->customer_name}</li>
                     <li><strong>Address:</strong> {$order->address}</li>
                     <li><strong>State:</strong> {$order->state}</li>
                     <li><strong>Customer Phone:</strong> {$order->customer_phone}</li>
-                    <li><strong>WhatsApp Number:</strong> {$order->customer_whatsapp}</li>
+                    <li><strong>Alternative Number:</strong> {$order->customer_whatsapp}</li>
                     <li><strong>Order Number:</strong> {$order->order_number}</li>
-                    <li><strong>Bundle:</strong> {$order->bundle_name}</li>
-                    <li><strong>Amount:</strong> {$order->bundle_price}</li>
+                    <li><strong>Product Details:</strong> {$quantity} {$order->bundle_name}</li>
+                    <li><strong>Product Price:</strong> {$this->currency($order->bundle_price ??$order->bundle_price, TRUE)}</li>
                 </ul>";
     }
 
@@ -406,7 +419,7 @@ class Orders extends MY_Controller
         foreach ($order_status as $status => $item) {
             $statusName = $item['label'];
 
-            if ($status != 'all' && ($status != $current_status)) {
+            if ($status != 'all' && $status != 'payment-received'  && ($status != $current_status)) {
                 $dropdownOptions .= "<li>
                     <a style='cursor:pointer' onclick=\"change_status('{$id}', '{$status}')\">
                         {$statusName}
@@ -415,7 +428,8 @@ class Orders extends MY_Controller
             }
         }
 
-        return "<div style='text-align: center; width: 100px;'><div class='btn-group'>
+        if ($current_status != 'payment-received') {
+            return "<div style='text-align: center; width: 100px;'><div class='btn-group'>
                     <button type='button' class='btn btn-sm {$buttonClass} dropdown-toggle' data-toggle='dropdown'>
                         {$label} <span class='caret'></span>
                     </button>
@@ -423,12 +437,25 @@ class Orders extends MY_Controller
                         {$dropdownOptions}
                     </ul>
                 </div><div style='text-wrap: wrap; word-wrap: break-word; font-size: 12px; margin-top: 5px; text-align: center'>" . $last_updated . "</div></div>";
+        } else {
+            return "<div style='text-align: center; width: 100px;'><div class='btn-group'>
+            <button type='button' class='btn btn-sm {$buttonClass} ' >
+                {$label}
+            </button>
+           
+        </div><div style='text-wrap: wrap; word-wrap: break-word; font-size: 12px; margin-top: 5px; text-align: center'>" . $last_updated . "</div></div>";
+        }
     }
 
     // Helper: Format action buttons
-    private function formatActions($id)
+    private function formatActions($order)
     {
-        return '<div class="btn-group" title="View Account">
+        $id = $order->id;
+        $current_status = $order->status;
+        if ($current_status != 'payment-received') {
+
+
+            return '<div class="btn-group" title="View Account">
                     <a class="btn btn-sm btn-primary btn-o dropdown-toggle" data-toggle="dropdown" href="#">
                         Action <span class="caret"></span>
                     </a>
@@ -460,6 +487,11 @@ class Orders extends MY_Controller
                         </li>
                     </ul>
                 </div>';
+        } else {
+            return ' <a class="btn btn-sm btn-primary btn-o href="#">
+                        Sales Details 
+                    </a>';
+        }
     }
 
     public function order_reports_json_data()
@@ -479,9 +511,9 @@ class Orders extends MY_Controller
             $row[] = '<div class="" style="font-weight:600;">' . $orders->customer_name . '</div>
             <small class="">' . $orders->customer_email . ' - ' . $orders->customer_phone . ' </small>';
             $row[] = show_date($orders->updated_at);
-            $row[] = $orders->fulfilment_id;
+            $row[] = $orders->order_number;
             $row[] = $orders->ref;
-            $row[] = $orders->item_name;
+            $row[] = $orders->bundle_name;
             $row[] = format_qty($orders->quantity);
             $row[] = store_number_format($orders->amount);
             $row[] = store_number_format($orders->fees);
@@ -491,8 +523,8 @@ class Orders extends MY_Controller
             $row[] = show_date($orders->order_date);
 
             // Update total quantity for each product
-            $productTotals[$orders->item_name] = isset($productTotals[$orders->item_name])
-                ? $productTotals[$orders->item_name] + $orders->quantity
+            $productTotals[$orders->bundle_name] = isset($productTotals[$orders->bundle_name])
+                ? $productTotals[$orders->bundle_name] + $orders->quantity
                 : $orders->quantity;
 
             $data[] = $row;
@@ -606,8 +638,8 @@ class Orders extends MY_Controller
 
             if ($status == 'rescheduled') {
                 // For rescheduled, add the new delivery date
-                $orderData['delivery_date'] = date("Y-m-d", strtotime($formData['delivery_date']));
-                $historyDescription = 'The delivery date has been rescheduled to: ' . $orderData['delivery_date'];
+                $orderData['rescheduled_date'] = date("Y-m-d", strtotime($formData['rescheduled_date']));
+                $historyDescription = 'The delivery date has been rescheduled to: ' . $orderData['rescheduled_date'];
             }
 
             // If no specific status-related action, just update status

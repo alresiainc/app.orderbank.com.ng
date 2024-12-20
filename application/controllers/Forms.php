@@ -88,6 +88,7 @@ class Forms extends MY_Controller
             }
 
 
+            $store_id = (store_module() && is_admin() && isset($store_id) && !empty($store_id)) ? $store_id : get_current_store_id();
             $form_data = array(
                 'form_name' => $this->input->post('form_name'),
                 'form_title' => $this->input->post('form_title'),
@@ -120,7 +121,9 @@ class Forms extends MY_Controller
                 'background_image_url' => $this->input->post('background_image_url'),
                 'background_color' => $this->input->post('background_color'),
                 'accent_color' => $this->input->post('accent_color'),
-                'form_bundles' => json_encode($form_bundles)  // Store selected products as JSON
+                'store_id' => $store_id,
+                'form_bundles' => json_encode($form_bundles),  // Store selected products as JSON
+
             );
 
             log_message('info', json_encode($form_data));  // Log form data (ensure this is safe for production)
@@ -216,6 +219,7 @@ class Forms extends MY_Controller
             // Generate order number (8 digits) and set current date with time
             $orderNumber = sprintf('%08d', mt_rand(1, 99999999));
             $currentDateTime = date("Y-m-d H:i:s");
+            $form_bundle = $this->form_bundles->get_bundle_by_id($formData['form_bundle_id']);
 
             $orderData = [
                 'form_id' => $form_id,
@@ -229,7 +233,8 @@ class Forms extends MY_Controller
                 'customer_whatsapp' => $formData['customer_whatsapp'] ?? null,
                 'address' => $formData['address'] ?? null,
                 'state' => $formData['state'] ?? null,
-                'amount' => $form_data->price
+                'amount' => $form_data->price,
+                'quantity' => $form_bundle->quantity
             ];
 
 
@@ -277,6 +282,7 @@ class Forms extends MY_Controller
             $bundle_data = array(
                 'name' => $this->input->post('name'),
                 'price' => $this->input->post('price'),
+                'quantity' => $this->input->post('quantity'),
                 'description' => $this->input->post('description'),
             );
 
@@ -340,6 +346,7 @@ class Forms extends MY_Controller
             $bundle_data = array(
                 'name' => $this->input->post('name'),
                 'price' => $this->input->post('price'),
+                'quantity' => $this->input->post('quantity'),
                 'description' => $this->input->post('description'),
             );
 
@@ -488,13 +495,13 @@ class Forms extends MY_Controller
             $data['bundles'] = $this->form_bundles->get_all_bundles();
 
             // Loop through bundles and format prices with currency
-            foreach ($data['bundles'] as $bundle) {
-                if (isset($bundle->price)) { // Ensure 'price' exists
-                    // print_r($bundle->price);
+            // foreach ($data['bundles'] as $bundle) {
+            //     if (isset($bundle->price)) { // Ensure 'price' exists
+            //         // print_r($bundle->price);
 
-                    $bundle->price = $this->currency($bundle->price, TRUE);
-                }
-            }
+            //         $bundle->price = $this->currency($bundle->price, TRUE);
+            //     }
+            // }
 
             // die;
 
@@ -611,6 +618,8 @@ class Forms extends MY_Controller
 
             // $row[] = store_number_format($bundle->price);
             $row[] = $this->currency($bundle->price, TRUE);
+
+            $row[] = $bundle->quantity;
 
 
 

@@ -19,7 +19,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-5">
+                    <div class="col-md-4">
                         <div class="box-body">
                             <div class="form-group">
                                 <label for="current_bundle_price">Price *</label>
@@ -29,7 +29,17 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-7">
+                    <div class="col-md-3">
+                        <div class="box-body">
+                            <div class="form-group">
+                                <label for="current_bundle_quantity">Quantity *</label>
+                                <label id="current_bundle_quantity_msg" class="text-danger text-right pull-right"></label>
+                                <input type="number" class="form-control " id="current_bundle_quantity" min="1"
+                                    value="1" name="quantity" placeholder="Enter Bundle Quantity">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-5">
                         <div class="box-body">
                             <div class="form-group">
                                 <label for="current_bundle_image">Image</label>

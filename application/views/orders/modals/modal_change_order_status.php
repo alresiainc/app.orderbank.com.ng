@@ -22,7 +22,7 @@ $order_status = $ci->config->item('order_status');
                     <div class="col-sm-12 form-row">
                         <div class="form-group" style="margin-bottom: 0px;">
                             <label for="update_status_value">Status *</label>
-                            <select class="form-control select2" id="update_status_value" name="status" style="width: 100%;" placeholder="Select status">
+                            <select class="form-control select2" id="update_status_value" name="status" style="width: 100%;" placeholder="Select status" readonly>
                                 <?php foreach ($order_status as $key => $v) {
                                     echo '<option value=' . $key . '>' . $v['label'] . '</option>';
                                 } ?>
@@ -62,7 +62,7 @@ $order_status = $ci->config->item('order_status');
                                     <i class="fa fa-calendar"></i>
                                 </div>
                                 <input type="text" class="form-control pull-right datepicker"
-                                    id="order_delivery_date" name="delivery_date">
+                                    id="order_delivery_date" name="rescheduled_date">
                             </div>
                         </div>
 

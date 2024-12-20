@@ -108,9 +108,9 @@
                                                                         <!-- <input type="checkbox" class="bulk_checkbox checkbox"> -->
                                                                         S/N
                                                                     </th>
-                                                                    <th>ORDER</th>
+                                                                    <th>IMAGE</th>
                                                                     <!-- <th>CUSTOMER EMAIL</th> -->
-                                                                    <th style="text-wrap: wrap; word-wrap: break-word;  margin-top: 5px; text-align: center; width: 150px;">ORDER DATE AND TIME</th>
+                                                                    <th style="text-wrap: wrap; word-wrap: break-word;  margin-top: 5px; text-align: center; ">OFFICE USE</th>
                                                                     <th>ORDER DETAILS</th>
                                                                     <th style="text-wrap: wrap; word-wrap: break-word;  margin-top: 5px; text-align: center; width: 150px;">DELIVERY DATE</th>
                                                                     <th style="text-align: center;">STATUS</th>

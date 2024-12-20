@@ -26,13 +26,13 @@
 
 
     <?php
+    $CI = &get_instance();
+
     // Generate a random string
     $randomString = substr(md5(uniqid(rand(), true)), 0, $length);
 
     // Create the slug
     $form_link = url_title($string . '-' . $randomString, 'dash', true);
-
-
     ?>
 </head>
 
@@ -52,7 +52,7 @@
             </section>
 
             <!-- Main content -->
-            <?= form_open('form_builder/update_form/' . $form_id, array('class' => '', 'id' => 'update-form')); ?>
+            <?= form_open('form_builder/update_form/' . $form->id, array('class' => '', 'id' => 'update-form')); ?>
             <section class="content">
                 <div class="box box-primary" style="padding: 10px;">
                     <div class="box-body">
@@ -299,22 +299,22 @@
                                 <div class="col-sm-9 form-row">
                                     <div class="form-group">
                                         <select name="states_checkbox" class="form-control select2">
-                                            <option value="hide" <?= $form->show_state == false ? 'selected' : ''; ?>>Hide</option>
-                                            <option value="show" <?= $form->show_state == true ? 'selected' : ''; ?>>Show</option>
+                                            <option value="hide" <?= $form->show_states == false ? 'selected' : ''; ?>>Hide</option>
+                                            <option value="show" <?= $form->show_states == true ? 'selected' : ''; ?>>Show</option>
                                         </select>
                                     </div>
-                                    <div class="label-description" id="states_fields" style="<?= $form->show_state == true ? '' : 'display: none;' ?>">
+                                    <div class="label-description" id="states_fields" style="<?= $form->show_states == true ? '' : 'display: none;' ?>">
                                         <div class="form-group">
                                             <label for="states_label">Form Label <span>*</span></label>
                                             <p>The title of this field.</p>
-                                            <input type="text" class="form-control" id="states_label" name="states_label" placeholder="Enter Label for States" value="<?= $form->state_label; ?>">
+                                            <input type="text" class="form-control" id="states_label" name="states_label" placeholder="Enter Label for States" value="<?= $form->states_label; ?>">
                                             <span id="states_label_msg" class="text-danger"></span>
                                         </div>
 
                                         <div class="form-group">
                                             <label for="state_desc">Form Description</label>
                                             <p>The description of this field (optional).</p>
-                                            <input type="text" class="form-control" id="state_desc" name="state_desc" placeholder="Enter Description for State field" value="<?= $form->state_label; ?>">
+                                            <input type="text" class="form-control" id="state_desc" name="state_desc" placeholder="Enter Description for State field" value="<?= $form->state_desc; ?>">
                                         </div>
                                     </div>
                                 </div>
@@ -373,7 +373,7 @@
                                         <option value="">All</option>
                                         <?php foreach ($bundles ?? [] as $bundle): ?>
                                             <option value="<?= $bundle->id; ?>" <?= in_array($bundle->id, json_decode($form->form_bundles)) ? 'selected' : ''; ?>>
-                                                <?= $bundle->name; ?> (<?= $bundle->price; ?>)
+                                                <?= $bundle->quantity; ?> <?= $bundle->name; ?> (<?= $CI->currency($bundle->price); ?>)
                                             </option>
                                         <?php endforeach; ?>
                                     </select>

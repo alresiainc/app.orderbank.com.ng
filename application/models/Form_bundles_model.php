@@ -10,7 +10,7 @@ class Form_bundles_model extends CI_Model
         'name',
         'price',
         'description',
-
+        'quantity',
     );
 
     var $form = array('id' => 'desc'); // Default order

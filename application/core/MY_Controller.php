@@ -162,7 +162,7 @@ class MY_Controller extends CI_Controller
     }
 
     // Get currency and placement from session or use defaults
-    $currency = $this->session->userdata('currency') ?? 'USD'; // Default currency
+    $currency = $this->session->userdata('currency') ?? '₦'; // Default currency
     $placement = $this->session->userdata('currency_placement') ?? 'Left'; // Default placement
 
     // Format the value with currency

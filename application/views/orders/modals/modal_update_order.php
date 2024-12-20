@@ -83,7 +83,7 @@
                                 <label for="current_order_number">Order Number *</label>
                                 <label id="current_order_number_msg" class="text-danger text-right pull-right"></label>
                                 <input type="text" class="form-control " id="current_order_number" name="order_number"
-                                    placeholder="Enter Order Number">
+                                    placeholder="Enter Order Number" readonly>
                             </div>
                         </div>
                     </div>

@@ -112,6 +112,7 @@
                                                                     <th>Product</th>
                                                                     <th>Description</th>
                                                                     <th>Price</th>
+                                                                    <th>Quantity</th>
                                                                     <th>Created at</th>
                                                                     <th></th>
                                                                 </tr>
@@ -121,6 +122,7 @@
                                                             </tbody>
                                                             <tfoot>
                                                                 <tr class="bg-gray" id="overdiv">
+                                                                    <th></th>
                                                                     <th></th>
                                                                     <th></th>
                                                                     <th></th>
@@ -237,6 +239,11 @@
                     var flag = false;
                 }
 
+                if (check_field("bundle_quantity") == true) {
+                    var flag = false;
+                }
+
+
                 if (check_field("image") == true) {
                     var flag = false;
                 }
@@ -317,6 +324,7 @@
                         var name = bundleDetails.name;
                         var image = bundleDetails.image;
                         var price = bundleDetails.price;
+                        var quantity = bundleDetails.quantity;
                         var description = bundleDetails.description;
 
 
@@ -327,6 +335,7 @@
                         $('#current_bundle_name').val(name);
                         $('#current_bundle_description').val(description);
                         $('#current_bundle_price').val(price);
+                        $('#current_bundle_quantity').val(quantity);
 
 
                         $('#update-bundle-modal').modal('toggle');
@@ -345,6 +354,10 @@
                             if (check_field("current_bundle_price") == true) {
                                 var flag = false;
                             }
+                            if (check_field("current_bundle_quantity") == true) {
+                                var flag = false;
+                            }
+
 
                             if (check_field("current_customer_phone") == true) {
                                 var flag = false;

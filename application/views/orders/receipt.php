@@ -42,6 +42,7 @@ $column_order = array(
     'f.background_color',
     'f.background_image_url',
     'f.form_bundles',
+    'f.store_id',
     'e.name as bundle_name',    // Bundle name
     'e.image as bundle_image',  // Bundle image
     'e.description as bundle_description', // Bundle description
@@ -93,6 +94,28 @@ $accent_color = $order->accent_color;
 
 // Calculate grand total
 $grand_total = $amount + $fees;
+
+if ($order->store_id) {
+
+    $q1 = $this->db->query("select * from db_store where id=" . $order->store_id . " ");
+    $res1 = $q1->row();
+    $store_name        = $res1->store_name;
+    $company_mobile        = $res1->mobile;
+    $company_phone        = $res1->phone;
+    $company_email        = $res1->email;
+    $company_country    = $res1->country;
+    $company_state        = $res1->state;
+    $company_city        = $res1->city;
+    $company_address    = $res1->address;
+    $company_postcode    = $res1->postcode;
+    $company_gst_no        = $res1->gst_no; //Goods and Service Tax Number (issued by govt.)
+    $company_vat_number        = $res1->vat_no; //Goods and Service Tax Number (issued by govt.)
+    $store_logo = (!empty($res1->store_logo)) ? $res1->store_logo : store_demo_logo();
+    $store_website        = $res1->store_website;
+    $mrp_column        = $res1->mrp_column;
+    $previous_balance_bit    = $res1->previous_balance_bit;
+} else {
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -227,9 +250,43 @@ $grand_total = $amount + $fees;
     <div class="container">
         <!-- Header Section -->
         <div class="header">
-            <h2>Order Receipt</h2>
-            <p>Order Number: <strong><?= $order_number ?></strong></p>
-            <p>Order Date: <?= $order_date ?> | Delivery Date: <?= $delivery_date ?></p>
+            <span>
+                <img src="<?= base_url($store_logo); ?>" style="width: 80px;">
+                <h2><?= $store_name; ?></h2><br>
+                <p>
+                    <?php echo (!empty(trim($company_address))) ? $this->lang->line('company_address') . "" . $company_address . "<br>" : ''; ?>
+                    <?= $company_city; ?>
+                    <?php echo (!empty(trim($company_postcode))) ? "-" . $company_postcode : ''; ?>
+                    <br>
+                    <?php echo (!empty(trim($company_gst_no)) && gst_number()) ? $this->lang->line('gst_number') . ": " . $company_gst_no . "<br>" : ''; ?>
+                    <?php echo (!empty(trim($company_vat_number)) && vat_number()) ? $this->lang->line('vat_number') . ": " . $company_vat_number . "<br>" : ''; ?>
+                    <?php if (!empty(trim($company_mobile))) {
+                        echo $this->lang->line('phone') . ": " . $company_mobile;
+                        if (!empty($company_phone)) {
+                            echo "," . $company_phone;
+                        }
+                        echo "<br>";
+                    }
+                    echo (!empty($company_email)) ? $company_email . "," : '';
+                    echo (!empty($store_website)) ? $store_website . "<br>" : '';
+
+                    ?>
+
+                </p>
+
+                <div style="display: flex; justify-content: space-between; align-items:center; margin: 15px 0px; background-color:transparent; padding: 8px 15px; border: 1px solid ">
+                    <div>
+                        Order Number: <strong><?= $order_number ?></strong>
+                    </div>
+                    <div>
+                        Order Date: <strong> <?= $order_date ?> </strong>
+                    </div>
+                    <div>
+                        Delivery Date: <strong><?= $delivery_date ?></strong>
+                    </div>
+                </div>
+                <!-- <p>Order Number: <strong><?= $order_number ?></strong></p>
+                <p>Order Date: <?= $order_date ?> | Delivery Date: <?= $delivery_date ?></p> -->
         </div>
 
         <!-- Customer Details Section -->

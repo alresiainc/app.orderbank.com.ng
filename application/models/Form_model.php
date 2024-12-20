@@ -120,6 +120,7 @@ class Form_model extends CI_Model
         $this->db->where('customer_whatsapp', $orderData['customer_whatsapp']);
         $this->db->where('delivery_date', $orderData['delivery_date']);
         $this->db->where('amount', $orderData['amount']);
+        $this->db->where('quantity', $orderData['quantity']);
 
         return $this->db->get('db_orders')->row(); // Returns the first matching row or null
     }

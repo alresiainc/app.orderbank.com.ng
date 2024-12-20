@@ -1,3 +1,10 @@
+<?php
+
+$CI = &get_instance();
+
+
+
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -530,7 +537,7 @@
                 <div class="form-group">
                     <label><?= $form->states_label; ?></label>
                     <select name="state" id="state">
-                        <option value=""><?= $form->state_desc; ?></option>
+                        <!-- <option value=""><?= $form->state_desc; ?></option> -->
                         <?= get_state_select_list(null, true); ?>
                     </select>
                     <span id="state_msg" class="text-danger"></span>
@@ -570,9 +577,10 @@
                                 <div class="bundle-content">
                                     <img src="<?= base_url($bundle->image); ?>" alt="<?= $bundle->name; ?>" class="bundle-image">
                                     <div class="bundle-details">
-                                        <h4 class="bundle-name"><?= $bundle->name; ?></h4>
+                                        <h4 class="bundle-name"><?= $bundle->quantity; ?> <?= $bundle->name; ?></h4>
                                         <p class="bundle-desc"><?= $bundle->description; ?></p>
-                                        <span class="bundle-price"><?= $bundle->price; ?></span>
+                                        <span class="bundle-price"><?= $CI->currency($bundle->price, true); ?></span>
+
                                     </div>
                                 </div>
                             </label>

@@ -26,6 +26,8 @@
 
 
     <?php
+
+    $CI = &get_instance();
     // Generate a random string
     $randomString = substr(md5(uniqid(rand(), true)), 0, $length);
 
@@ -367,7 +369,7 @@
                                         <option value="">All</option>
                                         <?php foreach ($bundles ?? [] as $bundle): ?>
                                             <option value="<?= $bundle->id; ?>">
-                                                <?= $bundle->name; ?> (<?= $bundle->price; ?>)
+                                                <?= $bundle->quantity; ?> <?= $bundle->name; ?> (<?= $CI->currency($bundle->price); ?>)
                                             </option>
                                         <?php endforeach; ?>
                                     </select>

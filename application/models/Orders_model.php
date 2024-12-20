@@ -13,6 +13,7 @@ class Orders_model extends CI_Model
         'a.customer_whatsapp',      // Customer WhatsApp
         'a.address',                // Customer address
         'a.order_date',             // Order date
+        'a.rescheduled_date',
         'a.order_number',           // Order number
         'a.delivery_date',          // Delivery date
         'a.ref',                    // Reference
@@ -42,6 +43,7 @@ class Orders_model extends CI_Model
         'f.show_delivery as form_has_delivery',
         'f.delivery_choices as form_delivery_choices',
         'f.form_bundles',
+        'f.store_id',
         'e.name as bundle_name',    // Bundle name
         'e.image as bundle_image',  // Bundle image
         'e.description as bundle_description', // Bundle description
@@ -108,6 +110,7 @@ class Orders_model extends CI_Model
         $this->db->join('db_order_histories as g', 'g.order_id = a.id', 'left');
         // Group by order id to avoid duplicating rows
         $this->db->group_by('a.id'); // Grouping by the order ID, as the main focus is on each order
+
 
         $i = 0;
 
