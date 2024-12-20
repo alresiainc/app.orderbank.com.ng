@@ -807,8 +807,9 @@ class Orders extends MY_Controller
 
     public function send_order_message($order, $status, $type = 'whatsapp')
     {
-        $message =  $this->orders->get_message($status, $type);
-        $customer_whatsapp = $order->customer_whatsapp;
+        $template =  $this->orders->get_message($status, $type);
+        $message = $template[0]->message;
+
         $imageUrl = !empty($order->bundle_image)
             ? base_url(return_item_image_thumb($order->bundle_image))
             : base_url() . "theme/images/no_image.png";
@@ -816,21 +817,37 @@ class Orders extends MY_Controller
         // if (Wassenger::numberExist($phone)) {
         //     Messages::message($phone, $message)->send();
         // }
+        log_message('error', "Sending to customer_whatsapp:" . json_encode([
+            'customer_whatsapp' => $order->customer_whatsapp,
+            'customer_phone' => $order->customer_phone,
+            'message' => $message,
+            'imageUrl' => $imageUrl,
+        ]));
         try {
             // Send WhatsApp message via Messages API 
 
             Messages::message($this->toCountryCode($order->customer_whatsapp), $message)
                 ->media(['url', $imageUrl])
                 ->send();
-
+            log_message('error', "Sending to customer_whatsapp:" . json_encode([
+                'customer_whatsapp' => $order->customer_whatsapp,
+                'message' => $message,
+                'imageUrl' => $imageUrl,
+            ]));
             if ($order->customer_whatsapp != $order->customer_phone) {
                 Messages::message($this->toCountryCode($order->customer_phone), $message)
                     ->media(['url', $imageUrl])
                     ->send();
+
+                log_message('error', "Sending to customer_phone:" . json_encode([
+                    'customer_phone' => $order->customer_phone,
+                    'message' => $message,
+                    'imageUrl' => $imageUrl,
+                ]));
             }
-        } catch (LaravelWassengerException $e) {
+        } catch (Exception $e) {
             // Handle exception
-            log_message('error', "LaravelWassengerException:" . json_encode($e));
+            log_message('error', "LaravelWassengerException:" . $e->getMessage());
         }
     }
 
