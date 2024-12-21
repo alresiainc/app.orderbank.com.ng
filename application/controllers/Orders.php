@@ -809,6 +809,7 @@ class Orders extends MY_Controller
     {
         $template =  $this->orders->get_message($status, $type);
         $message = $this->resolveTemplate($order, $template[0]->message);
+        $subject = $this->resolveTemplate($order, $template[0]->subject);
 
         $imageUrl = !empty($order->bundle_image)
             ? base_url(return_item_image_thumb($order->bundle_image))
@@ -825,27 +826,16 @@ class Orders extends MY_Controller
         ]));
         try {
             // Send WhatsApp message via Messages API 
-
-            Messages::message($this->toCountryCode($order->customer_whatsapp), $message)
+            Messages::message($this->toCountryCode($order->customer_whatsapp), '*' . $subject . '* \n' . $message)
                 ->media(['url', $imageUrl])
                 ->send();
-            log_message('error', "Sending to customer_whatsapp:" . json_encode([
-                'customer_whatsapp' => $order->customer_whatsapp,
-                'message' => $message,
-                'imageUrl' => $imageUrl,
-            ]));
+
             if ($order->customer_whatsapp != $order->customer_phone) {
                 Messages::message($this->toCountryCode($order->customer_phone), $message)
                     ->media(['url', $imageUrl])
                     ->send();
-
-                log_message('error', "Sending to customer_phone:" . json_encode([
-                    'customer_phone' => $order->customer_phone,
-                    'message' => $message,
-                    'imageUrl' => $imageUrl,
-                ]));
             }
-        } catch (Exception $e) {
+        } catch (LaravelWassengerException $e) {
             // Handle exception
             log_message('error', "LaravelWassengerException:" . $e->getMessage());
         }

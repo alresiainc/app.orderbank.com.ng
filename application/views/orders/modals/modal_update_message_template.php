@@ -23,7 +23,20 @@
                     <div class="col-md-12">
                         <div class="box-body">
                             <div class="form-group">
-                                <label for="message_content">Message Content * <a href="" id="show-hide-placeholder">Show Placeholder</a></label>
+                                <label for="message_content">Message Content * </label>
+
+                                <label id="message_content_msg" class="text-danger text-right pull-right"></label>
+                                <textarea type="text" class="form-control pull-right" rows="10"
+                                    id="message_content" name="message"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="box-body">
+                            <div class="form-group">
+                                <label for="message_content">
+                                    <a href="" id="show-hide-placeholder" class="mb-3 ">Show Placeholder</a>
+                                </label>
                                 <div class="place-holder-container" style="display: none;">
                                     <table>
                                         <thead>
@@ -120,9 +133,6 @@
                                         </tbody>
                                     </table>
                                 </div>
-                                <label id="message_content_msg" class="text-danger text-right pull-right"></label>
-                                <textarea type="text" class="form-control pull-right"
-                                    id="message_content" name="message"></textarea>
                             </div>
                         </div>
                     </div>
