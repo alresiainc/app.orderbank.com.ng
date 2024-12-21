@@ -286,7 +286,7 @@ if ($order->store_id) {
             <div style="display: flex; justify-content: space-between;  ">
                 <div>
                     <img src="<?= base_url($store_logo); ?>" style="width:80px;">
-                    <div style="font-weight: 900;"><?= $store_name; ?></div><br>
+                    <div style="font-weight: 900; font-size: 18px;"><?= $store_name; ?></div><br>
                 </div>
                 <div>
                     <button class="print-button">
@@ -298,20 +298,20 @@ if ($order->store_id) {
                 <div>
 
                     <div style="font-size: 14px; font-weight: 500;">
-                        <?php echo (!empty(trim($company_address))) ? $this->lang->line('company_address') . "" . $company_address . "<br>" : ''; ?>
+                        <?php echo (!empty(trim($company_address))) ? '<strong></strong>' . $this->lang->line('company_address') . "" . $company_address . "<br>" : ''; ?>
                         <?= $company_city; ?>
                         <?php echo (!empty(trim($company_postcode))) ? "-" . $company_postcode : ''; ?>
                         <br>
                         <?php echo (!empty(trim($company_gst_no)) && gst_number()) ? $this->lang->line('gst_number') . ": " . $company_gst_no . "<br>" : ''; ?>
                         <?php echo (!empty(trim($company_vat_number)) && vat_number()) ? $this->lang->line('vat_number') . ": " . $company_vat_number . "<br>" : ''; ?>
                         <?php if (!empty(trim($company_mobile))) {
-                            echo $this->lang->line('phone') . ": " . $company_mobile;
+                            echo "<strong> " . $this->lang->line('phone') . ": </strong>" . $company_mobile;
                             if (!empty($company_phone)) {
                                 echo "," . $company_phone;
                             }
                             echo "<br>";
                         }
-                        echo (!empty($company_email)) ? $company_email . "," : '';
+                        echo (!empty($company_email)) ? "<strong> " . $this->lang->line('email') . ": </strong>" . $company_email . "," : '';
                         // echo (!empty($store_website)) ? $store_website . "<br>" : '';
 
                         ?>
@@ -427,6 +427,9 @@ if ($order->store_id) {
     <script>
         // Automatically trigger the print dialog
         window.print();
+        document.querySelector('.print-button').addEventListener('click', function() {
+            window.print();
+        });
     </script>
 </body>
 
