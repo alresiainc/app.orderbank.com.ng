@@ -1,6 +1,8 @@
 <?php
 
 $CI = &get_instance();
+$CI->load->config('order_status');
+$order_status = $CI->config->item('order_status');
 // Your column order array
 $column_order = array(
     'a.id',                     // Order ID
@@ -329,7 +331,7 @@ if ($order->store_id) {
                             Delivery Date: <strong><?= $delivery_date ?></strong>
                         </div>
                         <div>
-                            Order Status: <strong style="text-transform: capitalize;"><?= $status ?></strong>
+                            Order Status: <strong style="text-transform: capitalize;"><?= $order_status[$status]['label'] ?? '' ?></strong>
                         </div>
 
                     </div>
