@@ -299,7 +299,7 @@ if ($order->store_id) {
             <div style="display: flex; justify-content: space-between;  ">
                 <div>
 
-                    <div style="font-size: 14px; font-weight: 500;">
+                    <div style="font-size: 14px; font-weight: 500; width:300px;">
                         <?php echo (!empty(trim($company_address))) ? '<strong></strong>' . $this->lang->line('company_address') . "" . $company_address . "<br>" : ''; ?>
                         <?= $company_city; ?>
                         <?php echo (!empty(trim($company_postcode))) ? "-" . $company_postcode : ''; ?>
