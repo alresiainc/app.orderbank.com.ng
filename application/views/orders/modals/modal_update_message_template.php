@@ -13,6 +13,16 @@
                     <div class="col-md-12">
                         <div class="box-body">
                             <div class="form-group">
+                                <select name="send_message" class="form-control select23" id="send_message">
+                                    <option value="no">No</option>
+                                    <option value="yes">Yes</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="box-body">
+                            <div class="form-group">
                                 <label for="message_subject">Message Subject *</label>
                                 <label id="message_subject_msg" class="text-danger text-right pull-right"></label>
                                 <input type="text" class="form-control " id="message_subject" name="subject"
@@ -31,6 +41,29 @@
                             </div>
                         </div>
                     </div>
+                    <div class="col-md-6">
+                        <div class="box-body">
+                            <div class="form-group">
+                                <label for="send_pdf">Send Receipt PDF </label>
+                                <select name="send_pdf" class="form-control select23" id="send_pdf">
+                                    <option value="no">No</option>
+                                    <option value="yes">Yes</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="box-body">
+                            <div class="form-group">
+                                <label for="send_image">Send Bundle Image </label>
+                                <select name="send_image" class="form-control select23" id="send_image">
+                                    <option value="no">No</option>
+                                    <option value="yes">Yes</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="col-md-12">
                         <div class="box-body">
                             <div class="form-group">

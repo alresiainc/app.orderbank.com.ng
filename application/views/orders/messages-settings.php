@@ -228,13 +228,39 @@
 
                         // Parse message details
                         var messageDetails = jQuery.parseJSON(result)[0];
+                        console.log(messageDetails);
+
                         var subject = messageDetails.subject;
                         var message = messageDetails.message;
+                        var send_message = messageDetails.send_message == 1 ? "yes" : 'no';
+                        var send_image = messageDetails.send_image == 1 ? "yes" : 'no';
+                        var send_pdf = messageDetails.send_pdf == 1 ? "yes" : 'no';
                         var messageId = messageDetails.id;
 
                         // Populate the form fields
                         $('#message_subject').val(subject);
                         $('#message_content').val(message);
+                        $('#send_message').val(send_message).trigger('change');
+                        $('#send_image').val(send_image).trigger('change');
+                        $('#send_pdf').val(send_pdf).trigger('change');
+                        if (send_message != 'yes') {
+                            $('#message_subject, #message_content, #send_image, #send_pdf').prop('disabled', true);
+                        } else {
+                            $('#message_subject, #message_content, #send_image, #send_pdf').prop('disabled', false);
+                        }
+
+
+                        $('#send_message').off('click');
+                        $('#send_message').on('change', function(e) {
+                            e.preventDefault();
+                            const value = $(this).val();
+
+                            if (value == 'yes') {
+                                $('#message_subject, #message_content, #send_image, #send_pdf').prop('disabled', false);
+                            } else {
+                                $('#message_subject, #message_content, #send_image, #send_pdf').prop('disabled', true);
+                            }
+                        });
 
                         // Show the modal
                         $('#update-message-template-modal').modal('show');

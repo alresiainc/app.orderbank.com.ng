@@ -95,14 +95,30 @@ class Orders extends MY_Controller
         $this->load->view('orders/messages-settings', $data);
     }
 
-    public function receipt($order_id)
+    public function receipts($order_id)
     {
 
         $data = $this->data;
         $data['page_title'] = "Orders Receipt";
         $data['order_id'] = $order_id;
-        $this->load->view('orders/receipt', $data);
+        $this->load->view('orders/receipt-pdf', $data);
     }
+
+    public function receipt($order_id)
+    {
+        // Prepare data for the view
+        $data = $this->data;
+        $data['page_title'] = "Orders Receipt";
+        $data['order_id'] = $order_id;
+
+
+        // Load the view and capture its HTML content
+        $html = $this->load->view('orders/receipt-pdf', $data, true);
+
+        // Generate and return the PDF
+        $this->generatePDFfromPage($html, 'Orders_receipt.pdf', true);
+    }
+
 
     public function store()
     {
@@ -563,9 +579,38 @@ class Orders extends MY_Controller
                     </ul>
                 </div>';
         } else {
-            return ' <a class="btn btn-sm btn-primary btn-o href="#">
-                        Sales Details 
-                    </a>';
+            return '<div class="btn-group" title="View Account">
+                    <a class="btn btn-sm btn-primary btn-o dropdown-toggle" data-toggle="dropdown" href="#">
+                        Action <span class="caret"></span>
+                    </a>
+                    <ul role="menu" class="dropdown-menu dropdown-light pull-right">
+                        <li>
+                            <a title="Copy Order Details" onclick="copy_order_details(\'' . $id . '\')">
+                                <i class="fa fa-fw fa-clipboard text-blue"></i>Copy
+                            </a>
+                        </li>
+                        <li>
+                            <a title="Edit Order" onclick="update_order_model(\'' . $id . '\')">
+                                <i class="fa fa-fw fa-edit text-blue"></i>Edit
+                            </a>
+                        </li>
+                        <li>
+                            <a title="Print Receipt" href="' . base_url('/orders/receipt/' . $id) . '">
+                                <i class="fa fa-fw fa-newspaper-o text-blue"></i>Receipt
+                            </a>
+                        </li>
+                        <li>
+                            <a title="View Order History" href="' . base_url('/orders/history/' . $id) . '">
+                                <i class="fa fa-fw fa-history text-blue"></i>History
+                            </a>
+                        </li>
+                        <li>
+                            <a style="cursor:pointer" title="Delete Record?" onclick="delete_order(\'' . $id . '\')">
+                                <i class="fa fa-fw fa-trash text-red"></i>Delete
+                            </a>
+                        </li>
+                    </ul>
+                </div>';
         }
     }
 
@@ -758,10 +803,16 @@ class Orders extends MY_Controller
             $formData = $this->input->post();
             $message = $formData['message'];
             $subject = $formData['subject'];
+            $send_message = $formData['send_message'] == 'yes' ? true : false;
+            $send_pdf = $formData['send_pdf'] == 'yes' ? true : false;
+            $send_image = $formData['send_image'] == 'yes' ? true : false;
 
             $data = [
                 'subject' => $subject,
                 'message' => $message,
+                'send_message' => $send_message,
+                'send_pdf' => $send_pdf,
+                'send_image' => $send_image,
             ];
             // Call the model method to store the order
             $result = $this->orders->update_message_by_id($id, $data);
@@ -809,36 +860,60 @@ class Orders extends MY_Controller
     public function send_order_message($order, $status, $type = 'whatsapp')
     {
         $template =  $this->orders->get_message($status, $type);
-        $message = $this->resolveTemplate($order, $template[0]->message);
-        $subject = $this->resolveTemplate($order, $template[0]->subject);
 
-        $imageUrl = !empty($order->bundle_image)
-            ? base_url(return_item_image_thumb($order->bundle_image))
-            : base_url() . "theme/images/no_image.png";
+        if ($template[0]->send_message) {
+            $message = $this->resolveTemplate($order, $template[0]->message);
+            $subject = $this->resolveTemplate($order, $template[0]->subject);
+            $files = [];
 
-        // if (Wassenger::numberExist($phone)) {
-        //     Messages::message($phone, $message)->send();
-        // }
-        log_message('error', "Sending to customer_whatsapp:" . json_encode([
-            'customer_whatsapp' => $order->customer_whatsapp,
-            'customer_phone' => $order->customer_phone,
-            'message' => $message,
-            'imageUrl' => $imageUrl,
-        ]));
-        try {
-            // Send WhatsApp message via Messages API 
-            Messages::message($this->toCountryCode($order->customer_whatsapp), '*' . $subject . '* \n\n' . $message)
-                ->media(['url', $imageUrl])
-                ->send();
+            $imageUrl = !empty($order->bundle_image)
+                ? base_url(return_item_image_thumb($order->bundle_image))
+                : base_url() . "theme/images/no_image.png";
 
-            if ($order->customer_whatsapp != $order->customer_phone) {
-                Messages::message($this->toCountryCode($order->customer_phone), '*' . $subject . '* \n\n' . $message)
-                    ->media(['url', $imageUrl])
-                    ->send();
+
+            $data = $this->data;
+            $data['page_title'] = "Orders Receipt";
+            $data['order_id'] = $order_id;
+
+
+            // Load the view and capture its HTML content
+            $html = $this->load->view('orders/receipt-pdf', $data, true);
+
+            // Generate and return the PDF
+            $pdfFile = $this->generatePDFfromPage($html, 'Orders_receipt.pdf', true);
+
+            // if (Wassenger::numberExist($phone)) {
+            //     Messages::message($phone, $message)->send();
+            // }
+            log_message('error', "Sending to customer_whatsapp:" . json_encode([
+                'customer_whatsapp' => $order->customer_whatsapp,
+                'customer_phone' => $order->customer_phone,
+                'message' => $message,
+                'imageUrl' => $imageUrl,
+            ]));
+
+            if ($template[0]->send_pdf) {
+                $files[] = ['url', $pdfFile];
             }
-        } catch (LaravelWassengerException $e) {
-            // Handle exception
-            log_message('error', "LaravelWassengerException:" . $e->getMessage());
+
+            if ($template[0]->send_image) {
+                $files[] = ['url', $imageUrl];
+            }
+            try {
+                // Send WhatsApp message via Messages API 
+                Messages::message($this->toCountryCode($order->customer_whatsapp), '*' . $subject . '* \n\n' . $message)
+                    ->media($files)
+                    ->send();
+
+                if ($order->customer_whatsapp != $order->customer_phone) {
+                    Messages::message($this->toCountryCode($order->customer_phone), '*' . $subject . '* \n\n' . $message)
+                        ->media($files)
+                        ->send();
+                }
+            } catch (LaravelWassengerException $e) {
+                // Handle exception
+                log_message('error', "LaravelWassengerException:" . $e->getMessage());
+            }
         }
     }
 
@@ -906,5 +981,30 @@ class Orders extends MY_Controller
         }
 
         return $template;
+    }
+
+    public function generatePDFfromPage($htmlContent, $fileName = 'document.pdf', $stream = true)
+    {
+        // Load Dompdf
+        $dompdf = new Dompdf();
+
+        // Load the HTML content into Dompdf
+        $dompdf->loadHtml($htmlContent);
+        $dompdf->set_option('isRemoteEnabled', true); // Allow loading remote assets
+
+        // Set the paper size and orientation
+        $dompdf->setPaper('A4', 'portrait');
+
+        // Render the HTML as a PDF
+        $dompdf->render();
+
+        // Output the generated PDF
+        if ($stream) {
+            // Stream the PDF to the browser
+            $dompdf->stream($fileName, ["Attachment" => false]);
+        } else {
+            // Return the PDF content
+            return $dompdf->output();
+        }
     }
 }

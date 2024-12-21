@@ -165,7 +165,7 @@ if ($order->store_id) {
         body {
             font-family: 'Arial', sans-serif;
             background-color: #f4f4f4;
-            padding: 30px;
+            padding: 0;
             color: #333;
         }
 
@@ -306,7 +306,7 @@ if ($order->store_id) {
             font-weight: normal;
             font-size: 14px;
             color: #71748d;
-            background-color: #efeff6;
+            background-color: #FFF;
             -webkit-font-smoothing: antialiased;
         }
 
@@ -323,79 +323,33 @@ if ($order->store_id) {
             color: #71748d;
         }
 
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            background-color: #fff;
-            padding: 20px;
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
-
-        }
 
         .container-fluid {
-            width: 100%;
-            padding-right: 15px;
-            padding-left: 15px;
-            margin-right: auto;
-            margin-left: auto;
-            box-sizing: border-box;
-            /* Includes padding in the element's width */
-        }
-
-        @media (min-width: 576px) {
-            .container-fluid {
-                max-width: 540px;
-            }
-        }
-
-        @media (min-width: 768px) {
-            .container-fluid {
-                max-width: 720px;
-            }
-        }
-
-        @media (min-width: 992px) {
-            .container-fluid {
-                max-width: 960px;
-            }
-        }
-
-        @media (min-width: 1200px) {
-            .container-fluid {
-                max-width: 1140px;
-            }
-        }
-
-        @media (min-width: 1400px) {
-            .container-fluid {
-                max-width: 1320px;
-            }
+            max-width: 100%;
+            padding: 0;
+            margin: 0;
         }
 
 
-        .card-body {
-            -ms-flex: 1 1 auto;
-            flex: 1 1 auto;
-            padding: 0px;
-        }
+
 
 
 
         #invoice {
-            padding: 30px;
+            padding: 20px;
         }
 
         .invoice {
             position: relative;
             background-color: #FFF;
             min-height: 680px;
-            padding: 15px
+            padding: 25px
         }
 
         .invoice header {
             padding: 10px 0;
             margin-bottom: 20px;
-            border-bottom: 1px solid ##30148c
+            border-bottom: 1px solid #30148c
         }
 
         .invoice .company-details {
@@ -408,7 +362,9 @@ if ($order->store_id) {
         }
 
         .invoice .contacts {
-            margin-bottom: 20px
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
         }
 
         .invoice .invoice-to {
@@ -433,10 +389,9 @@ if ($order->store_id) {
             padding-bottom: 50px
         }
 
-        .invoice main .thanks {
-            margin-top: -100px;
-            font-size: 2em;
-            margin-bottom: 50px
+        .thanks {
+            font-size: 18px;
+            color: #2C3E50
         }
 
         .invoice main .notices {
@@ -448,60 +403,60 @@ if ($order->store_id) {
             font-size: 1.2em
         }
 
-        .invoice table {
+        .invoice table.order-status {
             width: 100%;
             border-collapse: collapse;
             border-spacing: 0;
             margin-bottom: 20px
         }
 
-        .invoice table td,
-        .invoice table th {
+        .invoice table.order-status td,
+        .invoice table.order-status th {
             padding: 15px;
             background: #eee;
             border-bottom: 1px solid #fff
         }
 
-        .invoice table th {
+        .invoice table.order-status th {
             white-space: nowrap;
             font-weight: 400;
             font-size: 16px
         }
 
-        .invoice table td h3 {
+        .invoice table.order-status td h3 {
             margin: 0;
             font-weight: 400;
             color: #3989c6;
             font-size: 1.2em
         }
 
-        .invoice table .qty,
-        .invoice table .total,
-        .invoice table .unit {
+        .invoice table.order-status .qty,
+        .invoice table.order-status .total,
+        .invoice table.order-status .unit {
             text-align: right;
             font-size: 1.2em
         }
 
-        .invoice table .no {
+        .invoice table.order-status .no {
             color: #fff;
             font-size: 1.6em;
             background: #3989c6
         }
 
-        .invoice table .unit {
+        .invoice table.order-status .unit {
             background: #ddd
         }
 
-        .invoice table .total {
+        .invoice table.order-status .total {
             background: #3989c6;
             color: #fff
         }
 
-        .invoice table tbody tr:last-child td {
+        .invoice table.order-status tbody tr:last-child td {
             border: none
         }
 
-        .invoice table tfoot td {
+        .invoice table.order-status tfoot td {
             background: 0 0;
             border-bottom: none;
             white-space: nowrap;
@@ -511,17 +466,17 @@ if ($order->store_id) {
             border-top: 1px solid #aaa
         }
 
-        .invoice table tfoot tr:first-child td {
+        .invoice table.order-status tfoot tr:first-child td {
             border-top: none
         }
 
-        .invoice table tfoot tr:last-child td {
+        .invoice table.order-status tfoot tr:last-child td {
             color: #3989c6;
             font-size: 1.4em;
             border-top: 1px solid #3989c6
         }
 
-        .invoice table tfoot tr td:first-child {
+        .invoice table.order-status tfoot tr td:first-child {
             border: none
         }
 
@@ -559,138 +514,134 @@ if ($order->store_id) {
                 display: none
             }
         }
+
+        .row {
+            display: -webkit-flex;
+            /* Older versions of Safari */
+            display: -ms-flexbox;
+            /* IE 10 */
+            display: flex;
+            /* Modern browsers */
+            display: flex;
+            justify-content: space-between;
+        }
     </style>
 
 </head>
 
 <body>
     <div class="container-fluid">
-        <div class="row">
-            <div class="card" id="printableArea">
-                <div class="card-body">
 
-                    <div id="invoice">
+        <div id="invoice">
 
 
-                        <div class="invoice overflow-auto">
-                            <div style="min-width: 600px">
-                                <div style="display: flex; justify-content: space-between; border-bottom: 2px solid #ddd; padding: 15px;">
-                                    <div>
+            <div class="invoice overflow-auto">
+                <div style="min-width: 600px">
+                    <header>
+                        <table style="width: 100%; border-collapse: collapse; margin-bottom:15px; margin-top:15px;">
+                            <td style="width: 50%; text-align: left;">
+                                <a href="#!">
 
-                                    </div>
-                                    <div>
-                                        <button class="print-button">
-                                            <i class="fa fa-print"></i>
-                                            Download Receipt
-                                        </button>
-                                    </div>
+                                    <img src="<?= base_url($store_logo); ?>" style="width: 100px; " data-holder-rendered="true">
+                                </a>
+                            </td>
+                            <td style="width: 50%; text-align: right;">
+
+                                <h2 class="name">
+                                    <a href="#!">
+                                        <?= $store_name; ?>
+                                    </a>
+                                </h2>
+                                <div>
+                                    <?php echo  $company_address; ?>
                                 </div>
-                                <header>
-                                    <div class="row" style="display: flex; justify-content: space-between; margin-top:15px;">
-                                        <div class="">
-                                            <a href="#!">
+                                <div><?php echo  $company_mobile; ?>
+                                    <?php
+                                    if (!empty($company_phone)) {
+                                        echo "," . $company_phone;
+                                    }
+                                    ?>
+                                </div>
+                                <div><?php echo  $company_email; ?></div>
+                            </td>
+                        </table>
+                    </header>
+                    <main>
+                        <table style="width: 100%; border-collapse: collapse; margin-bottom:15px;">
+                            <td style="width: 50%; text-align: left;">
+                                <div class="text-gray-light">ORDER TO:</div>
+                                <h2 class="to"><?= $customer_name ?></h2>
+                                <div class="address"><?= $customer_address ?>, <?= $state_name ?>, <?= $country_name ?></div>
+                                <div class="email"><a href="#!"><?php echo  $customer_phone; ?>
+                                        <?php
+                                        if (!empty($customer_whatsapp)) {
+                                            echo "," . $customer_whatsapp;
+                                        }
+                                        ?></a></div>
+                            </td>
+                            <td style="width: 50%; text-align: right;">
+                                <h3 class="invoice-id">Order Number: #<?php echo  $order_number; ?></h3>
+                                <div class="date">Date Order Was Placed: <?= $order_date ?></div>
+                                <div class="date">Delivery Date: deliver <?= $delivery_date ?></div>
+                            </td>
+                        </table>
 
-                                                <img src="<?= base_url($store_logo); ?>" style="width:300; height:60;" data-holder-rendered="true">
-                                            </a>
-                                        </div>
-                                        <div class="col company-details">
+                        <table border="2" cellspacing="4" cellpadding="4" class="order-status">
+                            <thead>
+                                <tr>
+                                    <th>PRODUCT IMAGE</th>
+                                    <th class="text-left">PRODUCT DETAILS</th>
+                                    <th class="text-right">=</th>
+                                    <th class="text-right">PRODUCT PRICE</th>
+                                    <th class="text-right">TOTAL</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="no">
+                                        <div class="row "><img src="<?= base_url($bundle_image); ?>" alt="" width="50%" height="50%" srcset="" style="width: 100px; height: 100px; "></div>
+                                    </td>
+                                    <td class="text-left">
+                                        <h3>
+                                            <?= $quantity ?> <?= $bundle_name ?>
 
-                                            <h2 class="name">
-                                                <a href="#!">
-                                                    <?= $store_name; ?>
-                                                </a>
-                                            </h2>
-                                            <div>
-                                                <?php echo  $company_address; ?>
-                                            </div>
-                                            <div><?php echo  $company_mobile; ?>
-                                                <?php
-                                                if (!empty($company_phone)) {
-                                                    echo "," . $company_phone;
-                                                }
-                                                ?>
-                                            </div>
-                                            <div><?php echo  $company_email; ?></div>
-                                        </div>
-                                    </div>
-                                </header>
-                                <main>
-                                    <div class="row contacts" style="display: flex; justify-content: space-between;">
-                                        <div class="col invoice-to">
-                                            <div class="text-gray-light">ORDER TO:</div>
-                                            <h2 class="to"><?= $customer_name ?></h2>
-                                            <div class="address"><?= $customer_address ?>, <?= $state_name ?>, <?= $country_name ?></div>
-                                            <div class="email"><a href="#!"><?php echo  $customer_phone; ?>
-                                                    <?php
-                                                    if (!empty($customer_whatsapp)) {
-                                                        echo "," . $customer_whatsapp;
-                                                    }
-                                                    ?></a></div>
-                                        </div>
-                                        <div class="col invoice-details">
-                                            <h3 class="invoice-id">Order Number: #<?php echo  $order_number; ?></h3>
-                                            <div class="date">Date Order Was Placed: <?= $order_date ?></div>
-                                            <div class="date">Delivery Date: deliver <?= $delivery_date ?></div>
-                                        </div>
-                                    </div>
+                                        </h3>
 
-                                    -- <table border="2" cellspacing="4" cellpadding="4">
-                                        <thead>
-                                            <tr>
-                                                <th>PRODUCT IMAGE</th>
-                                                <th class="text-left">PRODUCT DETAILS</th>
-                                                <th class="text-right">=</th>
-                                                <th class="text-right">PRODUCT PRICE</th>
-                                                <th class="text-right">TOTAL</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr>
-                                                <td class="no">
-                                                    <div class="row justify-content-center"><img src="<?= base_url($bundle_image); ?>" alt="" width="50%" height="50%" srcset=""></div>
-                                                </td>
-                                                <td class="text-left">
-                                                    <h3>
-                                                        <?= $quantity ?> <?= $bundle_name ?>
+                                    </td>
+                                    <td class="unit">=</td>
+                                    <td class="qty"><?= $CI->currency($bundle_price, TRUE) ?></td>
+                                    <td class="total"><?= $CI->currency($bundle_price, TRUE) ?></td>
+                                </tr>
 
-                                                    </h3>
-
-                                                </td>
-                                                <td class="unit">=</td>
-                                                <td class="qty"><?= $CI->currency($bundle_price, TRUE) ?></td>
-                                                <td class="total"><?= $CI->currency($bundle_price, TRUE) ?></td>
-                                            </tr>
-
-                                        </tbody>
-                                        <tfoot>
+                            </tbody>
+                            <tfoot>
 
 
-                                            <tr>
-                                                <td colspan="2"></td>
-                                                <td colspan="2">GRAND TOTAL</td>
-                                                <td><?= $CI->currency($grand_total, TRUE) ?></td>
-                                            </tr>
-                                        </tfoot>
-                                    </table>
-                                    <br><br>
-                                    <div class="thanks">PRODA - The lifestyle you can’t resist.</div>
-                                    <div class="notices">
-                                        <div class="notice">Thank you for being our valued customer.
-                                            <br> We hope our product will meet your expectations.
-                                            <br> We hope to see you again in the future.
-                                            <br>For supporting our small business, You are a superhero!
-                                        </div>
-                                    </div>
-                                </main>
-                                <footer>
-                                    This Order Receipt Was Created On A Computer And Is Valid Without The Signature And Seal.
-                                </footer>
+                                <tr>
+                                    <td colspan="2">
+                                        <div class="thanks">PRODA - The lifestyle you can’t resist.</div>
+                                    </td>
+                                    <td colspan="2">GRAND TOTAL</td>
+                                    <td><?= $CI->currency($grand_total, TRUE) ?></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                        <br><br>
+
+                        <div class="notices">
+                            <div class="notice">Thank you for being our valued customer.
+                                <br> We hope our product will meet your expectations.
+                                <br> We hope to see you again in the future.
+                                <br>For supporting our small business, You are a superhero!
                             </div>
-                            <!--DO NOT DELETE THIS div. IT is responsible for showing footer always at the bottom-->
-                            <div></div>
                         </div>
-                    </div>
+                    </main>
+                    <footer>
+                        This Order Receipt Was Created On A Computer And Is Valid Without The Signature And Seal.
+                    </footer>
                 </div>
+                <!--DO NOT DELETE THIS div. IT is responsible for showing footer always at the bottom-->
+                <div></div>
             </div>
         </div>
 

@@ -34,6 +34,7 @@ class Orders_model extends CI_Model
         'a.amount',                 // Order amount
         'a.fees',                   // Additional fees
         'a.form_bundle_id',         // Bundle ID
+
         'f.show_customer_name as form_has_customer_name',
         'f.show_email as form_has_email',
         'f.show_phone as form_has_phone',

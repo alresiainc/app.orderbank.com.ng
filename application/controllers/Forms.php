@@ -217,7 +217,7 @@ class Forms extends MY_Controller
             $formData = $this->input->post(); // Retrieve form data as associative array
 
             // Generate order number (8 digits) and set current date with time
-            $orderNumber = sprintf('%08d', mt_rand(1, 99999999));
+            $orderNumber = sprintf('%08d', mt_rand(1, 999999));
             $currentDateTime = date("Y-m-d H:i:s");
             $form_bundle = $this->form_bundles->get_bundle_by_id($formData['form_bundle_id']);
 
@@ -260,6 +260,8 @@ class Forms extends MY_Controller
                 $formData['customer_name']
             );
 
+            $updatedOrder = $this->orders->get_orders_by_id($orderId);
+            $this->send_order_message($updatedOrder[0], 'new');
             echo json_encode(['success' => true, 'message' => 'Form submitted successfully.', 'order_id' => $orderId]);
         } else {
             // Validation errors
