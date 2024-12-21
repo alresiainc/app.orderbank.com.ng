@@ -42,12 +42,16 @@ class Orders_model extends CI_Model
         'f.show_states as form_has_states',
         'f.show_delivery as form_has_delivery',
         'f.delivery_choices as form_delivery_choices',
+        'f.accent_color as form_accent_color',
+        'f.background_color as form_background_color',
         'f.form_bundles',
         'f.store_id',
         'e.name as bundle_name',    // Bundle name
         'e.image as bundle_image',  // Bundle image
         'e.description as bundle_description', // Bundle description
         'e.price as bundle_price',  // Bundle price
+        'a.discount_type',
+        'a.discount_amount',
         'a.created_at',             // Record creation timestamp
         'a.updated_at',
         'MAX(g.updated_at) AS last_update_date',

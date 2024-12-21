@@ -826,12 +826,12 @@ class Orders extends MY_Controller
         ]));
         try {
             // Send WhatsApp message via Messages API 
-            Messages::message($this->toCountryCode($order->customer_whatsapp), '*' . $subject . '* \n' . $message)
+            Messages::message($this->toCountryCode($order->customer_whatsapp), '*' . $subject . '* \n\n' . $message)
                 ->media(['url', $imageUrl])
                 ->send();
 
             if ($order->customer_whatsapp != $order->customer_phone) {
-                Messages::message($this->toCountryCode($order->customer_phone), $message)
+                Messages::message($this->toCountryCode($order->customer_phone), '*' . $subject . '* \n\n' . $message)
                     ->media(['url', $imageUrl])
                     ->send();
             }

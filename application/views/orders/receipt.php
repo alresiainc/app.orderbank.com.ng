@@ -1,6 +1,6 @@
 <?php
 
-
+$CI = &get_instance();
 // Your column order array
 $column_order = array(
     'a.id',                     // Order ID
@@ -47,6 +47,8 @@ $column_order = array(
     'e.image as bundle_image',  // Bundle image
     'e.description as bundle_description', // Bundle description
     'e.price as bundle_price',  // Bundle price
+    'a.discount_type',
+    'a.discount_amount',
     'a.created_at',             // Record creation timestamp
     'a.updated_at',
     'MAX(g.updated_at) AS last_update_date',
@@ -84,6 +86,11 @@ $bundle_name = $order->bundle_name;
 $bundle_price = $order->bundle_price;
 $bundle_description = $order->bundle_description;
 $accent_color = $order->accent_color;
+$discount_type = $order->discount_type;
+$discount_amount = $order->discount_amount;
+
+
+
 
 // Fetch order items
 // $order_items = $this->db->select('b.item_name, a.quantity, a.amount')
@@ -94,6 +101,17 @@ $accent_color = $order->accent_color;
 
 // Calculate grand total
 $grand_total = $amount + $fees;
+
+
+if ($discount_type === 'percentage') {
+    $discount_price = ($amount * ($discount_amount / 100));
+} else {
+    $discount_price = $discount_amount;
+}
+if ($discount_amount) {
+    $grand_total = $grand_total - $discount_price;
+}
+
 
 if ($order->store_id) {
 
@@ -126,6 +144,10 @@ if ($order->store_id) {
     <title>Order Receipt</title>
     <style>
         /* General Reset */
+        :root {
+            --accent-color: <?php echo $accent_color; ?>;
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -149,14 +171,14 @@ if ($order->store_id) {
 
         /* Header */
         .header {
-            text-align: center;
+            /* text-align: center; */
             margin-bottom: 30px;
         }
 
         .header h2 {
-            font-size: 36px;
+            font-size: 26px;
             margin-bottom: 5px;
-            color: <? echo $accent_color; ?>;
+            color: var(--accent-color);
         }
 
         .header p {
@@ -212,7 +234,17 @@ if ($order->store_id) {
         .total .total-amount {
             font-size: 18px;
             font-weight: bold;
-            color: <? echo $accent_color; ?>;
+            /* color: var(--accent-color); */
+        }
+
+        .print-button {
+            background-color: var(--accent-color);
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 5px;
         }
 
         /* Footer */
@@ -239,7 +271,8 @@ if ($order->store_id) {
                 box-shadow: none;
             }
 
-            .footer {
+            .footer,
+            .print-button {
                 display: none;
             }
         }
@@ -250,40 +283,66 @@ if ($order->store_id) {
     <div class="container">
         <!-- Header Section -->
         <div class="header">
-            <span>
-                <img src="<?= base_url($store_logo); ?>" style="width: 80px;">
-                <h2><?= $store_name; ?></h2><br>
-                <p>
-                    <?php echo (!empty(trim($company_address))) ? $this->lang->line('company_address') . "" . $company_address . "<br>" : ''; ?>
-                    <?= $company_city; ?>
-                    <?php echo (!empty(trim($company_postcode))) ? "-" . $company_postcode : ''; ?>
-                    <br>
-                    <?php echo (!empty(trim($company_gst_no)) && gst_number()) ? $this->lang->line('gst_number') . ": " . $company_gst_no . "<br>" : ''; ?>
-                    <?php echo (!empty(trim($company_vat_number)) && vat_number()) ? $this->lang->line('vat_number') . ": " . $company_vat_number . "<br>" : ''; ?>
-                    <?php if (!empty(trim($company_mobile))) {
-                        echo $this->lang->line('phone') . ": " . $company_mobile;
-                        if (!empty($company_phone)) {
-                            echo "," . $company_phone;
+            <div style="display: flex; justify-content: space-between;  ">
+                <div>
+                    <img src="<?= base_url($store_logo); ?>" style="width:80px;">
+                    <div style="font-weight: 900;"><?= $store_name; ?></div><br>
+                </div>
+                <div>
+                    <button class="print-button">
+                        Download Receipt
+                    </button>
+                </div>
+            </div>
+            <div style="display: flex; justify-content: space-between;  ">
+                <div>
+
+                    <div style="font-size: 14px; font-weight: 500;">
+                        <?php echo (!empty(trim($company_address))) ? $this->lang->line('company_address') . "" . $company_address . "<br>" : ''; ?>
+                        <?= $company_city; ?>
+                        <?php echo (!empty(trim($company_postcode))) ? "-" . $company_postcode : ''; ?>
+                        <br>
+                        <?php echo (!empty(trim($company_gst_no)) && gst_number()) ? $this->lang->line('gst_number') . ": " . $company_gst_no . "<br>" : ''; ?>
+                        <?php echo (!empty(trim($company_vat_number)) && vat_number()) ? $this->lang->line('vat_number') . ": " . $company_vat_number . "<br>" : ''; ?>
+                        <?php if (!empty(trim($company_mobile))) {
+                            echo $this->lang->line('phone') . ": " . $company_mobile;
+                            if (!empty($company_phone)) {
+                                echo "," . $company_phone;
+                            }
+                            echo "<br>";
                         }
-                        echo "<br>";
-                    }
-                    echo (!empty($company_email)) ? $company_email . "," : '';
-                    echo (!empty($store_website)) ? $store_website . "<br>" : '';
+                        echo (!empty($company_email)) ? $company_email . "," : '';
+                        // echo (!empty($store_website)) ? $store_website . "<br>" : '';
 
-                    ?>
+                        ?>
+                    </div>
+                </div>
+                <div>
+                    <div style="font-size: 14px; font-weight: 500;">
+                        <div>
+                            Order Number: <strong>#<?= $order_number ?></strong>
+                        </div>
+                        <div>
+                            Order Date: <strong> <?= $order_date ?> </strong>
+                        </div>
+                        <div>
+                            Delivery Date: <strong><?= $delivery_date ?></strong>
+                        </div>
+                        <div>
+                            Order Status: <strong style="text-transform: capitalize;"><?= $status ?></strong>
+                        </div>
 
-                </p>
+                    </div>
+                </div>
+            </div>
+            <span>
 
-                <div style="display: flex; justify-content: space-between; align-items:center; margin: 15px 0px; background-color:transparent; padding: 8px 15px; border: 1px solid ">
-                    <div>
-                        Order Number: <strong><?= $order_number ?></strong>
+
+                <div style="margin: 15px 0px; background-color:transparent; padding: 8px 15px; border: 1px solid; text-align:center">
+                    <div style="font-size: 20px; font-weight: 900; ">
+                        Order Receipt
                     </div>
-                    <div>
-                        Order Date: <strong> <?= $order_date ?> </strong>
-                    </div>
-                    <div>
-                        Delivery Date: <strong><?= $delivery_date ?></strong>
-                    </div>
+
                 </div>
                 <!-- <p>Order Number: <strong><?= $order_number ?></strong></p>
                 <p>Order Date: <?= $order_date ?> | Delivery Date: <?= $delivery_date ?></p> -->
@@ -292,7 +351,7 @@ if ($order->store_id) {
         <!-- Customer Details Section -->
         <div class="details">
             <h3>Customer Details</h3>
-            <table width="100%">
+            <table width="100%" style="margin: 15px 0px; background-color:transparent;  border: 1px solid; ">
                 <tr>
                     <th>Name:</th>
                     <td><?= $customer_name ?></td>
@@ -315,12 +374,12 @@ if ($order->store_id) {
         <!-- Bundle Details Section -->
         <div class="details">
             <h3>Bundle Details</h3>
-            <table width="100%">
+            <table width="100%" style="margin: 15px 0px; background-color:transparent;  border: 1px solid; ">
                 <tr>
                     <th>Bundle Name:</th>
                     <td><?= $bundle_name ?></td>
                     <th>Price:</th>
-                    <td><?= number_format($bundle_price, 2) ?></td>
+                    <td><?= $CI->currency($bundle_price, TRUE) ?></td>
                 </tr>
                 <tr>
                     <th>Description:</th>
@@ -329,25 +388,31 @@ if ($order->store_id) {
             </table>
         </div>
 
-        <!-- Order Status Section -->
-        <div class="details">
-            <h3>Order Status: <?= $status ?></h3>
-        </div>
 
         <!-- Total Section -->
         <div class="total">
             <table>
                 <tr>
                     <td><strong>Total Amount:</strong></td>
-                    <td><?= number_format($grand_total, 2) ?></td>
+                    <td><?= $CI->currency($grand_total ?? 0, TRUE) ?></td>
                 </tr>
                 <tr>
                     <td><strong>Fees:</strong></td>
-                    <td><?= number_format($fees, 2) ?></td>
+                    <td><?= $CI->currency($fees ?? 0.00, TRUE) ?></td>
                 </tr>
+                <?php
+                if (!empty($discount_amount)): ?>
+                    <tr>
+                        <td><strong>Discount:</strong></td>
+                        <td><?= $CI->currency($discount_price ?? 0, TRUE) ?></td>
+                    </tr>
+                <?php
+                endif;
+                ?>
+
                 <tr>
                     <td><strong class="total-amount">Grand Total:</strong></td>
-                    <td class="total-amount"><?= number_format($grand_total + $fees, 2) ?></td>
+                    <td class="total-amount"><?= $CI->currency($grand_total + $fees, TRUE) ?></td>
                 </tr>
             </table>
         </div>
@@ -355,6 +420,7 @@ if ($order->store_id) {
         <!-- Footer Section -->
         <div class="footer">
             <p>Thank you for your purchase! If you have any questions, feel free to contact us.</p>
+
         </div>
     </div>
 
