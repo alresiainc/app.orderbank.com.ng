@@ -143,6 +143,8 @@ class Orders_model extends CI_Model
                 if (count($this->column_search) - 1 == $i) //last loop
                     $this->db->group_end(); //close bracket
             }
+
+
             $i++;
         }
 
@@ -168,18 +170,23 @@ class Orders_model extends CI_Model
             $this->db->where_in('a.country', $country);
         }
 
+        $state = $this->input->post('state');
+        if (!empty($state) && is_array($state)) {
+            $this->db->where('a.state', $state);
+        }
+
         // If from_date selected
         $fromDate = $this->input->post('from_date');
         if (!empty($fromDate)) {
             $formattedFromDate = date('Y-m-d', strtotime($fromDate));
-            $this->db->where('a.updated_at >=', $formattedFromDate);
+            $this->db->where('a.delivery_date >=', $formattedFromDate);
         }
 
         // If to_date selected
         $toDate = $this->input->post('to_date');
         if (!empty($toDate)) {
             $formattedToDate = date('Y-m-d', strtotime($toDate));
-            $this->db->where('a.updated_at <=', $formattedToDate);
+            $this->db->where('a.delivery_date <=', $formattedToDate);
         }
 
         // If status selected (multi-select)
@@ -241,6 +248,32 @@ class Orders_model extends CI_Model
 
         if ($status != "all") {
             $this->db->where("a.status", $status);
+        }
+
+
+        $country = $this->input->post('country');
+        if (!empty($country) && is_array($country)) {
+            $this->db->where_in('a.country', $country);
+        }
+
+        $state = $this->input->post('state');
+
+        if (!empty($state)) {
+            $this->db->where('a.state', $state);
+        }
+
+        // If from_date selected
+        $fromDate = $this->input->post('from_date');
+        if (!empty($fromDate)) {
+            $formattedFromDate = date('Y-m-d', strtotime($fromDate));
+            $this->db->where('a.delivery_date >=', $formattedFromDate);
+        }
+
+        // If to_date selected
+        $toDate = $this->input->post('to_date');
+        if (!empty($toDate)) {
+            $formattedToDate = date('Y-m-d', strtotime($toDate));
+            $this->db->where('a.delivery_date <=', $formattedToDate);
         }
 
         // print_r($_POST['length']);

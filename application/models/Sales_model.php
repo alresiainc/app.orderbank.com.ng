@@ -1047,9 +1047,11 @@ class Sales_model extends CI_Model
 					<?php foreach ($this->orders->get_orders_by_status($order_status) as $order) : ?>
 						<option <?= isset($order_details['id']) && $order_details['id'] == $order->id ? 'selected' : ''; ?>
 							value="<?= htmlspecialchars($order->id, ENT_QUOTES, 'UTF-8'); ?>">
-							<?= htmlspecialchars($order->fulfilment_id, ENT_QUOTES, 'UTF-8'); ?> -
+							#<?= htmlspecialchars($order->order_number, ENT_QUOTES, 'UTF-8'); ?> -
 							<?= htmlspecialchars($order->customer_name, ENT_QUOTES, 'UTF-8'); ?> -
-							<?= htmlspecialchars($order->state, ENT_QUOTES, 'UTF-8'); ?></option>
+							<?= htmlspecialchars($order->state, ENT_QUOTES, 'UTF-8'); ?>
+							(<?= htmlspecialchars($order->quantity ?? 1, ENT_QUOTES, 'UTF-8'); ?>)
+						</option>
 					<?php endforeach; ?>
 				</select>
 			</td>

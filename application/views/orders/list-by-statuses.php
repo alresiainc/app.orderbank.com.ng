@@ -1,3 +1,9 @@
+<?php
+$CI = &get_instance();
+$CI->load->config('order_status');
+$order_statuses = $CI->config->item('order_status');
+
+?>
 <!DOCTYPE html>
 <html>
 
@@ -7,6 +13,7 @@
     <!-- </copy> -->
     <!-- bootstrap wysihtml5 - text editor -->
     <link rel="stylesheet" href="<?php echo $theme_link; ?>plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/flatpickr.min.css">
     <style type="text/css">
         table.table-bordered>thead>tr>th {
             /* border:1px solid black;*/
@@ -22,6 +29,68 @@
             padding-left: 2px;
             padding-right: 2px;
 
+        }
+
+        .filter-container {
+            display: none;
+            margin-top: 20px;
+            border: 1px solid #ccc;
+            padding: 15px;
+            /* border-radius: 5px; */
+            background: #f9f9f9;
+            margin-bottom: 15px;
+        }
+
+        .filter-row {
+            margin-bottom: 15px;
+        }
+
+        .filter-row label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .filter-row input,
+        .filter-row select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .filter-btn {
+            margin-top: 10px;
+        }
+
+        .shortcut-buttons-flatpickr-button {
+            display: inline-block;
+            padding: 6px 12px;
+            margin-bottom: 0;
+            font-size: 14px;
+            font-weight: 400;
+            line-height: 1.42857143;
+            text-align: center;
+            white-space: nowrap;
+            vertical-align: middle;
+            -ms-touch-action: manipulation;
+            touch-action: manipulation;
+            cursor: pointer;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            background-image: none;
+            border: 1px solid transparent;
+            border-radius: 4px;
+            background-color: #3c8dbc;
+            border-color: #367fa9;
+            border-radius: 3px;
+            -webkit-box-shadow: none;
+            box-shadow: none;
+            border: 1px solid transparent;
+            color: #fff;
+            margin-bottom: 12px;
         }
     </style>
     <meta name="current-order-status" content=" <?= $order_status; ?>">
@@ -89,17 +158,38 @@
                                                         <div class="input-group">
                                                             <span class="input-group-addon" title="Search Items"><i class="fa fa-barcode"></i></span>
                                                             <input type="text" class="form-control " placeholder="Search Product Name/Order Number" autofocus id="order_search">
-
-
-                                                            <span class="input-group-addon pointer text-green" data-toggle="modal" data-target="#new-order-modal" title="Click to Create Order"><i class="fa fa-plus"></i></span>
-
-
-
+                                                            <span id="toggle-filter" class="filter-btn   input-group-addon pointer text-green" title="Click to Filter View">Filter Orders</span>
 
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div class="box-body">
+                                                <div class="box-body ">
+                                                    <div id="filter-container" class="filter-container mb-3">
+                                                        <div class="row mb-3">
+                                                            <!-- Date Filter -->
+                                                            <div class="filter-row col-md-5">
+                                                                <label for="date-filter">Filter by Date</label>
+                                                                <input type="text" id="date-filter" class="form-control" placeholder="Select Date Range">
+                                                            </div>
+
+                                                            <!-- country Filter -->
+                                                            <div class="filter-row col-md-3">
+                                                                <label for="country-filter">Filter by Country</label>
+                                                                <select id="country-filter" class="form-control">
+                                                                    <?= get_country_select_list(134, false); ?>
+                                                                </select>
+                                                            </div>
+                                                            <!-- State Filter -->
+                                                            <div class="filter-row col-md-4">
+                                                                <label for="state-filter">Filter by State</label>
+                                                                <select id="state-filter" class="form-control">
+                                                                    <?= get_state_select_list(null, true); ?>
+                                                                </select>
+                                                            </div>
+
+
+                                                        </div>
+                                                    </div>
                                                     <div class="table-responsive" style="width: 100%">
                                                         <table id="order_table" class="table custom_hover " width="100%">
                                                             <thead class="bg-gray ">
@@ -172,8 +262,65 @@
         <div class="control-sidebar-bg"></div>
     </div>
     <!-- ./wrapper -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/flatpickr.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/shortcut-buttons-flatpickr@0.3.0/dist/shortcut-buttons-flatpickr.min.js"></script>
 
     <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const toggleButton = document.getElementById("toggle-filter");
+            const filterContainer = document.getElementById("filter-container");
+
+            // Toggle filter visibility
+            toggleButton.addEventListener("click", () => {
+                if (filterContainer.style.display === "none" || filterContainer.style.display === "") {
+                    filterContainer.style.display = "block";
+                    toggleButton.textContent = "Hide Filter";
+                } else {
+                    filterContainer.style.display = "none";
+                    toggleButton.textContent = "Filter Orders";
+
+                    document.querySelector('#date-filter').value = '';
+                    document.querySelector('#state-filter').value = '';
+
+                    $("#date-filter").val('').trigger('change');
+                    $("#state-filter").val('').trigger('change');
+                }
+            });
+
+            // Initialize Flatpickr with shortcuts
+            flatpickr("#date-filter", {
+                mode: "range",
+                dateFormat: "Y-m-d",
+
+                plugins: [
+                    ShortcutButtonsPlugin({
+                        button: [{
+                                label: "Today"
+                            },
+                            {
+                                label: "Tomorrow"
+                            },
+
+                        ],
+                        label: "or",
+                        onClick: (index, fp) => {
+                            let date;
+                            switch (index) {
+
+                                case 0:
+                                    date = new Date();
+                                    break;
+                                case 1:
+                                    date = new Date(Date.now() + 24 * 60 * 60 * 1000);
+                                    break;
+
+                            }
+                            fp.setDate(date);
+                        }
+                    })
+                ]
+            });
+        });
         var base_url = $("#base_url").val();
         $("#order_search").on("focusout", function() {
             $("#order_search").removeClass('ui-autocomplete-loading');
@@ -381,6 +528,7 @@ Amount:        ${orderAmount || bundlePrice || 'N/A'}
                         var form_has_delivery = orderDetails.form_has_delivery == '1' ? true : false;
                         var form_delivery_choices = orderDetails.form_delivery_choices;
                         var form_bundles = orderDetails.form_bundles;
+                        var quantity = orderDetails.quantity;
 
 
 
@@ -393,6 +541,7 @@ Amount:        ${orderAmount || bundlePrice || 'N/A'}
                         $('#current_order_amount').val(orderAmount || bundlePrice);
                         $('#current_delivery_date').val(deliveryDate);
                         $('#current_address').val(address);
+                        $('#current_quantity').val(quantity ?? 1);
 
                         $('#current_form_bundle_id').select2().val(formBundleId)
                             .trigger('change');
@@ -843,9 +992,12 @@ Amount:        ${orderAmount || bundlePrice || 'N/A'}
                     "data": {
                         search_table: search_table,
                         status: document.querySelector('meta[name="current-order-status"]').getAttribute('content'),
+                        state: document.querySelector('#state-filter')?.value,
+                        country: document.querySelector('#country-filter')?.value,
+                        from_date: document.querySelector('#date-filter')?.value?.split(' to ')[0] || '',
+                        to_date: document.querySelector('#date-filter')?.value?.split(' to ')[1] || ''
                     },
                     complete: function(data) {
-
 
                         $('.single_checkbox').iCheck({
                             checkboxClass: 'icheckbox_square-orange',
@@ -918,11 +1070,16 @@ Amount:        ${orderAmount || bundlePrice || 'N/A'}
             load_datatable();
 
 
-            // $('#order_search').on('keyup change', function() {
-            //     // $('#order_table').DataTable().ajax.reload();
-            //     $('#order_table').DataTable().destroy();
-            //     load_datatable();
-            // });
+            $('#state-filter, #date-filter').on('keyup change', function() {
+                // $('#order_table').DataTable().ajax.reload();
+                // alert(JSON.stringify({
+                //     from_date: document.querySelector('#date-filter')?.value?.split(' to ')[0] || '',
+                //     to_date: document.querySelector('#date-filter')?.value?.split(' to ')[1] || '',
+                //     state: document.querySelector('#state-filter')?.value,
+                // }))
+                $('#order_table').DataTable().destroy();
+                load_datatable();
+            });
 
             $('#new-order-form-button').click(function(e) {
                 e.preventDefault();

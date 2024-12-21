@@ -237,7 +237,8 @@ class Orders extends MY_Controller
                 'customer_whatsapp' => $formData['customer_whatsapp'] ?? null,
                 'address' => $formData['address'] ?? null,
                 'state' => $formData['state'] ?? null,
-                'amount' => $formData['amount'] ?? null
+                'amount' => $formData['amount'] ?? null,
+                'quantity' => $formData['quantity'] ?? null
             ];
 
 

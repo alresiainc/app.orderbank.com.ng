@@ -51,7 +51,7 @@
                         </div>
                     </div>
 
-                    <div class="col-md-8">
+                    <div class="col-md-6">
                         <div class="box-body">
                             <div class="form-group">
                                 <label for="current_form_bundle_id">Bundle *</label>
@@ -67,7 +67,17 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-3">
+                        <div class="box-body">
+                            <div class="form-group">
+                                <label for="current_quantity">Quantity</label>
+                                <label id="current_quantity_msg" class="text-danger text-right pull-right"></label>
+                                <input type="number" class="form-control " id="current_quantity" name="quantity" min="1"
+                                    placeholder=" Enter Quantity">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
                         <div class="box-body">
                             <div class="form-group">
                                 <label for="current_order_amount">Amount</label>
