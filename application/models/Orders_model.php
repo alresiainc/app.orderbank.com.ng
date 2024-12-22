@@ -424,7 +424,7 @@ class Orders_model extends CI_Model
             $this->db->where('deleted_at IS NULL'); // Ignore soft-deleted messages
             $query = $this->db->get();
 
-            if ($query->num_rows() == 0) {
+            if ($query->num_rows() == 0 && !in_array($status_key, ['all'])) {
                 // If the message doesn't exist, create it
                 $data = [
                     'type' => $type,

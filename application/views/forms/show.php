@@ -87,14 +87,14 @@ $CI = &get_instance();
         }
 
         .form-title {
-            font-size: 1.7rem;
+            font-size: 2.7rem;
             font-weight: 600;
             margin-bottom: 10px;
             text-align: center;
         }
 
         .form-header-text {
-            font-size: 1.1rem;
+            font-size: 1.4rem;
             font-weight: 400;
             margin-bottom: 10px;
             text-align: center;
@@ -110,13 +110,13 @@ $CI = &get_instance();
             display: block;
             margin-bottom: 8px;
             color: #34495e;
-            font-size: 1.1rem;
+            font-size: 1.4rem;
         }
 
         .form-group small {
             display: block;
             margin-top: 5px;
-            font-size: 0.9rem;
+            font-size: 1.2rem;
             color: #95a5a6;
         }
 
@@ -311,20 +311,20 @@ $CI = &get_instance();
         }
 
         .bundle-name {
-            font-size: 0.9rem;
+            font-size: 1.2rem;
             font-weight: 600;
             margin-bottom: 5px;
             color: #2c3e50;
         }
 
         .bundle-desc {
-            font-size: 0.7rem;
+            font-size: 1rem;
             color: #7f8c8d;
             margin-bottom: 10px;
         }
 
         .bundle-price {
-            font-size: 1rem;
+            font-size: 1.8rem;
             font-weight: bold;
             color: var(--form-color);
         }
@@ -475,11 +475,107 @@ $CI = &get_instance();
             /* Highlight active date */
             color: #fff !important;
         }
+
+        /* Modal container - hidden by default */
+        .modal {
+            display: none;
+            /* Hidden by default */
+            position: fixed;
+            /* Stay in place */
+            z-index: 1000;
+            /* Sit on top */
+            left: 0;
+            top: 0;
+            width: 100%;
+            /* Full width */
+            height: 100%;
+            /* Full height */
+            overflow: auto;
+            /* Enable scroll if needed */
+            background-color: rgba(0, 0, 0, 0.5);
+            /* Black background with opacity */
+        }
+
+        /* Modal content box */
+        .modal-content {
+            background-color: #fff;
+            margin: auto;
+            margin-top: 30px;
+            /* Center the modal */
+            padding: 20px;
+            border-radius: 8px;
+            width: 620px;
+            max-width: 100%;
+            /* Modal width */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            text-align: center;
+        }
+
+        /* Close button */
+        .close-button {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: -10px;
+        }
+
+        .close-button:hover,
+        .close-button:focus {
+            color: #000;
+            text-decoration: none;
+        }
+
+        .confirm-modal h4 {
+            width: 100%;
+            padding: 5px 27px;
+            background: var(--form-color);
+            color: #fff;
+            font-size: 1.5rem;
+        }
+
+        .confirm-modal a.confirm-order {
+            color: #fff;
+            background-color: var(--form-color);
+            border-color: var(--form-color);
+            cursor: pointer;
+            display: inline-block;
+            font-weight: 400;
+            text-align: center;
+            white-space: nowrap;
+            vertical-align: middle;
+            display: block;
+            font-size: 14px;
+            padding: 9px 16px;
+            border-radius: 2px;
+            text-decoration: none;
+
+        }
+
+        .confirm-modal a.edit-order {
+            color: #2e2f39;
+            background-color: #ffc108;
+            border-color: #ffc108;
+            cursor: pointer;
+            display: inline-block;
+            font-weight: 400;
+            text-align: center;
+            white-space: nowrap;
+            vertical-align: middle;
+            display: block;
+            font-size: 14px;
+            padding: 9px 16px;
+            border-radius: 2px;
+            text-decoration: none;
+
+        }
     </style>
 
 </head>
 
 <body>
+    <?php $this->load->view('forms/modals/modal_confirm_order.php'); ?>
     <div class="form-container">
         <h1 class="form-title"><?= $form->form_title; ?></h1>
         <p class="form-header-text"><?= $form->form_header_text; ?></p>
@@ -568,7 +664,7 @@ $CI = &get_instance();
 
 
             <div class="form-group">
-                <label>Select an Item:</label>
+                <label>Select The Product You Want To Order:</label>
                 <div class="bundle-container">
                     <?php foreach ($bundles as $bundle): ?>
                         <?php if (in_array($bundle->id, json_decode($form->form_bundles))): ?>
@@ -595,7 +691,7 @@ $CI = &get_instance();
 
             <!-- Submit Button -->
             <div class="form-group button-container">
-                <button type="submit">Submit </button>
+                <button type="submit" id="show-confirm-order-modal">Place Your Order </button>
             </div>
 
 
@@ -622,7 +718,7 @@ $CI = &get_instance();
     <div id="loader-container" class="hidden">
         <div class="loader-wrapper">
             <div class="spinner"></div>
-            <p id="funny-message">Preparing your experience...</p>
+            <p id="funny-messagee">Please wait while we process your order...</p>
             <div class="progress-bar">
                 <div class="progress-fill"></div>
             </div>
@@ -665,10 +761,10 @@ $CI = &get_instance();
             // Set up the date picker
             $('#custom-date-picker').datepicker({
                 autoclose: true,
-                format: 'dd-mm-yyyy',
+                format: 'yyyy-mm-dd',
                 todayHighlight: true, // Highlight today's date
-                startDate: '<?= date('d-m-Y'); ?>', // Include today as the first selectable date
-                endDate: '<?= date('d-m-Y', strtotime('+' . $form->delivery_choices . ' days')); ?>', // End date
+                startDate: '<?= date('Y-m-d'); ?>', // Include today as the first selectable date
+                endDate: '<?= date('Y-m-d', strtotime('+' . $form->delivery_choices . ' days')); ?>', // End date
                 beforeShowDay: function(date) {
                     // Normalize the current date and serverToday to midnight
                     const currentDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
@@ -712,18 +808,18 @@ $CI = &get_instance();
             });
 
             const messages = [
-                "Processing your order... Making sure everything's perfect!",
-                "Hang tight, we're confirming your details...",
-                "Just a moment, we're packaging your request...",
-                "Getting everything ready... almost there!",
-                "Checking stock and preparing your order...",
-                "One last check to ensure a smooth delivery!",
-                "Finalizing your order... almost ready!",
-                "Reviewing your order... ensuring everything is correct!",
-                "Crossing the t's and dotting the i's... just a sec!",
-                "Good things are on the way! Wrapping up your order...",
-                "Your order is in progress... making sure everything adds up!",
-                "Don't worry, we're just double-checking your request!"
+                // "Processing your order... Making sure everything's perfect!",
+                // "Hang tight, we're confirming your details...",
+                // "Just a moment, we're packaging your request...",
+                // "Getting everything ready... almost there!",
+                // "Checking stock and preparing your order...",
+                // "One last check to ensure a smooth delivery!",
+                // "Finalizing your order... almost ready!",
+                // "Reviewing your order... ensuring everything is correct!",
+                // "Crossing the t's and dotting the i's... just a sec!",
+                // "Good things are on the way! Wrapping up your order...",
+                // "Your order is in progress... making sure everything adds up!",
+                // "Don't worry, we're just double-checking your request!"
             ];
 
 
@@ -771,10 +867,61 @@ $CI = &get_instance();
                     return false;
                 }
             }
+            const formatDeliveryDate = (dateStr) => {
+                const months = [
+                    "January", "February", "March", "April", "May", "June",
+                    "July", "August", "September", "October", "November", "December"
+                ];
 
-            $("#order-form").on("submit", function(e) {
+                const addOrdinalSuffix = (day) => {
+                    if (day > 3 && day < 21) return day + "th"; // Covers 4-20
+                    switch (day % 10) {
+                        case 1:
+                            return day + "st";
+                        case 2:
+                            return day + "nd";
+                        case 3:
+                            return day + "rd";
+                        default:
+                            return day + "th";
+                    }
+                };
+
+                const inputDate = new Date(dateStr); // Parse input date
+                const currentDate = new Date(); // Current date
+
+                const dayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+
+                // Check for "Today" and "Tomorrow"
+                const diffDays = Math.floor((inputDate - currentDate) / (1000 * 60 * 60 * 24));
+                let prefix = "";
+
+                if (diffDays === 0) {
+                    prefix = "Today, ";
+                } else if (diffDays === 1) {
+                    prefix = "Tomorrow, ";
+                } else {
+                    prefix = `${dayNames[inputDate.getDay()]}, `;
+                }
+
+                const day = addOrdinalSuffix(inputDate.getDate());
+                const month = months[inputDate.getMonth()];
+                const year = inputDate.getFullYear();
+
+                return `${prefix}${day} ${month}, ${year}`;
+            };
+
+            $(window).on('click', function(event) {
+                if ($(event.target).is('#confirm-order-modal')) {
+                    $('#confirm-order-modal').fadeOut(); // Hide the modal
+                }
+            });
+            $('.close-button, .edit-order').on('click', function() {
+                $('#confirm-order-modal').fadeOut(); // Hide the modal with a fade effect
+            });
+
+            $("#show-confirm-order-modal").on("click", function(e) {
                 e.preventDefault(); // Prevent form's default submission
-
 
                 var flag = true;
 
@@ -830,6 +977,41 @@ $CI = &get_instance();
                     toastr["warning"]("You have not selected any Item yet!");
                     return;
                 }
+
+                const delivery_date = formatDeliveryDate($('#delivery_select').val() != 'custom' ? $('#delivery_select').val() : $('#custom-date-picker').val());
+                const selected_bundle_img = $('#form_bundle:checked').parents('.bundle-box').find('.bundle-image').attr('src');
+                const selected_bundle_name = $('#form_bundle:checked').parents('.bundle-box').find('.bundle-name').text();
+                const selected_bundle_description = $('#form_bundle:checked').parents('.bundle-box').find('.bundle-desc').text();
+                const selected_bundle_price = $('#form_bundle:checked').parents('.bundle-box').find('.bundle-price').text();
+                const selected_bundle_details = $('#form_bundle:checked').parents('.bundle-box').find('.bundle-details').html();
+                $('.show-customer-name').text($('#customer_name').val());
+                $('.show-customer-email').text($('#email').val());
+                $('.show-customer-phone').text($('#phone').val());
+                $('.show-customer-whatsapp').text($('#whatsapp').val());
+                $('.show-customer-address').text($('#address').val());
+                //for the state lets get the option text
+                $('.show-customer-state').text($('#state option:selected').text());
+
+                $('.show-delivery-date').text('Your Order Will Be deliver your order ' + delivery_date);
+                $('.show-selected-bundle-img').attr('src', selected_bundle_img);
+                $('.show-selected-bundle-name').text(selected_bundle_name);
+                $('.show-selected-bundle-description').text(selected_bundle_description);
+                $('.show-selected-bundle-price').text(selected_bundle_price);
+                // $('.show-selected-bundle-details').html(selected_bundle_details)
+
+
+                $('#confirm-order-modal').fadeIn(); // Show the modal with a fade effect
+
+            });
+
+            $(".confirm-order").on("click", function(e) {
+                e.preventDefault();
+                $("#order-form").submit();
+            })
+
+
+            $("#order-form").on("submit", function(e) {
+                e.preventDefault(); // Prevent form's default submission
 
 
                 let csrfName = '<?php echo $this->security->get_csrf_token_name(); ?>';
@@ -903,6 +1085,7 @@ $CI = &get_instance();
                                 if (redirectUrl) {
                                     window.location.href = redirectUrl; // Redirect to URL after a successful submission
                                 }
+                                $('#confirm-order-modal').fadeOut();
 
                                 $('.form-container').hide();
                                 $('.success-message').show();

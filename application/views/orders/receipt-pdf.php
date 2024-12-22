@@ -71,8 +71,19 @@ $order = $query->row(); // Get the first result
 
 // Extract order details
 $order_number = $order->order_number;
-$order_date = show_date($order->order_date); // Use your date formatting function
-$delivery_date = show_date($order->delivery_date);
+$date = new DateTime($delivery_date);
+$today = new DateTime('today');
+$tomorrow = new DateTime('tomorrow');
+// $order_date =  date('jS \of M, Y \a\t g:ia', strtotime($order->order_date)); // Use your date formatting function
+$order_date =   show_date($order->order_date);
+if ($date->format('Y-m-d') == $today->format('Y-m-d')) {
+    $delivery_date = 'Today, ' . $date->format('jS F, Y');
+} elseif ($date->format('Y-m-d') == $tomorrow->format('Y-m-d')) {
+    $delivery_date = 'Tomorrow, ' . $date->format('jS F, Y');
+} else {
+    $delivery_date = $date->format('l, jS F, Y');
+}
+
 $customer_name = $order->customer_name;
 $customer_email = $order->customer_email;
 $customer_phone = $order->customer_phone;

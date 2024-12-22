@@ -2,8 +2,8 @@
 defined('BASEPATH') or exit('No direct script access allowed');
 
 
-
-
+// include_once('./Orders.php');
+include_once(APPPATH . 'controllers/Orders.php'); // Path to your controller
 class Forms extends MY_Controller
 {
     public function __construct()
@@ -20,6 +20,8 @@ class Forms extends MY_Controller
         $this->load->model('Form_bundles_model', 'form_bundles');
         $this->load->model('State_model', 'states');
         $this->load->library('wassenger');
+
+        // $this->OrdersController = new Orders();
     }
 
 
@@ -233,7 +235,7 @@ class Forms extends MY_Controller
                 'customer_whatsapp' => $formData['customer_whatsapp'] ?? null,
                 'address' => $formData['address'] ?? null,
                 'state' => $formData['state'] ?? null,
-                'amount' => $form_data->price,
+                'amount' => $form_bundle->price,
                 'quantity' => $form_bundle->quantity
             ];
 
@@ -260,8 +262,10 @@ class Forms extends MY_Controller
                 $formData['customer_name']
             );
 
+            // Load ControllerA
             $updatedOrder = $this->orders->get_orders_by_id($orderId);
             $this->send_order_message($updatedOrder[0], 'new');
+
             echo json_encode(['success' => true, 'message' => 'Form submitted successfully.', 'order_id' => $orderId]);
         } else {
             // Validation errors

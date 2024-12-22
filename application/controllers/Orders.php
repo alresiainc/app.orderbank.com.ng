@@ -1,13 +1,7 @@
 <?php
 defined('BASEPATH') or exit('No direct script access allowed');
 
-use Dompdf\Dompdf;
-use Dompdf\Options;
-use Alresia\LaravelWassenger\Wassenger;
-use Alresia\LaravelWassenger\Messages;
-use Alresia\LaravelWassenger\Devices;
-use Alresia\LaravelWassenger\Exceptions\LaravelWassengerException;
-use Alresia\LaravelWassenger\Session;
+
 
 
 class Orders extends MY_Controller
@@ -510,7 +504,7 @@ class Orders extends MY_Controller
         foreach ($order_status as $status => $item) {
             $statusName = $item['label'];
 
-            if ($status != 'all' && $status != 'payment-received'  && ($status != $current_status)) {
+            if (!in_array($status, ['all', 'new', 'payment-received']) && ($status != $current_status)) {
                 $dropdownOptions .= "<li>
                     <a style='cursor:pointer' onclick=\"change_status('{$id}', '{$status}')\">
                         {$statusName}
@@ -589,11 +583,7 @@ class Orders extends MY_Controller
                                 <i class="fa fa-fw fa-clipboard text-blue"></i>Copy
                             </a>
                         </li>
-                        <li>
-                            <a title="Edit Order" onclick="update_order_model(\'' . $id . '\')">
-                                <i class="fa fa-fw fa-edit text-blue"></i>Edit
-                            </a>
-                        </li>
+                        
                         <li>
                             <a title="Print Receipt" href="' . base_url('/orders/receipt/' . $id) . '">
                                 <i class="fa fa-fw fa-newspaper-o text-blue"></i>Receipt
@@ -604,11 +594,7 @@ class Orders extends MY_Controller
                                 <i class="fa fa-fw fa-history text-blue"></i>History
                             </a>
                         </li>
-                        <li>
-                            <a style="cursor:pointer" title="Delete Record?" onclick="delete_order(\'' . $id . '\')">
-                                <i class="fa fa-fw fa-trash text-red"></i>Delete
-                            </a>
-                        </li>
+                       
                     </ul>
                 </div>';
         }
@@ -760,6 +746,8 @@ class Orders extends MY_Controller
                 // For rescheduled, add the new delivery date
                 $orderData['rescheduled_date'] = date("Y-m-d", strtotime($formData['rescheduled_date']));
                 $historyDescription = 'The delivery date has been rescheduled to: ' . $orderData['rescheduled_date'];
+            } else {
+                $orderData['rescheduled_date'] = null;
             }
 
             // If no specific status-related action, just update status
@@ -855,156 +843,5 @@ class Orders extends MY_Controller
 
         print_r($data);
         // $this->load->view('test', $data);
-    }
-
-    public function send_order_message($order, $status, $type = 'whatsapp')
-    {
-        $template =  $this->orders->get_message($status, $type);
-
-        if ($template[0]->send_message) {
-            $message = $this->resolveTemplate($order, $template[0]->message);
-            $subject = $this->resolveTemplate($order, $template[0]->subject);
-            $files = [];
-
-            $imageUrl = !empty($order->bundle_image)
-                ? base_url(return_item_image_thumb($order->bundle_image))
-                : base_url() . "theme/images/no_image.png";
-
-
-            $data = $this->data;
-            $data['page_title'] = "Orders Receipt";
-            $data['order_id'] = $order_id;
-
-
-            // Load the view and capture its HTML content
-            $html = $this->load->view('orders/receipt-pdf', $data, true);
-
-            // Generate and return the PDF
-            $pdfFile = $this->generatePDFfromPage($html, 'Orders_receipt.pdf', true);
-
-            // if (Wassenger::numberExist($phone)) {
-            //     Messages::message($phone, $message)->send();
-            // }
-            log_message('error', "Sending to customer_whatsapp:" . json_encode([
-                'customer_whatsapp' => $order->customer_whatsapp,
-                'customer_phone' => $order->customer_phone,
-                'message' => $message,
-                'imageUrl' => $imageUrl,
-            ]));
-
-            if ($template[0]->send_pdf) {
-                $files[] = ['url', $pdfFile];
-            }
-
-            if ($template[0]->send_image) {
-                $files[] = ['url', $imageUrl];
-            }
-            try {
-                // Send WhatsApp message via Messages API 
-                Messages::message($this->toCountryCode($order->customer_whatsapp), '*' . $subject . '* \n\n' . $message)
-                    ->media($files)
-                    ->send();
-
-                if ($order->customer_whatsapp != $order->customer_phone) {
-                    Messages::message($this->toCountryCode($order->customer_phone), '*' . $subject . '* \n\n' . $message)
-                        ->media($files)
-                        ->send();
-                }
-            } catch (LaravelWassengerException $e) {
-                // Handle exception
-                log_message('error', "LaravelWassengerException:" . $e->getMessage());
-            }
-        }
-    }
-
-
-    public function toCountryCode($phone, $cCode = '+234', $nMax = 10)
-    {
-
-        //Get the last character.
-        $lastNum = $phone[strlen($phone) - 1];
-        $formatNum = $cCode . '' . substr($phone, -$nMax, -1) . '' . $lastNum;
-        return $formatNum;
-        // echo toCountryCode('2349022233344').'<br>'; //Must Result +2349022233344
-        // echo toCountryCode('09022233344').'<br>'; //Must Result +2349022233344
-        // echo toCountryCode('+23409022233344').'<br>'; //Must Result +2349022233344
-        // echo toCountryCode('23409022233344').'<br>'; //Must Result +2349022233344
-    }
-
-    public function break_text($text, $return = 10)
-    {
-        $newSring = substr($text, 0, $return);
-        if (strlen($text) < $return) {
-            return $newSring;
-        } else {
-            return $newSring . '...';
-        }
-    }
-
-    public function resolveTemplate($order, $template)
-    {
-        // Map placeholders to their corresponding order properties
-        $placeholders = [
-            '[order_number]' => $order->order_number,
-            '[customer_name]' => $order->customer_name,
-            '[customer_phone]' => $order->customer_phone,
-            '[customer_whatsapp]' => $order->customer_whatsapp,
-            '[customer_email]' => $order->customer_email,
-            '[customer_address]' => $order->address,
-            '[order_date]' => $order->order_date,
-            '[rescheduled_date]' => $order->rescheduled_date,
-            '[delivery_date]' => $order->delivery_date,
-            '[status]' => $order->status,
-            '[country]' => $order->country,
-            '[state]' => $order->state,
-            '[quantity]' => $order->quantity,
-            '[amount]' => $order->amount,
-            '[bundle_name]' => $order->bundle_name,
-            '[bundle_image]' => $order->bundle_image,
-            '[bundle_description]' => $order->bundle_description,
-            '[bundle_price]' => $order->bundle_price,
-            '[discount_type]' => $order->discount_type,
-            '[discount_amount]' => $order->discount_amount,
-        ];
-
-        // Calculate the discount price
-        if ($order->discount_type === 'percentage') {
-            $discount_price = $order->amount - ($order->amount * ($order->discount_amount / 100));
-        } else {
-            $discount_price = $order->amount - $order->discount_amount;
-        }
-        $placeholders['[discount_price]'] = $discount_price;
-
-        // Replace all placeholders in the template
-        foreach ($placeholders as $placeholder => $value) {
-            $template = str_replace($placeholder, $value, $template);
-        }
-
-        return $template;
-    }
-
-    public function generatePDFfromPage($htmlContent, $fileName = 'document.pdf', $stream = true)
-    {
-        // Load Dompdf
-        $dompdf = new Dompdf();
-
-        // Load the HTML content into Dompdf
-        $dompdf->loadHtml($htmlContent);
-        $dompdf->set_option('isRemoteEnabled', true); // Allow loading remote assets
-
-        // Set the paper size and orientation
-        $dompdf->setPaper('A4', 'portrait');
-
-        // Render the HTML as a PDF
-        $dompdf->render();
-
-        // Output the generated PDF
-        if ($stream) {
-            // Stream the PDF to the browser
-            $dompdf->stream($fileName, ["Attachment" => false]);
-        } else {
-            // Return the PDF content
-            return $dompdf->output();
-        }
     }
 }

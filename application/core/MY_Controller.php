@@ -3,6 +3,15 @@
 /**
  * Author: Askarali
  */
+
+use Dompdf\Dompdf;
+use Dompdf\Options;
+use Alresia\LaravelWassenger\Wassenger;
+use Alresia\LaravelWassenger\Messages;
+use Alresia\LaravelWassenger\Devices;
+use Alresia\LaravelWassenger\Exceptions\LaravelWassengerException;
+use Alresia\LaravelWassenger\Session;
+
 class MY_Controller extends CI_Controller
 {
   public $source_version = "1.7.1";
@@ -256,6 +265,164 @@ class MY_Controller extends CI_Controller
   {
     if (!is_it_belong_to_store($table, $rec_id)) {
       show_error("Data may not avaialable!!", 403, $heading = "Something Went Wrong!!");
+    }
+  }
+
+  public function send_order_message($order, $status, $type = 'whatsapp')
+  {
+    $template = $this->orders->get_message($status, $type);
+
+    if ($template[0]->send_message) {
+      $message = $this->resolveTemplate($order, $template[0]->message);
+      $subject = $this->resolveTemplate($order, $template[0]->subject);
+      $files = [];
+
+      $imageUrl = !empty($order->bundle_image)
+        ? base_url(return_item_image_thumb($order->bundle_image))
+        : base_url() . "theme/images/no_image.png";
+
+      $data = $this->data;
+      $data['page_title'] = "Orders Receipt";
+      $data['order_id'] = $order->id;
+
+      // Load the view and capture its HTML content
+      $html = $this->load->view('orders/receipt-pdf', $data, true);
+
+      // Generate and return the PDF (temporary file)
+      $pdfFilePath = $this->generatePDFfromPage($html, null, false);
+
+      if ($template[0]->send_pdf) {
+        // $files[] = ['url' => $pdfFilePath];
+        $files = ['url' => $pdfFilePath];
+      }
+
+      if ($template[0]->send_image) {
+        // $files[] = ['url' => $imageUrl];
+        $files = ['url' => $imageUrl];
+      }
+
+      log_message('error', "Sending to customer_whatsapp:" . json_encode([
+        'customer_whatsapp' => $order->customer_whatsapp,
+        'customer_phone' => $order->customer_phone,
+        'message' => $message,
+        'files' => $files,
+      ]));
+
+      try {
+        // Send WhatsApp message via Messages API
+        Messages::message($this->toCountryCode($order->customer_whatsapp), '*' . $subject . '* \n\n' . $message)
+          ->media($files)
+          ->send();
+
+        if ($order->customer_whatsapp != $order->customer_phone) {
+          Messages::message($this->toCountryCode($order->customer_phone), '*' . $subject . '* \n\n' . $message)
+            ->media($files)
+            ->send();
+        }
+      } catch (LaravelWassengerException $e) {
+        // Handle exception
+        log_message('error', "LaravelWassengerException:" . $e->getMessage());
+      }
+
+      // Clean up temporary file
+      if (file_exists($pdfFilePath)) {
+        unlink($pdfFilePath);
+      }
+    }
+  }
+
+
+  public function toCountryCode($phone, $cCode = '+234', $nMax = 10)
+  {
+
+    //Get the last character.
+    $lastNum = $phone[strlen($phone) - 1];
+    $formatNum = $cCode . '' . substr($phone, -$nMax, -1) . '' . $lastNum;
+    return $formatNum;
+    // echo toCountryCode('2349022233344').'<br>'; //Must Result +2349022233344
+    // echo toCountryCode('09022233344').'<br>'; //Must Result +2349022233344
+    // echo toCountryCode('+23409022233344').'<br>'; //Must Result +2349022233344
+    // echo toCountryCode('23409022233344').'<br>'; //Must Result +2349022233344
+  }
+
+  public function break_text($text, $return = 10)
+  {
+    $newSring = substr($text, 0, $return);
+    if (strlen($text) < $return) {
+      return $newSring;
+    } else {
+      return $newSring . '...';
+    }
+  }
+
+  public function resolveTemplate($order, $template)
+  {
+    // Map placeholders to their corresponding order properties
+    $placeholders = [
+      '[order_number]' => $order->order_number,
+      '[customer_name]' => $order->customer_name,
+      '[customer_phone]' => $order->customer_phone,
+      '[customer_whatsapp]' => $order->customer_whatsapp,
+      '[customer_email]' => $order->customer_email,
+      '[customer_address]' => $order->address,
+      '[order_date]' => $order->order_date,
+      '[rescheduled_date]' => $order->rescheduled_date,
+      '[delivery_date]' => $order->delivery_date,
+      '[status]' => $order->status,
+      '[country]' => $order->country,
+      '[state]' => $order->state,
+      '[quantity]' => $order->quantity,
+      '[amount]' => $order->amount,
+      '[bundle_name]' => $order->bundle_name,
+      '[bundle_image]' => $order->bundle_image,
+      '[bundle_description]' => $order->bundle_description,
+      '[bundle_price]' => $order->bundle_price,
+      '[discount_type]' => $order->discount_type,
+      '[discount_amount]' => $order->discount_amount,
+    ];
+
+    // Calculate the discount price
+    if ($order->discount_type === 'percentage') {
+      $discount_price = $order->amount - ($order->amount * ($order->discount_amount / 100));
+    } else {
+      $discount_price = $order->amount - $order->discount_amount;
+    }
+    $placeholders['[discount_price]'] = $discount_price;
+
+    // Replace all placeholders in the template
+    foreach ($placeholders as $placeholder => $value) {
+      $template = str_replace($placeholder, $value, $template);
+    }
+
+    return $template;
+  }
+
+  public function generatePDFfromPage($htmlContent, $fileName = null, $stream = true)
+  {
+    // Load Dompdf
+    $dompdf = new Dompdf();
+
+    // Load the HTML content into Dompdf
+    $dompdf->loadHtml($htmlContent);
+    $dompdf->set_option('isRemoteEnabled', true); // Allow loading remote assets
+
+    // Set the paper size and orientation
+    $dompdf->setPaper('A4', 'portrait');
+
+    // Render the HTML as a PDF
+    $dompdf->render();
+
+    if ($stream) {
+      // Stream the PDF to the browser
+      $dompdf->stream($fileName ?? 'document.pdf', ["Attachment" => false]);
+    } else {
+      // Generate a unique file name if not provided
+      $fileName = $fileName ?? uniqid('order_receipt_') . '.pdf';
+      $filePath = sys_get_temp_dir() . DIRECTORY_SEPARATOR . $fileName; // Temporary directory
+
+      // Save the PDF content to the file
+      file_put_contents($filePath, $dompdf->output());
+      return $filePath;
     }
   }
 }
