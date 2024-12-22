@@ -275,7 +275,7 @@ class MY_Controller extends CI_Controller
     if ($template[0]->send_message) {
       $message = $this->resolveTemplate($order, $template[0]->message);
       $subject = $this->resolveTemplate($order, $template[0]->subject);
-      $files = [];
+      $media = [];
 
       $imageUrl = !empty($order->bundle_image)
         ? base_url(return_item_image_thumb($order->bundle_image))
@@ -292,31 +292,31 @@ class MY_Controller extends CI_Controller
       $pdfFilePath = $this->generatePDFfromPage($html, null, false);
 
       if ($template[0]->send_pdf) {
-        // $files[] = ['url' => $pdfFilePath];
-        $files = ['url' => $pdfFilePath];
+        // $media[] = ['url' => $pdfFilePath];
+        $media = ['url', $pdfFilePath];
       }
 
       if ($template[0]->send_image) {
-        // $files[] = ['url' => $imageUrl];
-        $files = ['url' => $imageUrl];
+        // $media[] = ['url' => $imageUrl];
+        $media = ['url', $imageUrl];
       }
 
       log_message('error', "Sending to customer_whatsapp:" . json_encode([
         'customer_whatsapp' => $order->customer_whatsapp,
         'customer_phone' => $order->customer_phone,
         'message' => $message,
-        'files' => $files,
+        'media' => $media,
       ]));
 
       try {
         // Send WhatsApp message via Messages API
         Messages::message($this->toCountryCode($order->customer_whatsapp), '*' . $subject . '* \n\n' . $message)
-          ->media($files)
+          ->media($media)
           ->send();
 
         if ($order->customer_whatsapp != $order->customer_phone) {
           Messages::message($this->toCountryCode($order->customer_phone), '*' . $subject . '* \n\n' . $message)
-            ->media($files)
+            ->media($media)
             ->send();
         }
       } catch (LaravelWassengerException $e) {
