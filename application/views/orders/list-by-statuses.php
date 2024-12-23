@@ -158,7 +158,7 @@ $order_statuses = $CI->config->item('order_status');
                                                         <div class="input-group">
                                                             <span class="input-group-addon" title="Search Items"><i class="fa fa-barcode"></i></span>
                                                             <input type="text" class="form-control " placeholder="Search Product Name/Order Number" autofocus id="order_search">
-                                                            <span id="toggle-filter" class="filter-btn   input-group-addon pointer text-green" title="Click to Filter View">Filter Orders</span>
+                                                            <span id="toggle-filter" class="filter-btn   input-group-addon pointer text-green" title="Click to Filter View">Click to Filter Orders</span>
 
                                                         </div>
                                                     </div>
@@ -169,7 +169,7 @@ $order_statuses = $CI->config->item('order_status');
                                                             <!-- Date Filter -->
                                                             <div class="filter-row col-md-5">
                                                                 <label for="date-filter">Filter by Date</label>
-                                                                <input type="text" id="date-filter" class="form-control" placeholder="Select Date Range">
+                                                                <input type="text" id="date-filter" class="form-control" placeholder="Select Date Range" value="<?php echo date('Y-m-d', strtotime('-1 days')); ?> to <?php echo date('Y-m-d'); ?>">
                                                             </div>
 
                                                             <!-- country Filter -->
@@ -274,10 +274,10 @@ $order_statuses = $CI->config->item('order_status');
             toggleButton.addEventListener("click", () => {
                 if (filterContainer.style.display === "none" || filterContainer.style.display === "") {
                     filterContainer.style.display = "block";
-                    toggleButton.textContent = "Hide Filter";
+                    toggleButton.textContent = "Remove All Filters";
                 } else {
                     filterContainer.style.display = "none";
-                    toggleButton.textContent = "Filter Orders";
+                    toggleButton.textContent = "Click to Filter Orders";
 
                     document.querySelector('#date-filter').value = '';
                     document.querySelector('#state-filter').value = '';
@@ -295,6 +295,9 @@ $order_statuses = $CI->config->item('order_status');
                 plugins: [
                     ShortcutButtonsPlugin({
                         button: [{
+                                label: "Yesterday"
+                            },
+                            {
                                 label: "Today"
                             },
                             {
@@ -307,11 +310,14 @@ $order_statuses = $CI->config->item('order_status');
                             let date;
                             switch (index) {
 
-                                case 0:
-                                    date = new Date();
+                                case 0: // Yesterday
+                                    date = new Date(Date.now() - 24 * 60 * 60 * 1000); // Subtract 24 hours
                                     break;
-                                case 1:
-                                    date = new Date(Date.now() + 24 * 60 * 60 * 1000);
+                                case 1: // Today
+                                    date = new Date(); // Current date
+                                    break;
+                                case 2: // Tomorrow
+                                    date = new Date(Date.now() + 24 * 60 * 60 * 1000); // Add 24 hours
                                     break;
 
                             }
