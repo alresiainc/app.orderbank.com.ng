@@ -323,11 +323,11 @@ class MY_Controller extends CI_Controller
           ->media($media)
           ->send();
 
-        if ($order->customer_whatsapp != $order->customer_phone) {
-          Messages::message($this->toCountryCode($order->customer_phone), '*' . $subject . '* \n\n' . $message)
-            ->media($media)
-            ->send();
-        }
+        // if ($order->customer_whatsapp != $order->customer_phone) {
+        //   Messages::message($this->toCountryCode($order->customer_phone), '*' . $subject . '* \n\n' . $message)
+        //     ->media($media)
+        //     ->send();
+        // }
       } catch (LaravelWassengerException $e) {
         // Handle exception
         log_message('error', "LaravelWassengerException:" . $e->getMessage());
