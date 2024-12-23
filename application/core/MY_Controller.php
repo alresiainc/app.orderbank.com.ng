@@ -37,6 +37,7 @@ class MY_Controller extends CI_Controller
     $default_lang = ($this->session->has_userdata('language')) ? $this->session->userdata('language') : "English";
 
     $this->lang->load($default_lang, $default_lang);
+    $this->load->config('order_status');
   }
   public function load_info()
   {
@@ -277,9 +278,14 @@ class MY_Controller extends CI_Controller
       $subject = $this->resolveTemplate($order, $template[0]->subject);
       $media = [];
 
-      $imageUrl = !empty($order->bundle_image)
+
+      $imagePath = !empty($order->bundle_image)
+        ? FCPATH . return_item_image_thumb($order->bundle_image)
+        : FCPATH . "theme/images/no_image.png";
+
+      $imageUrl = file_exists($imagePath)
         ? base_url(return_item_image_thumb($order->bundle_image))
-        : base_url() . "theme/images/no_image.png";
+        : base_url("theme/images/no_image.png");
 
       $data = $this->data;
       $data['page_title'] = "Orders Receipt";
@@ -290,10 +296,11 @@ class MY_Controller extends CI_Controller
 
       // Generate and return the PDF (temporary file)
       $pdfFilePath = $this->generatePDFfromPage($html, null, false);
+      $pdfFileUrl = base_url('/orders/receipt/' . $order->id);
 
       if ($template[0]->send_pdf) {
         // $media[] = ['url' => $pdfFilePath];
-        $media = ['url', $pdfFilePath];
+        $media = ['url', $pdfFileUrl];
       }
 
       if ($template[0]->send_image) {
@@ -357,7 +364,22 @@ class MY_Controller extends CI_Controller
 
   public function resolveTemplate($order, $template)
   {
+    $statuses = $this->config->item('order_status');
+    $status = $statuses[$order->status]['label'];
+    // Extract order details
+    $date = new DateTime($order->delivery_date);
+    $today = new DateTime('today');
+    $tomorrow = new DateTime('tomorrow');
+    $order_date =  date('jS \of M, Y \a\t g:ia', strtotime($order->order_date)); // Use your date formatting function
+    if ($date->format('Y-m-d') == $today->format('Y-m-d')) {
+      $delivery_date = 'Today, ' . $date->format('jS F, Y');
+    } elseif ($date->format('Y-m-d') == $tomorrow->format('Y-m-d')) {
+      $delivery_date = 'Tomorrow, ' . $date->format('jS F, Y');
+    } else {
+      $delivery_date = $date->format('l, jS F, Y');
+    }
     // Map placeholders to their corresponding order properties
+
     $placeholders = [
       '[order_number]' => $order->order_number,
       '[customer_name]' => $order->customer_name,
@@ -365,10 +387,10 @@ class MY_Controller extends CI_Controller
       '[customer_whatsapp]' => $order->customer_whatsapp,
       '[customer_email]' => $order->customer_email,
       '[customer_address]' => $order->address,
-      '[order_date]' => $order->order_date,
+      '[order_date]' => $order_date,
       '[rescheduled_date]' => $order->rescheduled_date,
-      '[delivery_date]' => $order->delivery_date,
-      '[status]' => $order->status,
+      '[delivery_date]' => $delivery_date,
+      '[status]' => $status,
       '[country]' => $order->country,
       '[state]' => $order->state,
       '[quantity]' => $order->quantity,

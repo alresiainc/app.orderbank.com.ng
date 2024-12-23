@@ -73,6 +73,18 @@ class Forms extends MY_Controller
         $this->load->view('forms/edit', $data);
     }
 
+    public function duplicate_form($id)
+    {
+
+        $data = $this->data;
+        $form  = $this->forms->get_form_by_id($id);
+        $data['page_title'] = "Duplicate Forms - " . $form->form_name;
+        $data['bundles'] = $this->form_bundles->get_all_bundles();
+        $data['form'] = $form;
+
+        $this->load->view('forms/duplicate', $data);
+    }
+
     public function create_form()
     {
         $this->form_validation->set_rules('form_name', 'Form Name', 'trim|required');
@@ -570,7 +582,8 @@ class Forms extends MY_Controller
             $options .= "<a href='" . site_url('forms/edit_form/' . $form->id) . "' class='btn btn-warning btn-sm' style='margin-right:5px'>Edit</a>";
             // $options .= " <a href='" . site_url('forms/delete_form/' . $form->id) . "' class='btn btn-danger btn-sm' style='margin-right:8px'>Delete</a>";
             $options .= " <a onclick='delete_form(\"" . $form->id . "\")' class='btn btn-danger btn-sm' style='margin-right:8px'>Delete</a>";
-            $options .= "<a target='_blank' href='" . base_url('form/' . $form->form_link) . "' class='btn btn-info btn-sm'>View</a>";
+            $options .= "<a target='_blank' href='" . base_url('form/' . $form->form_link) . "' class='btn btn-info btn-sm' style='margin-right:8px'>View</a>";
+            $options .= "<a href='" . base_url('forms/duplicate-form/' . $form->id) . "' class='btn btn-primary btn-sm'>Duplicate</a>";
 
             $row[] = $options;
 

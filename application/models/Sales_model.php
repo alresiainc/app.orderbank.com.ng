@@ -332,33 +332,32 @@ class Sales_model extends CI_Model
 
 			##############################################START
 			//FIND THE PREVIOUSE ITEM LIST Orders Details and delete it
-			$prev_item_order_details = $this->db->select("order_details")
+			$prev_item_order_details = $this->db->select("order_id")
 				->from("db_salesitems")
 				->where("sales_id", $sales_id)
 				->get()
 				->result_array();
 
 
+
+			$prev_items_orders = [];
+
 			foreach ($prev_item_order_details as $order) {
 				$order_details = json_decode($order['order_details'], true); // Decode JSON column
-				$order_id = $order_details['id']; // Extract order_id from the JSON object
-
-				// Update order status
-				$order_data = [
-					'status' => 'Delivered',
-					'id' => $order_id,
-					// 'fees' => '',
-					// 'amount' => '',
-					// 'quantity' => '',
-				];
-
-				// Call the model method to process the order
-				$this->orders->change_order_status($order_data);
-
-
-				// Delete the item
-				// $this->db->where("item_id", $item['item_id'])->delete("db_salesitems");
+				$item_order_id = $order['order_id']; // Extract order_id from the JSON object
+				$prev_items_orders[] = $item_order_id;
 			}
+
+			log_message("error", "prev_item_order_details" . json_encode($prev_items_orders));
+			if (count($prev_items_orders) > 0) {
+				$this->orders->change_order_status([
+					'status' => 'delivered',
+					'id' => $prev_items_orders,
+				]);
+			}
+
+
+
 			##############################################END
 
 			$q11 = $this->db->query("delete from db_salesitems where sales_id='$sales_id'");
@@ -388,6 +387,8 @@ class Sales_model extends CI_Model
 
 				//ADD THE ORDER DETAILS 
 				$order_id		= $this->xss_html_filter(trim($_REQUEST['td_data_' . $i . '_22']));
+
+				log_message("error", "order_id: " . $order_id);
 
 				$order			= $this->orders->get_orders_by_id($order_id);
 
@@ -458,8 +459,8 @@ class Sales_model extends CI_Model
 					'purchase_price' 	=> $purchase_price,
 					'status'	 		=> 1,
 					'seller_points'		=> get_seller_points($item_id) * $sales_qty,
-					'order_details'		=> json_encode($order)
-
+					'order_id'			=> $order_id,
+					'order_details'			=> json_encode($order[0]),
 				);
 
 
@@ -468,7 +469,7 @@ class Sales_model extends CI_Model
 				$q2 = $this->db->insert('db_salesitems', $salesitems_entry);
 
 				$order_data = [
-					'status' => 'Payment Received',
+					'status' => 'payment-received',
 					'id' => $order_id,
 					'fees' => '',
 					'amount' => $purchase_price,
@@ -1026,7 +1027,7 @@ class Sales_model extends CI_Model
 				'order_id' 					=> $res1->order_id,
 			);
 
-			$result = $this->return_row_with_data($rowcount++, $info, 'Received');
+			$result = $this->return_row_with_data($rowcount++, $info, 'payment-received');
 		}
 		return $result;
 	}
@@ -1036,16 +1037,19 @@ class Sales_model extends CI_Model
 		log_message('error', 'order_status:  ' . $order_status);
 
 		extract($info);
-		$order_details = json_decode($order_details, true);
-		$item_amount = ($item_sales_price * $item_sales_qty) + $item_tax_amt; ?>
 
+		$item_amount = ($item_sales_price * $item_sales_qty) + $item_tax_amt; ?>
+		$order = $this->orders->get_orders_by_id($order_id);
 		<tr id="row_<?= $rowcount; ?>" data-row='<?= $rowcount; ?>'>
 			<td id="td_<?= $rowcount; ?>_sn" class="sn_column"><?= $rowcount; ?></td> <!-- Add this line for SN -->
 			<td id="td_<?= $rowcount; ?>_22">
 				<select class="form-control select2" id="td_data_<?= $rowcount; ?>_22" name="td_data_<?= $rowcount; ?>_22">
 					<option value="">Select Order</option>
 					<?php foreach ($this->orders->get_orders_by_status($order_status) as $order) : ?>
-						<option <?= isset($order_details['id']) && $order_details['id'] == $order->id ? 'selected' : ''; ?>
+						<option <?= isset($order_id) && $order_id == $order->id ? 'selected' : ''; ?>
+							style="<?= isset($order_id) && $order_id != $order->id ? 'display:none;' : ''; ?>"
+							quantity="<?= htmlspecialchars($order->quantity, ENT_QUOTES, 'UTF-8'); ?>"
+							amount="<?= htmlspecialchars($order->amount, ENT_QUOTES, 'UTF-8'); ?>"
 							value="<?= htmlspecialchars($order->id, ENT_QUOTES, 'UTF-8'); ?>">
 							#<?= htmlspecialchars($order->order_number, ENT_QUOTES, 'UTF-8'); ?> -
 							<?= htmlspecialchars($order->customer_name, ENT_QUOTES, 'UTF-8'); ?> -

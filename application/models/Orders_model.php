@@ -385,7 +385,9 @@ class Orders_model extends CI_Model
 
         $this->db->trans_begin();
 
-        $this->db->where("id", $data['id']);
+        $ids = is_array($data['id']) ? $data['id'] : [$data['id']];
+
+        $this->db->where_in("id", $ids);
 
         if ($data['status'] == 'Returned') {
             $this->db->update("db_orders", [

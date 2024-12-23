@@ -71,7 +71,7 @@ $order = $query->row(); // Get the first result
 
 // Extract order details
 $order_number = $order->order_number;
-$date = new DateTime($delivery_date);
+$date = new DateTime($order->delivery_date);
 $today = new DateTime('today');
 $tomorrow = new DateTime('tomorrow');
 // $order_date =  date('jS \of M, Y \a\t g:ia', strtotime($order->order_date)); // Use your date formatting function

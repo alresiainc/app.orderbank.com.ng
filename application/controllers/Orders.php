@@ -290,13 +290,13 @@ class Orders extends MY_Controller
             // Column 2: Customer email with image
             $row[] = $this->formatCustomerColumn($order);
 
-            $order_date =  date('jS \of M, Y \a\t g:ia', strtotime($order->order_date));
+            $order_date =  date('l, jS F, Y \a\t g:ia', strtotime($order->order_date));
             $col3 =   "<div style='text-align:center;'>";
             $col3 .=   "<div style='font-weight:600;'>{$order->customer_email}</div>";
             $col3 .=   "<small>{$order_date}</small>";
 
             if ($order->rescheduled_date) {
-                $rescheduled_date =  date('jS \of M, Y \a\t g:ia', strtotime($order->rescheduled_date));
+                $rescheduled_date =  date('l, jS F, Y \a\t g:ia', strtotime($order->rescheduled_date));
                 $col3 .=   "<br><small><strong>Rescheduled date:</strong> <br> {$rescheduled_date}</small>";
             }
             $col3 .=   "</div>";
@@ -556,7 +556,7 @@ class Orders extends MY_Controller
                             </a>
                         </li>
                         <li>
-                            <a title="Print Receipt" href="' . base_url('/orders/receipt/' . $id) . '">
+                            <a title="Print Receipt" target="_blank"  href="' . base_url('/orders/receipt/' . $id) . '">
                                 <i class="fa fa-fw fa-newspaper-o text-blue"></i>Receipt
                             </a>
                         </li>
@@ -585,7 +585,7 @@ class Orders extends MY_Controller
                         </li>
                         
                         <li>
-                            <a title="Print Receipt" href="' . base_url('/orders/receipt/' . $id) . '">
+                            <a title="Print Receipt" target="_blank" href="' . base_url('/orders/receipt/' . $id) . '">
                                 <i class="fa fa-fw fa-newspaper-o text-blue"></i>Receipt
                             </a>
                         </li>
