@@ -298,15 +298,17 @@ class MY_Controller extends CI_Controller
       $pdfFilePath = $this->generatePDFfromPage($html, null, false);
       $pdfFileUrl = base_url('/orders/receipt/' . $order->id);
 
-      if ($template[0]->send_pdf) {
-        // $media[] = ['url' => $pdfFilePath];
-        $media = ['url', $pdfFileUrl];
-      }
 
       if ($template[0]->send_image) {
         // $media[] = ['url' => $imageUrl];
         $media = ['url', $imageUrl];
       }
+
+      if ($template[0]->send_pdf) {
+        // $media[] = ['url' => $pdfFilePath];
+        $media = ['url', $pdfFileUrl];
+      }
+
 
       log_message('error', "Sending to customer_whatsapp:" . json_encode([
         'customer_whatsapp' => $order->customer_whatsapp,
@@ -354,11 +356,11 @@ class MY_Controller extends CI_Controller
 
   public function break_text($text, $return = 10)
   {
-    $newSring = substr($text, 0, $return);
+    $newString = substr($text, 0, $return);
     if (strlen($text) < $return) {
-      return $newSring;
+      return $newString;
     } else {
-      return $newSring . '...';
+      return $newString . '...';
     }
   }
 
