@@ -39,3 +39,4 @@ ERROR - 2024-12-23 12:58:43 --> Severity: Warning --> Undefined property: Orders
 ERROR - 2024-12-23 12:58:43 --> Severity: Warning --> Undefined variable $theme_link /Applications/AMPPS/www/backend.myproda.test/application/views/orders/receipt-pdf.php 159
 ERROR - 2024-12-23 12:58:43 --> Severity: Warning --> Undefined variable $theme_link /Applications/AMPPS/www/backend.myproda.test/application/views/orders/receipt-pdf.php 161
 ERROR - 2024-12-23 12:58:43 --> Severity: Warning --> Undefined variable $theme_link /Applications/AMPPS/www/backend.myproda.test/application/views/orders/receipt-pdf.php 163
+ERROR - 2024-12-23 14:16:42 --> Severity: error --> Exception: Too few arguments to function Sales::invoice(), 0 passed in /Applications/AMPPS/www/backend.myproda.test/system/core/CodeIgniter.php on line 532 and exactly 1 expected /Applications/AMPPS/www/backend.myproda.test/application/controllers/Sales.php 243
