@@ -300,6 +300,7 @@ if ($order->store_id) {
     <style>
         :root {
             --accent-color: <?php echo $accent_color; ?>;
+            /* --accent-color: #3989c6; */
         }
 
         * {
@@ -324,7 +325,7 @@ if ($order->store_id) {
 
 
         a {
-            color: #007bff;
+            color: var(--accent-color);
             text-decoration: none;
             background-color: transparent;
             -webkit-text-decoration-skip: objects;
@@ -393,7 +394,7 @@ if ($order->store_id) {
 
         .invoice .invoice-details .invoice-id {
             margin-top: 0;
-            color: #3989c6
+            color: <?php echo $accent_color; ?>
         }
 
         .invoice main {
@@ -407,7 +408,7 @@ if ($order->store_id) {
 
         .invoice main .notices {
             padding-left: 6px;
-            border-left: 6px solid #3989c6
+            border-left: 6px solid <?php echo $accent_color; ?>
         }
 
         .invoice main .notices .notice {
@@ -437,7 +438,7 @@ if ($order->store_id) {
         .invoice table.order-status td h3 {
             margin: 0;
             font-weight: 400;
-            color: #3989c6;
+            color: <?php echo $accent_color; ?>;
             font-size: 1.2em
         }
 
@@ -451,7 +452,7 @@ if ($order->store_id) {
         .invoice table.order-status .no {
             color: #fff;
             font-size: 1.6em;
-            background: #3989c6
+            background: <?php echo $accent_color; ?>
         }
 
         .invoice table.order-status .unit {
@@ -459,7 +460,7 @@ if ($order->store_id) {
         }
 
         .invoice table.order-status .total {
-            background: #3989c6;
+            background: <?php echo $accent_color; ?>;
             color: #fff
         }
 
@@ -482,9 +483,9 @@ if ($order->store_id) {
         }
 
         .invoice table.order-status tfoot tr:last-child td {
-            color: #3989c6;
+            color: <?php echo $accent_color; ?>;
             font-size: 1.4em;
-            border-top: 1px solid #3989c6
+            border-top: 1px solid <?php echo $accent_color; ?>
         }
 
         .invoice table.order-status tfoot tr td:first-child {

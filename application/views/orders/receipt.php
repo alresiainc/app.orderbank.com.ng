@@ -405,7 +405,7 @@ if ($order->store_id) {
         .invoice header {
             padding: 10px 0;
             margin-bottom: 20px;
-            border-bottom: 1px solid ##30148c
+            border-bottom: 1px solid #30148c
         }
 
         .invoice .company-details {
