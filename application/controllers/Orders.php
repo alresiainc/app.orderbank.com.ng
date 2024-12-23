@@ -9,7 +9,12 @@ class Orders extends MY_Controller
     public function __construct()
     {
         parent::__construct();
-        $this->load_global();
+        $method = $this->router->fetch_method();
+        // print_r($method);
+        // die;
+        if ($method !== 'receipt') {
+            $this->load_global();
+        }
         $this->load->model('Orders_model', 'orders');
         $this->load->model('Form_model', 'forms');
         $this->load->config('order_status');
