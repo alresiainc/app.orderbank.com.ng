@@ -541,6 +541,7 @@ class Orders extends MY_Controller
     private function formatActions($order)
     {
         $id = $order->id;
+        $sales_id = $order->sales_id;
         $current_status = $order->status;
         if ($current_status != 'payment-received') {
 
@@ -583,6 +584,11 @@ class Orders extends MY_Controller
                         Action <span class="caret"></span>
                     </a>
                     <ul role="menu" class="dropdown-menu dropdown-light pull-right">
+                        <li>
+                            <a title="View Order History" href="' . base_url('/sales/invoice/' . $sales_id) . '">
+                                <i class="fa fa-fw fa-columns text-blue"></i>View Sales
+                            </a>
+                        </li>
                         <li>
                             <a title="Copy Order Details" onclick="copy_order_details(\'' . $id . '\')">
                                 <i class="fa fa-fw fa-clipboard text-blue"></i>Copy

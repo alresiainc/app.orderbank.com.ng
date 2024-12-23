@@ -34,7 +34,7 @@ class Orders_model extends CI_Model
         'a.amount',                 // Order amount
         'a.fees',                   // Additional fees
         'a.form_bundle_id',         // Bundle ID
-
+        'i.sales_id',
         'f.show_customer_name as form_has_customer_name',
         'f.show_email as form_has_email',
         'f.show_phone as form_has_phone',
@@ -113,6 +113,8 @@ class Orders_model extends CI_Model
         // $this->db->join('db_order_histories as g', 'g.order_id = a.id', 'left');
         // Join to get all order history entries
         $this->db->join('db_order_histories as g', 'g.order_id = a.id', 'left');
+        $this->db->join('db_salesitems as i', 'i.order_id = a.id', 'left');
+
         // Group by order id to avoid duplicating rows
         $this->db->group_by('a.id'); // Grouping by the order ID, as the main focus is on each order
 
