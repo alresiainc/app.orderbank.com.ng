@@ -562,7 +562,7 @@ if ($order->store_id) {
                             <td style="width: 50%; text-align: left;">
                                 <a href="#!">
 
-                                    <img src="<?= base_url($store_logo); ?>" style="width: 100px; " data-holder-rendered="true">
+                                    <img src="<?= base_url($store_logo, 'http://'); ?>" style="width: 100px; " data-holder-rendered="true">
                                 </a>
                             </td>
                             <td style="width: 50%; text-align: right;">
