@@ -22,3 +22,7 @@ ERROR - 2024-12-24 08:27:48 --> Severity: Warning --> Undefined property: Orders
 ERROR - 2024-12-24 08:27:48 --> Severity: Warning --> Undefined variable $theme_link /Applications/AMPPS/www/backend.myproda.test/application/views/orders/receipt-pdf.php 159
 ERROR - 2024-12-24 08:27:48 --> Severity: Warning --> Undefined variable $theme_link /Applications/AMPPS/www/backend.myproda.test/application/views/orders/receipt-pdf.php 161
 ERROR - 2024-12-24 08:27:48 --> Severity: Warning --> Undefined variable $theme_link /Applications/AMPPS/www/backend.myproda.test/application/views/orders/receipt-pdf.php 163
+ERROR - 2024-12-24 09:14:24 --> Severity: Warning --> Undefined property: Orders::$data /Applications/AMPPS/www/backend.myproda.test/application/controllers/Orders.php 113
+ERROR - 2024-12-24 09:14:24 --> Severity: Warning --> Undefined variable $theme_link /Applications/AMPPS/www/backend.myproda.test/application/views/orders/receipt-pdf.php 159
+ERROR - 2024-12-24 09:14:24 --> Severity: Warning --> Undefined variable $theme_link /Applications/AMPPS/www/backend.myproda.test/application/views/orders/receipt-pdf.php 161
+ERROR - 2024-12-24 09:14:24 --> Severity: Warning --> Undefined variable $theme_link /Applications/AMPPS/www/backend.myproda.test/application/views/orders/receipt-pdf.php 163
