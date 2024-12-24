@@ -426,13 +426,17 @@ if ($order->store_id) {
         .invoice table.order-status th {
             padding: 15px;
             background: #eee;
-            border-bottom: 1px solid #fff
+            /* border-bottom: 1px solid #fff */
         }
 
         .invoice table.order-status th {
             white-space: nowrap;
             font-weight: 400;
             font-size: 16px
+        }
+
+        .invoice table.order-status tr {
+            border-color: <?php echo $accent_color; ?>;
         }
 
         .invoice table.order-status td h3 {
@@ -452,7 +456,7 @@ if ($order->store_id) {
         .invoice table.order-status .no {
             color: #fff;
             font-size: 1.6em;
-            background: <?php echo $accent_color; ?>
+            /* background: <?php echo $accent_color; ?> */
         }
 
         .invoice table.order-status .unit {
@@ -460,12 +464,12 @@ if ($order->store_id) {
         }
 
         .invoice table.order-status .total {
-            background: <?php echo $accent_color; ?>;
-            color: #fff
+            /* background: <?php echo $accent_color; ?>; */
+            /* color: #fff */
         }
 
         .invoice table.order-status tbody tr:last-child td {
-            border: none
+            /* border: none */
         }
 
         .invoice table.order-status tfoot td {
@@ -489,7 +493,7 @@ if ($order->store_id) {
         }
 
         .invoice table.order-status tfoot tr td:first-child {
-            border: none
+            /* border: none */
         }
 
         .invoice footer {
