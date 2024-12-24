@@ -338,8 +338,8 @@
                         $('#current_bundle_quantity').val(quantity);
 
 
-                        $('#update-bundle-modal').modal('toggle');
-
+                        $('#update-bundle-modal').modal('show');
+                        $('#update-bundle-form-button').off('click');
                         $('#update-bundle-form-button').click(function(e) {
                             e.preventDefault();
 
@@ -393,7 +393,7 @@
                                         toastr["success"]("Record Updated Successfully!");
                                         $('#bundle_table').DataTable().ajax.reload();
 
-                                        $('#update-bundle-modal').modal('toggle');
+                                        $('#update-bundle-modal').modal('hide');
 
                                     } else {
                                         toastr["error"](data?.message);

@@ -169,7 +169,10 @@ $order_statuses = $CI->config->item('order_status');
                                                             <!-- Date Filter -->
                                                             <div class="filter-row col-md-5">
                                                                 <label for="date-filter">Filter by Date</label>
-                                                                <input type="text" id="date-filter" class="form-control" placeholder="Select Date Range" value="<?php echo date('Y-m-d', strtotime('-1 days')); ?> to <?php echo date('Y-m-d'); ?>">
+                                                                <input type="text" id="date-filter" class="form-control" placeholder="Select Date Range"
+                                                                    <?php if ($order_status == 'new'): ?>
+                                                                    value="<?php echo date('Y-m-d', strtotime('-1 days')); ?> to <?php echo date('Y-m-d'); ?>"
+                                                                    <?php endif; ?>>
                                                             </div>
 
                                                             <!-- country Filter -->
