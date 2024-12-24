@@ -234,13 +234,15 @@ class Forms extends MY_Controller
             $orderNumber = sprintf('%08d', mt_rand(1, 999999));
             $currentDateTime = date("Y-m-d H:i:s");
             $form_bundle = $this->form_bundles->get_bundle_by_id($formData['form_bundle_id']);
-
+            log_message("error", '$formData' . json_encode($$formData));
+            $delivery_date = $formData['delivery_date'] == 'custom' ? $formData['custom_delivery_date'] : $formData['delivery_date'];
+            log_message("error", $delivery_date);
             $orderData = [
                 'form_id' => $form_id,
                 'order_number' => $orderNumber,
                 'form_bundle_id' => $formData['form_bundle_id'] ?? null,
                 'order_date' => $currentDateTime,
-                'delivery_date' => $form_data->show_delivery ? date("Y-m-d", strtotime($formData['delivery_date'])) : null,
+                'delivery_date' => $form_data->show_delivery ? date("Y-m-d", strtotime($delivery_date)) : null,
                 'customer_name' => $formData['customer_name'] ?? null,
                 'customer_email' => $formData['customer_email'] ?? null,
                 'customer_phone' => $formData['customer_phone'] ?? null,
@@ -250,6 +252,8 @@ class Forms extends MY_Controller
                 'amount' => $form_bundle->price,
                 'quantity' => $form_bundle->quantity
             ];
+
+            log_message("error", json_encode($orderData));
 
 
             // Check if an order with the same data already exists

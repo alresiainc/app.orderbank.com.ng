@@ -421,14 +421,19 @@ class MY_Controller extends CI_Controller
     return $template;
   }
 
-  public function generatePDFfromPage($htmlContent, $fileName = null, $stream = true)
+  public function generatePDFfromPage($htmlContent, $fileName = null, $stream = true, $download = false)
   {
     // Load Dompdf
-    $dompdf = new Dompdf();
+    $options = new Options();
+    $options->set('isRemoteEnabled', true);
+    $dompdf = new Dompdf($options);
+
+
 
     // Load the HTML content into Dompdf
     $dompdf->loadHtml($htmlContent);
-    $dompdf->set_option('isRemoteEnabled', true); // Allow loading remote assets
+
+
 
     // Set the paper size and orientation
     $dompdf->setPaper('A4', 'portrait');
@@ -438,7 +443,7 @@ class MY_Controller extends CI_Controller
 
     if ($stream) {
       // Stream the PDF to the browser
-      $dompdf->stream($fileName ?? 'document.pdf', ["Attachment" => false]);
+      $dompdf->stream($fileName ?? 'document.pdf', ["Attachment" => $download]);
     } else {
       // Generate a unique file name if not provided
       $fileName = $fileName ?? uniqid('order_receipt_') . '.pdf';

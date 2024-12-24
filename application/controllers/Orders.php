@@ -105,6 +105,10 @@ class Orders extends MY_Controller
 
     public function receipt($order_id)
     {
+        // Retrieve URL parameters
+        $file_name = $this->input->get('file_name'); // Get the file_name parameter from the URL
+        $download = $this->input->get('download') !== null; // Check if 'download' exists in the URL (true if present)
+
         // Prepare data for the view
         $data = $this->data;
         $data['page_title'] = "Orders Receipt";
@@ -115,7 +119,7 @@ class Orders extends MY_Controller
         $html = $this->load->view('orders/receipt-pdf', $data, true);
 
         // Generate and return the PDF
-        $this->generatePDFfromPage($html, 'Orders_receipt.pdf', true);
+        $this->generatePDFfromPage($html, $file_name ?? 'Orders_receipt.pdf', true, $download ?? false);
     }
 
 

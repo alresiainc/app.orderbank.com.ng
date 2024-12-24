@@ -540,6 +540,10 @@ if ($order->store_id) {
     </style>
 
 </head>
+<?php
+// print_r(base_url($store_logo));
+// // die;
+?>
 
 <body>
     <div class="container-fluid">
@@ -661,7 +665,7 @@ if ($order->store_id) {
 
         <script>
             // Automatically trigger the print dialog
-            window.print();
+            // window.print();
             document.querySelector('.print-button').addEventListener('click', function() {
                 window.print();
             });

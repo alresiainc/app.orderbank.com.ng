@@ -641,6 +641,7 @@ $CI = &get_instance();
                 </div>
             <?php endif; ?>
 
+
             <!-- Delivery Section -->
             <?php if ($form->show_delivery): ?>
                 <div class="form-group">
