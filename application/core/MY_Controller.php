@@ -425,7 +425,15 @@ class MY_Controller extends CI_Controller
   {
     // Load Dompdf
     $options = new Options();
+
+    // $options->set('defaultFont', 'Courier');
     $options->set('isRemoteEnabled', true);
+    $options->set('tempDir', sys_get_temp_dir()); // Use a writable temp directory
+    $options->set('httpContext', stream_context_create([
+      'http' => [
+        'timeout' => 30, // Increase timeout
+      ]
+    ]));
     $dompdf = new Dompdf($options);
 
 
