@@ -619,7 +619,7 @@ if ($order->store_id) {
                             <tbody>
                                 <tr>
                                     <td class="no">
-                                        <div class="row "><img src="<?= base_url($bundle_image); ?>" alt="" width="50%" height="50%" srcset="" style="width: 100px; height: 100px; "></div>
+                                        <div class="row "><img src="<?= base_url($bundle_image, 'http'); ?>" alt="" width="50%" height="50%" srcset="" style="width: 100px; height: 100px; "></div>
                                     </td>
                                     <td class="text-left">
                                         <h3>
