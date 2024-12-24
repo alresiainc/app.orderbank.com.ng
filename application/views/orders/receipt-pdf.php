@@ -639,7 +639,7 @@ if ($order->store_id) {
 
                                 <tr>
                                     <td colspan="2">
-                                        <div class="thanks">PRODA - The lifestyle you can’t resist.</div>
+                                        <div class="thanks">PRODA - Your satisfaction is our priority.</div>
                                     </td>
                                     <td colspan="2">GRAND TOTAL</td>
                                     <td><?= $CI->currency($grand_total, TRUE) ?></td>
