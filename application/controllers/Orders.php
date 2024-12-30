@@ -777,7 +777,8 @@ class Orders extends MY_Controller
             // Send any necessary order message
             $updatedOrder = $this->orders->get_orders_by_id($id);
 
-            $this->send_order_message($updatedOrder[0], $status);
+            $this->send_order_message($updatedOrder[0], $status, 'whatsapp');
+            $this->send_order_message($updatedOrder[0], $status, 'email');
 
             // Add the order history with the dynamically built description
             $this->orders->add_order_history(

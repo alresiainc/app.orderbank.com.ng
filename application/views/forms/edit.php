@@ -547,7 +547,10 @@
             if (!xss_validation(data)) {
                 return false;
             }
-
+            for (let pair of data.entries()) {
+                alert(pair[0] + ': ' + pair[1]);
+                console.log(pair[0] + ': ' + pair[1]);
+            }
 
 
             $(".box").append('<div class="overlay"><i class="fa fa-refresh fa-spin"></i></div>');

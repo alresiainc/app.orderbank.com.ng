@@ -12,9 +12,10 @@ class Forms extends MY_Controller
         // $this->load_global();
         // Bypass `load_global` for the `show_form` method
         $method = $this->router->fetch_method();
-        if ($method !== 'show_form') {
+        if ($method !== 'show_form' && $method !== 'submit' && $method !== 'submit_alt') {
             $this->load_global();
         }
+
         $this->load->model('Form_model', 'forms');
         $this->load->model('Orders_model', 'orders');
         $this->load->model('Form_bundles_model', 'form_bundles');
@@ -156,13 +157,28 @@ class Forms extends MY_Controller
         }
     }
 
+    public function submit_alt()
+    {
+        $formData = $this->input->post(); // Retrieve form data as associative array
+        log_message('error', 'formData:' . json_encode($formData));
 
+        return json_encode(['success' => false, 'message' => 'Form not found.']);
+    }
     public function submit()
     {
+        //     error_reporting(E_ALL);
+        //     ini_set('display_errors', 1);
+
+        $this->form_validation->set_rules(
+            'form_id',
+            'Form Id',
+            'trim|required'
+        );
         $form_id = $this->input->post('form_id');
+        log_message('error', 'form_id:' . json_encode($form_id));  // Log form data (ensure this is safe for production)
         // Fetch form configuration
         $form_data = $this->forms->get_form_by_id($form_id);
-        log_message('error', json_encode($form_data));  // Log form data (ensure this is safe for production)
+
         if (!$form_data) {
             echo json_encode(['success' => false, 'message' => 'Form not found.']);
             return;
@@ -228,7 +244,7 @@ class Forms extends MY_Controller
         // Run validation
         if ($this->form_validation->run() === TRUE) {
             $formData = $this->input->post(); // Retrieve form data as associative array
-
+            log_message('error', 'formData:' . json_encode($formData));
             // Generate order number (8 digits) and set current date with time
             $orderNumber = sprintf('%06d', mt_rand(1, 999999));
             $currentDateTime = date("Y-m-d H:i:s");
@@ -274,12 +290,23 @@ class Forms extends MY_Controller
 
             // Load ControllerA
             $updatedOrder = $this->orders->get_orders_by_id($orderId);
-            $this->send_order_message($updatedOrder[0], 'new');
+            $this->send_order_message($updatedOrder[0], 'new', 'whatsapp');
+            $this->send_order_message($updatedOrder[0], 'new', 'email');
 
+            // $this->output
+            //     ->set_content_type('application/json')
+            //     ->set_output(json_encode([
+            //         'success' => true,
+            //         'message' => 'Form submitted successfully.',
+            //         'order_id' => $orderId
+            //     ]));
+            // header('Content-Type: application/json');
             echo json_encode(['success' => true, 'message' => 'Form submitted successfully.', 'order_id' => $orderId]);
+            exit; // Stop any further output
         } else {
             // Validation errors
             echo json_encode(['success' => false, 'message' => validation_errors()]);
+            exit; // Stop any further output
         }
     }
 

@@ -413,10 +413,14 @@ class MY_Controller extends CI_Controller
         $this->email->message($message);
 
         // Attach files
-        $this->email->attach($media['url']);
+        if (isset($media['url'])) {
+          $this->email->attach($media['url']);
+        }
 
         if (!$this->email->send()) {
           log_message('error', "Email sending failed: " . $this->email->print_debugger());
+        } else {
+          log_message('error', "Email sent: " . $this->email->print_debugger());
         }
       }
 

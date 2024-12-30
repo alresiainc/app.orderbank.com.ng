@@ -231,9 +231,9 @@
                         // Reset the form
                         $('#update-message-template-form')[0].reset();
                         if (tinymce.get('message_content')) {
+
                             tinymce.get('message_content').remove();
                         }
-
 
                         // Parse message details
                         var messageDetails = jQuery.parseJSON(result)[0];
@@ -271,6 +271,10 @@
                                     branding: false,
                                     height: 300,
                                 });
+                            } else {
+                                if (tinymce.get('message_content')) {
+                                    tinymce.get('message_content').remove();
+                                }
                             }
                             $('#message_content').prop('disabled', false);
 
@@ -302,6 +306,10 @@
                                             branding: false,
                                             height: 300,
                                         });
+                                    }
+                                } else {
+                                    if (tinymce.get('message_content')) {
+                                        tinymce.get('message_content').remove();
                                     }
                                 }
                                 $('#message_content').prop('disabled', false);

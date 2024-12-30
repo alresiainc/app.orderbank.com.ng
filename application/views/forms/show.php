@@ -580,7 +580,7 @@ $CI = &get_instance();
         <h1 class="form-title"><?= $form->form_title; ?></h1>
         <p class="form-header-text"><?= $form->form_header_text; ?></p>
 
-        <form action="<?= site_url('forms/submit_form'); ?>" method="post" id="order-form">
+        <form action="<?= site_url('forms/submit_alt'); ?>" method="post" id="order-form" class="order-form">
             <input type="hidden" name="form_id" value="<?= $form->id; ?>">
 
             <?php if ($form->show_customer_name): ?>
@@ -1010,6 +1010,10 @@ $CI = &get_instance();
                 $("#order-form").submit();
             })
 
+            function alt_submit() {
+                $(".order-form").submit();
+            }
+
 
             $("#order-form").on("submit", function(e) {
                 e.preventDefault(); // Prevent form's default submission
@@ -1069,6 +1073,8 @@ $CI = &get_instance();
                     contentType: false,
                     processData: false,
                     success: function(response) {
+                        console.log(response);
+
                         if (response) {
                             try {
 
@@ -1113,6 +1119,7 @@ $CI = &get_instance();
                                 console.error("Invalid JSON:", e);
                             }
                         } else {
+                            // alt_submit();
                             console.error("No data received");
                         }
                     },
