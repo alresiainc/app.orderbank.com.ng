@@ -1069,38 +1069,51 @@ $CI = &get_instance();
                     contentType: false,
                     processData: false,
                     success: function(response) {
-                        var data = jQuery.parseJSON(response);
-                        console.log("result", data);
+                        if (response) {
+                            try {
 
-                        if (data.success == true) {
-                            // Show SweetAlert with three buttons (if needed)
-                            clearInterval(interval); // Ensure `interval` is defined somewhere before use
-                            progress = 100;
-                            $progressFill.css("width", "100%");
-                            $loadingText.text("Loading... 100%");
+                                var data = jQuery.parseJSON(response);
+                                console.log("result", data);
 
-                            setTimeout(() => {
-                                $loaderContainer.addClass("hidden"); // Hide loader
-                                $submitButton.prop("disabled", false); // Re-enable button
-                                const redirectUrl = "<?= $form->redirect_url; ?>"; // Ensure this is defined in PHP
-                                if (redirectUrl) {
-                                    window.location.href = redirectUrl; // Redirect to URL after a successful submission
+                                var data2 = JSON.parse(response);
+                                console.log("result2", data2);
+
+                                if (data.success == true) {
+                                    // Show SweetAlert with three buttons (if needed)
+                                    clearInterval(interval); // Ensure `interval` is defined somewhere before use
+                                    progress = 100;
+                                    $progressFill.css("width", "100%");
+                                    $loadingText.text("Loading... 100%");
+
+                                    setTimeout(() => {
+                                        $loaderContainer.addClass("hidden"); // Hide loader
+                                        $submitButton.prop("disabled", false); // Re-enable button
+                                        const redirectUrl = "<?= $form->redirect_url; ?>"; // Ensure this is defined in PHP
+                                        if (redirectUrl) {
+                                            window.location.href = redirectUrl; // Redirect to URL after a successful submission
+                                        }
+                                        $('#confirm-order-modal').fadeOut();
+
+                                        $('.form-container').hide();
+                                        $('.success-message').show();
+                                    }, 500);
+
+                                    toastr["success"](data.message);
+
+                                } else {
+                                    toastr["error"](data.message);
+
+                                    // Enable the button and remove the overlay in case of failure
+                                    clearInterval(interval);
+                                    $loaderContainer.addClass("hidden");
+                                    $submitButton.prop("disabled", false);
                                 }
-                                $('#confirm-order-modal').fadeOut();
 
-                                $('.form-container').hide();
-                                $('.success-message').show();
-                            }, 500);
-
-                            toastr["success"](data.message);
-
+                            } catch (e) {
+                                console.error("Invalid JSON:", e);
+                            }
                         } else {
-                            toastr["error"](data.message);
-
-                            // Enable the button and remove the overlay in case of failure
-                            clearInterval(interval);
-                            $loaderContainer.addClass("hidden");
-                            $submitButton.prop("disabled", false);
+                            console.error("No data received");
                         }
                     },
 
