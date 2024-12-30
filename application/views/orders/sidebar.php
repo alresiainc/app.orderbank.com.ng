@@ -24,7 +24,7 @@ $active_classes = implode(' ', array_map(function ($key) use ($current_segment) 
 
 
 
-if (!is_user()) { ?>
+if (!is_user() && $ci->permissions('view_orders')) { ?>
     <li class="<?= $active_classes ?> treeview">
 
         <a href="#">
@@ -43,30 +43,36 @@ if (!is_user()) { ?>
                 $label = $item['label']; // Dynamically get the label
                 $color = $item['color']; // Dynamically get the label
                 $count = orders_count($key); // Dynamically get the count
-            ?>
-                <li class="<?= $slug == $current_segment ? 'active' : ''; ?>">
-                    <a href="<?php echo $base_url; ?>orders/<?php echo $slug; ?>">
-                        <i class="fa <?php echo $icon; ?>"></i>
-                        <span><?php echo $label; ?></span>
-                        <?php if ($count > 0) : ?>
-                            <span class="pull-right-container">
-                                <small class="label pull-right label-<?= $color; ?>">
-                                    <?= $count; ?></small>
-                            </span>
-                        <?php endif; ?>
+                if ($ci->permissions('view_' . $key)) { ?>
+                    <li class="<?= $slug == $current_segment ? 'active' : ''; ?>">
+                        <a href="<?php echo $base_url; ?>orders/<?php echo $slug; ?>">
+                            <i class="fa <?php echo $icon; ?>"></i>
+                            <span><?php echo $label; ?></span>
+                            <?php if ($count > 0) : ?>
+                                <span class="pull-right-container">
+                                    <small class="label pull-right label-<?= $color; ?>">
+                                        <?= $count; ?></small>
+                                </span>
+                            <?php endif; ?>
+                        </a>
+                    </li>
+            <?php }
+            } ?>
+
+            <?php if ($ci->permissions('view_reports')) { ?>
+                <li class="<?= 'reports' == $current_segment ? 'active' : ''; ?>">
+                    <a href="<?php echo $base_url; ?>orders/reports">
+                        <i class="fa fa-files-o "></i><span>Reports</span>
                     </a>
                 </li>
             <?php } ?>
-            <li class="<?= 'reports' == $current_segment ? 'active' : ''; ?>">
-                <a href="<?php echo $base_url; ?>orders/reports">
-                    <i class="fa fa-files-o "></i><span>Reports</span>
-                </a>
-            </li>
-            <li class="<?= 'message-settings' == $current_segment ? 'active' : ''; ?>">
-                <a href="<?php echo $base_url; ?>orders/message-settings">
-                    <i class="fa fa-gear "></i><span>Orders Message Settings</span>
-                </a>
-            </li>
+            <?php if ($ci->permissions('update_message_templates')) { ?>
+                <li class="<?= 'message-settings' == $current_segment ? 'active' : ''; ?>">
+                    <a href="<?php echo $base_url; ?>orders/message-settings">
+                        <i class="fa fa-gear "></i><span>Orders Message Settings</span>
+                    </a>
+                </li>
+            <?php } ?>
         </ul>
     </li>
 <?php } ?>
