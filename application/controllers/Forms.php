@@ -162,6 +162,7 @@ class Forms extends MY_Controller
         $form_id = $this->input->post('form_id');
         // Fetch form configuration
         $form_data = $this->forms->get_form_by_id($form_id);
+        log_message('error', json_encode($form_data));  // Log form data (ensure this is safe for production)
         if (!$form_data) {
             echo json_encode(['success' => false, 'message' => 'Form not found.']);
             return;
