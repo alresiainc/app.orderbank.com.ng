@@ -826,22 +826,22 @@ $CI = &get_instance();
 
             let typingInterval;
 
-            function typeMessage(message, element) {
-                let charIndex = 0;
-                element = document.getElementById("funny-message");
+            // function typeMessage(message, element) {
+            //     let charIndex = 0;
+            //     element = document.getElementById("funny-message");
 
-                element.textContent = "";
+            //     element.textContent = "";
 
-                clearInterval(typingInterval);
-                typingInterval = setInterval(() => {
-                    if (charIndex < message.length) {
-                        element.textContent += message.charAt(charIndex);
-                        charIndex++;
-                    } else {
-                        clearInterval(typingInterval);
-                    }
-                }, 50); // Adjust speed as needed
-            }
+            //     clearInterval(typingInterval);
+            //     typingInterval = setInterval(() => {
+            //         if (charIndex < message.length) {
+            //             element.textContent += message.charAt(charIndex);
+            //             charIndex++;
+            //         } else {
+            //             clearInterval(typingInterval);
+            //         }
+            //     }, 50); // Adjust speed as needed
+            // }
 
 
 
@@ -1028,7 +1028,7 @@ $CI = &get_instance();
                 const $progressFill = $(".progress-fill");
                 const $loadingText = $("#loading-text");
                 const $submitButton = $("#submit-button");
-                const funnyMessage = $("#funny-message");
+                // const funnyMessage = $("#funny-message");
 
                 $loaderContainer.removeClass("hidden"); // Show loader
                 $submitButton.prop("disabled", true); // Disable submit button
@@ -1055,10 +1055,10 @@ $CI = &get_instance();
                     if (progress >= 100) clearInterval(interval);
                 }, loaderInterval);
 
-                const messageInterval = setInterval(() => {
-                    const funnyMessage = messages[Math.floor(Math.random() * messages.length)];
-                    typeMessage(funnyMessage);
-                }, 10000);
+                // const messageInterval = setInterval(() => {
+                //     const funnyMessage = messages[Math.floor(Math.random() * messages.length)];
+                //     typeMessage(funnyMessage);
+                // }, 10000);
 
                 // AJAX Request
                 $.ajax({
