@@ -347,8 +347,9 @@ class Orders extends MY_Controller
 
 
 
+
         $data = [];
-        log_message('debug', "Requested status: $type");
+        log_message('error', "Requested status: $type");
         $no = $_POST['start'];
 
 

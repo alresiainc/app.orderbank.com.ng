@@ -160,10 +160,8 @@ class Forms extends MY_Controller
     public function submit()
     {
         $form_id = $this->input->post('form_id');
-
         // Fetch form configuration
         $form_data = $this->forms->get_form_by_id($form_id);
-
         if (!$form_data) {
             echo json_encode(['success' => false, 'message' => 'Form not found.']);
             return;
@@ -231,12 +229,11 @@ class Forms extends MY_Controller
             $formData = $this->input->post(); // Retrieve form data as associative array
 
             // Generate order number (8 digits) and set current date with time
-            $orderNumber = sprintf('%08d', mt_rand(1, 999999));
+            $orderNumber = sprintf('%06d', mt_rand(1, 999999));
             $currentDateTime = date("Y-m-d H:i:s");
             $form_bundle = $this->form_bundles->get_bundle_by_id($formData['form_bundle_id']);
-            log_message("error", '$formData' . json_encode($$formData));
             $delivery_date = $formData['delivery_date'] == 'custom' ? $formData['custom_delivery_date'] : $formData['delivery_date'];
-            log_message("error", $delivery_date);
+
             $orderData = [
                 'form_id' => $form_id,
                 'order_number' => $orderNumber,
@@ -252,10 +249,6 @@ class Forms extends MY_Controller
                 'amount' => $form_bundle->price,
                 'quantity' => $form_bundle->quantity
             ];
-
-            log_message("error", json_encode($orderData));
-
-
             // Check if an order with the same data already exists
             $existingOrder = $this->forms->check_existing_order($orderData);
 

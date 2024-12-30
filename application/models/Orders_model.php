@@ -418,43 +418,62 @@ class Orders_model extends CI_Model
     public function get_or_create_messages_by_status($type = 'whatsapp')
     {
         $statuses = $this->config->item('order_status'); // Load statuses
+        if (!empty($type)) {
 
-        foreach ($statuses as $status_key => $status) {
-            // Check if a message exists for the given type and status
+            foreach ($statuses as $status_key => $status) {
+                // Check if a message exists for the given type and status
+                $this->db->select('*');
+                $this->db->from('db_order_messages');
+                $this->db->where('type', $type);
+                $this->db->where('status', $status_key);
+                $this->db->where('deleted_at IS NULL'); // Ignore soft-deleted messages
+                $query = $this->db->get();
+
+                if ($query->num_rows() == 0 && !in_array($status_key, ['all'])) {
+                    // If the message doesn't exist, create it
+                    $data = [
+                        'type' => $type,
+                        'status' => $status_key,
+                        'title' => 'Order Status changed to ' . $status['label'],
+                        'subject' => 'Order change to ' . $status['label'],
+                        'message' => 'Hello [customer_name], your order status has been changed to ' . $status['label'],
+                        'created_at' => date('Y-m-d H:i:s'),
+                    ];
+                    $this->db->insert('db_order_messages', $data);
+                }
+            }
+
+
+            // Now retrieve all messages with pagination
             $this->db->select('*');
             $this->db->from('db_order_messages');
             $this->db->where('type', $type);
-            $this->db->where('status', $status_key);
             $this->db->where('deleted_at IS NULL'); // Ignore soft-deleted messages
-            $query = $this->db->get();
 
-            if ($query->num_rows() == 0 && !in_array($status_key, ['all'])) {
-                // If the message doesn't exist, create it
-                $data = [
-                    'type' => $type,
-                    'status' => $status_key,
-                    'title' => 'Order Status changed to ' . $status['label'],
-                    'subject' => 'Order change to ' . $status['label'],
-                    'message' => 'Hello [customer_name], your order status has been changed to ' . $status['label'],
-                    'created_at' => date('Y-m-d H:i:s'),
-                ];
-                $this->db->insert('db_order_messages', $data);
+            // Apply pagination (start and length)
+            if (isset($_POST['length']) && $_POST['length'] != -1) {
+                $this->db->limit($_POST['length'], $_POST['start']);
             }
+
+            $query = $this->db->get();
+            return $query->result(); // Returns paginated messages
+
+            # code...
+        } else {
+            $this->db->select('*');
+            $this->db->from('db_order_messages');
+            $this->db->where('type IS NULL');
+            $this->db->where('deleted_at IS NULL'); // Ignore soft-deleted messages
+
+            // Apply pagination (start and length)
+            if (isset($_POST['length']) && $_POST['length'] != -1) {
+                $this->db->limit($_POST['length'], $_POST['start']);
+            }
+
+            $query = $this->db->get();
+            return $query->result(); // Returns paginated messages
+
         }
-
-        // Now retrieve all messages with pagination
-        $this->db->select('*');
-        $this->db->from('db_order_messages');
-        $this->db->where('type', $type);
-        $this->db->where('deleted_at IS NULL'); // Ignore soft-deleted messages
-
-        // Apply pagination (start and length)
-        if (isset($_POST['length']) && $_POST['length'] != -1) {
-            $this->db->limit($_POST['length'], $_POST['start']);
-        }
-
-        $query = $this->db->get();
-        return $query->result(); // Returns paginated messages
     }
 
 

@@ -7,6 +7,8 @@
     <!-- </copy> -->
     <!-- bootstrap wysihtml5 - text editor -->
     <link rel="stylesheet" href="<?php echo $theme_link; ?>plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.min.css">
+    <!-- <link rel="stylesheet" href="<?php echo $theme_link; ?>plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.min.css"> -->
+
     <style type="text/css">
         table.table-bordered>thead>tr>th {
             /* border:1px solid black;*/
@@ -24,6 +26,8 @@
 
         }
     </style>
+    <meta charset="UTF-8">
+
 </head>
 
 
@@ -56,6 +60,7 @@
                 </ol>
             </section>
 
+
             <!-- Main content -->
             <?= form_open('#', array('class' => '', 'id' => 'table_form')); ?>
             <section class="content">
@@ -68,21 +73,20 @@
                     <!-- ********** ALERT MESSAGE END******* -->
                     <!-- right column -->
                     <div class="col-md-12">
+                        <input type="hidden" id="message_type" value="whatsapp">
                         <!-- Horizontal Form -->
-                        <div class="box box-primary ">
-                            <!-- style="background: #68deac;" -->
+                        <div class="nav-tabs-custom">
 
-                            <!-- form start -->
-                            <!-- OK START -->
-
-
-                            <div class="box-body"></div>
                             <!-- /.box-body -->
+                            <ul class="nav nav-tabs">
+                                <li class="active"><a href="#tab_4" id="tab_4_btn" data-toggle="tab" aria-expanded="true" data-message-type="whatsapp">WhatsApp Message Template</a></li>
+                                <li class=""><a href="#tab_1" id="tab_1_btn" data-toggle="tab" aria-expanded="false" data-message-type="email">Email Message Template</a></li>
+                            </ul>
 
                             <div class="row">
                                 <div class="col-md-12">
                                     <div class="col-md-12">
-                                        <div class="box">
+                                        <div class="boxx">
                                             <div class="box-info">
                                                 <!-- <div class="box-header">
                                                     <div class="col-md-8 col-md-offset-2 d-flex justify-content">
@@ -166,7 +170,8 @@
         <div class="control-sidebar-bg"></div>
     </div>
     <!-- ./wrapper -->
-
+    <!-- Bootstrap WYSIHTML5 -->
+    <script src="<?php echo $theme_link; ?>plugins/tinymce/tinymce.min.js"></script>
     <script>
         var base_url = $("#base_url").val();
         $("#order_search").on("focusout", function() {
@@ -225,11 +230,16 @@
 
                         // Reset the form
                         $('#update-message-template-form')[0].reset();
+                        if (tinymce.get('message_content')) {
+                            tinymce.get('message_content').remove();
+                        }
+
 
                         // Parse message details
                         var messageDetails = jQuery.parseJSON(result)[0];
                         console.log(messageDetails);
 
+                        var type = messageDetails.type;
                         var subject = messageDetails.subject;
                         var message = messageDetails.message;
                         var send_message = messageDetails.send_message == 1 ? "yes" : 'no';
@@ -243,10 +253,33 @@
                         $('#send_message').val(send_message).trigger('change');
                         $('#send_image').val(send_image).trigger('change');
                         $('#send_pdf').val(send_pdf).trigger('change');
-                        if (send_message != 'yes') {
-                            $('#message_subject, #message_content, #send_image, #send_pdf').prop('disabled', true);
+                        // if (send_message != 'yes') {
+                        //     $('#message_subject, #message_content, #send_image, #send_pdf').prop('disabled', true);
+                        // } else {
+                        //     $('#message_subject, #message_content, #send_image, #send_pdf').prop('disabled', false);
+                        // }
+
+
+                        if (send_message === 'yes') {
+                            $('#message_subject, #send_image, #send_pdf').prop('disabled', false);
+                            if (type == 'email' && !tinymce.get('message_content')) {
+                                tinymce.init({
+                                    selector: '#message_content',
+                                    plugins: 'lists link image preview',
+                                    toolbar: 'undo redo | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image',
+                                    menubar: false,
+                                    branding: false,
+                                    height: 300,
+                                });
+                            }
+                            $('#message_content').prop('disabled', false);
+
                         } else {
-                            $('#message_subject, #message_content, #send_image, #send_pdf').prop('disabled', false);
+                            $('#message_subject, #send_image, #send_pdf').prop('disabled', true);
+                            if (tinymce.get('message_content') && type != 'email') {
+                                tinymce.get('message_content').remove();
+                            }
+                            $('#message_content').prop('disabled', true);
                         }
 
 
@@ -255,10 +288,31 @@
                             e.preventDefault();
                             const value = $(this).val();
 
-                            if (value == 'yes') {
-                                $('#message_subject, #message_content, #send_image, #send_pdf').prop('disabled', false);
+
+                            if (value === 'yes') {
+                                $('#message_subject, #send_image, #send_pdf').prop('disabled', false);
+
+                                if (type == 'email') {
+                                    if (!tinymce.get('message_content')) {
+                                        tinymce.init({
+                                            selector: '#message_content',
+                                            plugins: 'lists link image preview',
+                                            toolbar: 'undo redo | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image',
+                                            menubar: false,
+                                            branding: false,
+                                            height: 300,
+                                        });
+                                    }
+                                }
+                                $('#message_content').prop('disabled', false);
                             } else {
-                                $('#message_subject, #message_content, #send_image, #send_pdf').prop('disabled', true);
+                                $('#message_subject, #send_image, #send_pdf').prop('disabled', true);
+
+                                if (tinymce.get('message_content') && type != 'email') {
+                                    tinymce.get('message_content').remove();
+                                }
+
+                                $('#message_content').prop('disabled', true);
                             }
                         });
 
@@ -271,6 +325,12 @@
                         // Attach a new click event handler
                         $('#update-message-template-form-button').click(function(e) {
                             e.preventDefault();
+
+                            // Synchronize TinyMCE content with the corresponding textarea
+                            if (tinymce.get('message_content')) {
+                                $('#message_content').val(tinymce.get('message_content').getContent());
+                            }
+
 
                             var flag = true;
 
@@ -287,8 +347,15 @@
                                 return;
                             }
 
+
+
                             // Prepare the data for submission
                             var data = new FormData($('#update-message-template-form')[0]);
+
+                            // Debug: Log data content (optional)
+                            for (let pair of data.entries()) {
+                                console.log(pair[0] + ': ' + pair[1]);
+                            }
 
                             // Check XSS Code
                             if (!xss_validation(data)) {
@@ -357,9 +424,24 @@
             }
         });
 
+        let messageType = 'whatsapp';
+
+        // Detect tab change
+        $('a[data-toggle="tab"]').on('shown.bs.tab', function(e) {
+            // Get the data-message-type of the active tab
+            messageType = $(e.target).data('message-type');
+            $('#message_type').val(messageType);
+            console.log("Active tab type:", messageType);
+
+            // Reload DataTable with new type
+
+            $('#message_table').DataTable().ajax.reload();
+        });
+
         function load_datatable() {
             //datatables
             var search_table = $('#order_search').val();
+
             var table = $('#message_table').DataTable({
 
                 "aLengthMenu": [
@@ -379,9 +461,10 @@
                 "ajax": {
                     "url": "<?php echo site_url('orders/order_message_json_data/') ?>",
                     "type": "POST",
-                    "data": {
-                        search_table: search_table,
-                        type: 'whatsapp',
+
+                    "data": function(d) {
+                        d.search_table = $('#order_search').val();
+                        d.type = $('#message_type').val();
                     },
                     complete: function(data) {
                         console.log("data:", data);
