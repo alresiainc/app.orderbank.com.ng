@@ -523,7 +523,7 @@ class Orders extends MY_Controller
             }
         }
 
-        if ($current_status != 'payment-received') {
+        if ($current_status != 'payment-received' && $this->permissions('change_status')) {
             return "<div style='text-align: center; width: 100px;'><div class='btn-group'>
                     <button type='button' class='btn btn-sm {$buttonClass} dropdown-toggle' data-toggle='dropdown'>
                         {$label} <span class='caret'></span>
@@ -543,7 +543,7 @@ class Orders extends MY_Controller
     }
 
     // Helper: Format action buttons
-    private function formatActions($order)
+    private function formatActionss($order)
     {
         $id = $order->id;
         $sales_url = $order->sales_id ? base_url('/sales/invoice/' . $order->sales_id) :  base_url('/sales');
@@ -615,6 +615,107 @@ class Orders extends MY_Controller
                 </div>';
         }
     }
+    private function formatActions($order)
+    {
+        $id = $order->id;
+        $sales_url = $order->sales_id ? base_url('/sales/invoice/' . $order->sales_id) : base_url('/sales');
+        $current_status = $order->status;
+
+        // Start building the dropdown menu
+        $actions = '<div class="btn-group" title="View Account">
+                    <a class="btn btn-sm btn-primary btn-o dropdown-toggle" data-toggle="dropdown" href="#">
+                        Action <span class="caret"></span>
+                    </a>
+                    <ul role="menu" class="dropdown-menu dropdown-light pull-right">';
+
+        // Add actions based on permissions
+        if ($current_status != 'payment-received') {
+            // Copy Order
+            if ($this->permissions('copy_order')) {
+                $actions .= '<li>
+                            <a title="Copy Order Details" onclick="copy_order_details(\'' . $id . '\')">
+                                <i class="fa fa-fw fa-clipboard text-blue"></i>Copy
+                            </a>
+                        </li>';
+            }
+
+            // Edit Order
+            if ($this->permissions('edit_orders')) {
+                $actions .= '<li>
+                            <a title="Edit Order" onclick="update_order_model(\'' . $id . '\')">
+                                <i class="fa fa-fw fa-edit text-blue"></i>Edit
+                            </a>
+                        </li>';
+            }
+
+            // Print Receipt
+            if ($this->permissions('view_receipt')) {
+                $actions .= '<li>
+                        <a title="Print Receipt" target="_blank" href="' . base_url('/orders/receipt/' . $id) . '">
+                            <i class="fa fa-fw fa-newspaper-o text-blue"></i>Receipt
+                        </a>
+                    </li>';
+            }
+
+            // View History
+            if ($this->permissions('view_history')) {
+                $actions .= '<li>
+                            <a title="View Order History" href="' . base_url('/orders/history/' . $id) . '">
+                                <i class="fa fa-fw fa-history text-blue"></i>History
+                            </a>
+                        </li>';
+            }
+
+            // Delete Order
+            if ($this->permissions('delete_orders')) {
+                $actions .= '<li>
+                            <a style="cursor:pointer" title="Delete Record?" onclick="delete_order(\'' . $id . '\')">
+                                <i class="fa fa-fw fa-trash text-red"></i>Delete
+                            </a>
+                        </li>';
+            }
+        } else {
+            // View Sales
+            $actions .= '<li>
+                        <a title="View Order History" href="' . $sales_url . '">
+                            <i class="fa fa-fw fa-columns text-blue"></i>View Sales
+                        </a>
+                    </li>';
+
+            // Copy Order
+            if ($this->permissions('copy_order')) {
+                $actions .= '<li>
+                            <a title="Copy Order Details" onclick="copy_order_details(\'' . $id . '\')">
+                                <i class="fa fa-fw fa-clipboard text-blue"></i>Copy
+                            </a>
+                        </li>';
+            }
+
+            // Print Receipt
+            if ($this->permissions('view_receipt')) {
+                $actions .= '<li>
+                        <a title="Print Receipt" target="_blank" href="' . base_url('/orders/receipt/' . $id) . '">
+                            <i class="fa fa-fw fa-newspaper-o text-blue"></i>Receipt
+                        </a>
+                    </li>';
+            }
+
+            // View History
+            if ($this->permissions('view_history')) {
+                $actions .= '<li>
+                            <a title="View Order History" href="' . base_url('/orders/history/' . $id) . '">
+                                <i class="fa fa-fw fa-history text-blue"></i>History
+                            </a>
+                        </li>';
+            }
+        }
+
+        // Close the dropdown menu
+        $actions .= '</ul></div>';
+
+        return $actions;
+    }
+
 
     public function order_reports_json_data()
     {

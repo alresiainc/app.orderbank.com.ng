@@ -1,5 +1,6 @@
 <?php
 $ci = &get_instance();
+
 if (!is_user() && ($ci->permissions('view_form') || $ci->permissions('view_form_bundle'))) { ?>
 
     <li class="index-form-li new-form-li   treeview">
