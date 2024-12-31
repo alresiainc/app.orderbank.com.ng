@@ -24,7 +24,7 @@ $active_classes = implode(' ', array_map(function ($key) use ($current_segment) 
 
 
 
-if (!is_user() && $ci->permissions('view_orders')) { ?>
+if (!is_user() && (is_admin() || is_store_admin() || $ci->permissions('view_orders'))) { ?>
     <li class="<?= $active_classes ?> treeview">
 
         <a href="#">
@@ -43,7 +43,7 @@ if (!is_user() && $ci->permissions('view_orders')) { ?>
                 $label = $item['label']; // Dynamically get the label
                 $color = $item['color']; // Dynamically get the label
                 $count = orders_count($key); // Dynamically get the count
-                if ($ci->permissions('view_' . $key)) { ?>
+                if (is_admin() || is_store_admin() || $ci->permissions('view_' . $key)) { ?>
                     <li class="<?= $slug == $current_segment ? 'active' : ''; ?>">
                         <a href="<?php echo $base_url; ?>orders/<?php echo $slug; ?>">
                             <i class="fa <?php echo $icon; ?>"></i>
@@ -59,14 +59,14 @@ if (!is_user() && $ci->permissions('view_orders')) { ?>
             <?php }
             } ?>
 
-            <?php if ($ci->permissions('view_reports')) { ?>
+            <?php if (is_admin() || is_store_admin() ||  $ci->permissions('view_reports')) { ?>
                 <li class="<?= 'reports' == $current_segment ? 'active' : ''; ?>">
                     <a href="<?php echo $base_url; ?>orders/reports">
                         <i class="fa fa-files-o "></i><span>Reports</span>
                     </a>
                 </li>
             <?php } ?>
-            <?php if ($ci->permissions('update_message_templates')) { ?>
+            <?php if (is_admin() || is_store_admin() || $ci->permissions('update_message_templates')) { ?>
                 <li class="<?= 'message-settings' == $current_segment ? 'active' : ''; ?>">
                     <a href="<?php echo $base_url; ?>orders/message-settings">
                         <i class="fa fa-gear "></i><span>Orders Message Settings</span>

@@ -150,6 +150,36 @@ class Orders_model extends CI_Model
 
             $i++;
         }
+        // If country selected
+        $country = $this->input->post('country');
+        if (!empty($country) && is_array($country)) {
+            $this->db->where_in('a.country', $country);
+        }
+
+        $state = $this->input->post('state');
+        if (!empty($state) && is_array($state)) {
+            $this->db->where('a.state', $state);
+        }
+
+        // If from_date selected
+        $fromDate = $this->input->post('from_date');
+        if (!empty($fromDate)) {
+            $formattedFromDate = date('Y-m-d', strtotime($fromDate));
+            $this->db->where('a.delivery_date >=', $formattedFromDate);
+        }
+
+        // If to_date selected
+        $toDate = $this->input->post('to_date');
+        if (!empty($toDate)) {
+            $formattedToDate = date('Y-m-d', strtotime($toDate));
+            $this->db->where('a.delivery_date <=', $formattedToDate);
+        }
+
+        // If status selected (multi-select)
+        $statuses = $this->input->post('status');
+        if (!empty($statuses) && is_array($statuses)) {
+            $this->db->where_in('a.status', $statuses);
+        }
 
         if (isset($_POST['order'])) // here order processing
         {

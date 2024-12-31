@@ -523,7 +523,7 @@ class Orders extends MY_Controller
             }
         }
 
-        if ($current_status != 'payment-received' && $this->permissions('change_status')) {
+        if ($current_status != 'payment-received' && (is_admin() || is_store_admin() || $this->permissions('change_status'))) {
             return "<div style='text-align: center; width: 100px;'><div class='btn-group'>
                     <button type='button' class='btn btn-sm {$buttonClass} dropdown-toggle' data-toggle='dropdown'>
                         {$label} <span class='caret'></span>
@@ -631,7 +631,7 @@ class Orders extends MY_Controller
         // Add actions based on permissions
         if ($current_status != 'payment-received') {
             // Copy Order
-            if ($this->permissions('copy_order')) {
+            if (is_admin() || is_store_admin() || $this->permissions('copy_order')) {
                 $actions .= '<li>
                             <a title="Copy Order Details" onclick="copy_order_details(\'' . $id . '\')">
                                 <i class="fa fa-fw fa-clipboard text-blue"></i>Copy
@@ -640,7 +640,7 @@ class Orders extends MY_Controller
             }
 
             // Edit Order
-            if ($this->permissions('edit_orders')) {
+            if (is_admin() || is_store_admin() || $this->permissions('edit_orders')) {
                 $actions .= '<li>
                             <a title="Edit Order" onclick="update_order_model(\'' . $id . '\')">
                                 <i class="fa fa-fw fa-edit text-blue"></i>Edit
@@ -649,7 +649,7 @@ class Orders extends MY_Controller
             }
 
             // Print Receipt
-            if ($this->permissions('view_receipt')) {
+            if (is_admin() || is_store_admin() || $this->permissions('view_receipt')) {
                 $actions .= '<li>
                         <a title="Print Receipt" target="_blank" href="' . base_url('/orders/receipt/' . $id) . '">
                             <i class="fa fa-fw fa-newspaper-o text-blue"></i>Receipt
@@ -658,7 +658,7 @@ class Orders extends MY_Controller
             }
 
             // View History
-            if ($this->permissions('view_history')) {
+            if (is_admin() || is_store_admin() || $this->permissions('view_history')) {
                 $actions .= '<li>
                             <a title="View Order History" href="' . base_url('/orders/history/' . $id) . '">
                                 <i class="fa fa-fw fa-history text-blue"></i>History
@@ -667,7 +667,7 @@ class Orders extends MY_Controller
             }
 
             // Delete Order
-            if ($this->permissions('delete_orders')) {
+            if (is_admin() || is_store_admin() || $this->permissions('delete_orders')) {
                 $actions .= '<li>
                             <a style="cursor:pointer" title="Delete Record?" onclick="delete_order(\'' . $id . '\')">
                                 <i class="fa fa-fw fa-trash text-red"></i>Delete
@@ -683,7 +683,7 @@ class Orders extends MY_Controller
                     </li>';
 
             // Copy Order
-            if ($this->permissions('copy_order')) {
+            if (is_admin() || is_store_admin() || $this->permissions('copy_order')) {
                 $actions .= '<li>
                             <a title="Copy Order Details" onclick="copy_order_details(\'' . $id . '\')">
                                 <i class="fa fa-fw fa-clipboard text-blue"></i>Copy
@@ -692,7 +692,7 @@ class Orders extends MY_Controller
             }
 
             // Print Receipt
-            if ($this->permissions('view_receipt')) {
+            if (is_admin() || is_store_admin() || $this->permissions('view_receipt')) {
                 $actions .= '<li>
                         <a title="Print Receipt" target="_blank" href="' . base_url('/orders/receipt/' . $id) . '">
                             <i class="fa fa-fw fa-newspaper-o text-blue"></i>Receipt
@@ -701,7 +701,7 @@ class Orders extends MY_Controller
             }
 
             // View History
-            if ($this->permissions('view_history')) {
+            if (is_admin() || is_store_admin() || $this->permissions('view_history')) {
                 $actions .= '<li>
                             <a title="View Order History" href="' . base_url('/orders/history/' . $id) . '">
                                 <i class="fa fa-fw fa-history text-blue"></i>History

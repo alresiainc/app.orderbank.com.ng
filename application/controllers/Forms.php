@@ -607,17 +607,17 @@ class Forms extends MY_Controller
             $options .= " <a onclick='copyFormLink(\"" . $form_link . "\")' class='btn btn-outline-primary btn-sm' style='margin-right:8px'><i class='fa fa-clipboard' style='margin-right:5px'></i>Copy Link</a>";
 
 
-            if ($this->permissions('edit_form')) {
+            if (is_admin() || is_store_admin() || $this->permissions('edit_form')) {
                 $options .= "<a href='" . site_url('forms/edit_form/' . $form->id) . "' class='btn btn-warning btn-sm' style='margin-right:5px'>Edit</a>";
             }
 
-            if ($this->permissions('delete_form')) {
+            if (is_admin() || is_store_admin() || $this->permissions('delete_form')) {
                 $options .= " <a onclick='delete_form(\"" . $form->id . "\")' class='btn btn-danger btn-sm' style='margin-right:8px'>Delete</a>";
             }
 
             $options .= "<a target='_blank' href='" . base_url('form/' . $form->form_link) . "' class='btn btn-info btn-sm' style='margin-right:8px'>View</a>";
 
-            if ($this->permissions('duplicate_form')) {
+            if (is_admin() || is_store_admin() || $this->permissions('duplicate_form')) {
                 $options .= "<a href='" . base_url('forms/duplicate-form/' . $form->id) . "' class='btn btn-primary btn-sm'>Duplicate</a>";
             }
             $row[] = $options;
@@ -686,10 +686,10 @@ class Forms extends MY_Controller
 
             // Optionally add the bundle link or ID for further actions
             $options = "";
-            if ($this->permissions('edit_form_bundle')) {
+            if (is_admin() || is_store_admin() || $this->permissions('edit_form_bundle')) {
                 $options .= " <a onclick='update_bundle_model(\"" . $bundle->id . "\")' class='btn btn-primary btn-sm' style='margin-right:8px'><i class='fa fa-pencil' style='margin-right:5px'></i>Update</a>";
             }
-            if ($this->permissions('delete_form_bundle')) {
+            if (is_admin() || is_store_admin() || $this->permissions('delete_form_bundle')) {
                 $options .= " <a onclick='delete_bundle(\"" . $bundle->id . "\")' class='btn btn-danger btn-sm' style='margin-right:8px'>Delete</a>";
             }
             $row[] = $options;

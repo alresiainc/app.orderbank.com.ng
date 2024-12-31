@@ -507,11 +507,11 @@ class MY_Controller extends CI_Controller
       '[country]' => $order->country,
       '[state]' => $order->state,
       '[quantity]' => $order->quantity,
-      '[amount]' => $order->amount,
+      '[amount]' => $this->currency($order->amount, true),
       '[bundle_name]' => $order->bundle_name,
       '[bundle_image]' => $order->bundle_image,
       '[bundle_description]' => $order->bundle_description,
-      '[bundle_price]' => $order->bundle_price,
+      '[bundle_price]' => $this->currency($order->bundle_price, true),
       '[discount_type]' => $order->discount_type,
       '[discount_amount]' => $order->discount_amount,
     ];

@@ -1051,7 +1051,7 @@
                               <div class="checkbox icheck"><label>
                                   <input type="checkbox" class="orders_all" id="update_message_templates" name="permission[update_message_templates]"> Update Message Templates
                                 </label></div>
-                            </td>
+                              <!-- </td>
                           </tr>
                           <tr>
                             <td><?= $i++; ?></td>
@@ -1062,7 +1062,7 @@
                                 </label></div>
                             </td>
                             <td>
-                              <input type="hidden" name="module[order_statuses]" value="on">
+                              <input type="hidden" name="module[order_statuses]" value="on"> -->
 
                               <?php
                               $ci = &get_instance();
@@ -1073,7 +1073,7 @@
                               <?php foreach ($order_status as $key => $status): ?>
                                 <?php if ($key != 'all'): ?>
                                   <div class="checkbox icheck"><label>
-                                      <input type="checkbox" class="order_statuses_all" id='view_<?= $key; ?>' name="permission[view_<?= $key; ?>]"> <?= $status['label']; ?>
+                                      <input type="checkbox" class="orders_all" id='view_<?= $key; ?>' name="permission[view_<?= $key; ?>]"> <?= $status['label']; ?>
                                     </label></div>
                                 <?php endif; ?>
                               <?php endforeach; ?>
