@@ -23,6 +23,7 @@ class ComposerStaticInitcdcd42b039ac0fa6dafd359776bb2c3c
         'P' => 
         array (
             'Psr\\Container\\' => 14,
+            'PHPMailer\\PHPMailer\\' => 20,
         ),
         'L' => 
         array (
@@ -61,6 +62,10 @@ class ComposerStaticInitcdcd42b039ac0fa6dafd359776bb2c3c
         'Psr\\Container\\' => 
         array (
             0 => __DIR__ . '/..' . '/psr/container/src',
+        ),
+        'PHPMailer\\PHPMailer\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/phpmailer/phpmailer/src',
         ),
         'Laminas\\Validator\\' => 
         array (
