@@ -366,7 +366,7 @@ class MY_Controller extends CI_Controller
         : base_url("theme/images/no_image.png");
 
       if ($template[0]->send_image) {
-        $media = ['url' => $imageUrl];
+        $media[] = ['url' => $imageUrl];
       }
 
       // Prepare PDF receipt
@@ -379,7 +379,7 @@ class MY_Controller extends CI_Controller
       $pdfFileUrl = base_url('/orders/receipt/' . $order->id . '?file_name=' . $fileName);
 
       if ($template[0]->send_pdf) {
-        $media = ['url' => $pdfFileUrl];
+        $media[] = ['url' => $pdfFileUrl];
       }
 
       // Send Email
@@ -413,7 +413,7 @@ class MY_Controller extends CI_Controller
         $this->email->message($message);
 
         // Attach files
-        if (isset($media['url'])) {
+        if (isset($media[0]['url'])) {
           $this->email->attach($media['url']);
         }
 
@@ -435,7 +435,7 @@ class MY_Controller extends CI_Controller
 
         try {
           Messages::message($this->toCountryCode($order->customer_whatsapp), '*' . $subject . '* \n\n' . $message)
-            ->media($media)
+            ->media($media[0] ?? [])
             ->send();
         } catch (LaravelWassengerException $e) {
           log_message('error', "WhatsApp Message Error: " . $e->getMessage());

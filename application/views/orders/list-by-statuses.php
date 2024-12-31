@@ -157,7 +157,7 @@ $order_statuses = $CI->config->item('order_status');
                                                     <div class="col-md-8 col-md-offset-2 d-flex justify-content">
                                                         <div class="input-group">
                                                             <span class="input-group-addon" title="Search Items"><i class="fa fa-barcode"></i></span>
-                                                            <input type="text" class="form-control " placeholder="Search Product Name/Order Number" autofocus id="order_search">
+                                                            <input type="text" class="form-control " placeholder="Search Product Name/Order Number" autofocus id="order_search" value="<?= isset($_GET['order_number']) ? htmlspecialchars($_GET['order_number']) : ''; ?>">
                                                             <span id="toggle-filter" class="filter-btn   input-group-addon pointer text-green" title="Click to Filter View">Click to Filter Orders</span>
 
                                                         </div>
@@ -334,6 +334,8 @@ $order_statuses = $CI->config->item('order_status');
         $("#order_search").on("focusout", function() {
             $("#order_search").removeClass('ui-autocomplete-loading');
         });
+
+
 
         // $("#order_search").on("focusin", function() {
         //     $("#order_search").addClass('ui-autocomplete-loading');
@@ -914,7 +916,9 @@ Amount:        ${orderAmount || bundlePrice || 'N/A'}
         function load_datatable() {
             //datatables
             var search_table = $('#order_search').val();
+
             var table = $('#order_table').DataTable({
+
 
                 "aLengthMenu": [
                     [10, 25, 50, 100, 500],
@@ -998,13 +1002,21 @@ Amount:        ${orderAmount || bundlePrice || 'N/A'}
                 "ajax": {
                     "url": "<?php echo site_url('orders/order_json_data') ?>",
                     "type": "POST",
-                    "data": {
-                        search_table: search_table,
-                        status: document.querySelector('meta[name="current-order-status"]').getAttribute('content'),
-                        state: document.querySelector('#state-filter')?.value,
-                        country: document.querySelector('#country-filter')?.value,
-                        from_date: document.querySelector('#date-filter')?.value?.split(' to ')[0] || '',
-                        to_date: document.querySelector('#date-filter')?.value?.split(' to ')[1] || ''
+                    // "data": { 
+                    //     search_table: search_table,
+                    //     status: document.querySelector('meta[name="current-order-status"]').getAttribute('content'),
+                    //     state: document.querySelector('#state-filter')?.value,
+                    //     country: document.querySelector('#country-filter')?.value,
+                    //     from_date: document.querySelector('#date-filter')?.value?.split(' to ')[0] || '',
+                    //     to_date: document.querySelector('#date-filter')?.value?.split(' to ')[1] || ''
+                    // },
+                    data: function(d) {
+                        d.search_table = document.querySelector('#order_search')?.value;
+                        d.status = document.querySelector('meta[name="current-order-status"]').getAttribute('content');
+                        d.state = document.querySelector('#state-filter')?.value;
+                        d.country = document.querySelector('#country-filter')?.value;
+                        d.from_date = document.querySelector('#date-filter')?.value?.split(' to ')[0] || '';
+                        d.to_date = document.querySelector('#date-filter')?.value?.split(' to ')[1] || '';
                     },
                     complete: function(data) {
 
@@ -1226,6 +1238,7 @@ Amount:        ${orderAmount || bundlePrice || 'N/A'}
                 $(".bulk_action_btn").addClass('hidden').hide();
             });
         });
+        $("#order_search").trigger('change');
     </script>
 
 

@@ -912,6 +912,7 @@ function get_privileged_warehouses_ids()
     $privileged_warehouses[] = $res3->warehouse_id;
   }
   $privileged_warehouses = implode(',', $privileged_warehouses);
+
   return $privileged_warehouses;
 }
 function calculate_inclusive($amount, $tax)

@@ -182,6 +182,7 @@
                                        }
                                     }
 
+
                                     $states_ids = array();
                                     if (!empty($username)) {
                                        $s1 = $this->db->select("state_id")->where("user_id", $q_id)->get("db_userstates");

@@ -9,7 +9,21 @@
   }
 </script>
 <!-- end -->
+<style>
+  .dropdown-header {
+    background-color: #d2d6df;
+    font-size: 14px;
+    text-align: center;
+    font-weight: 800;
+  }
 
+  .dropdown-item {
+    font-size: 14px;
+    font-weight: 500;
+    padding: 4px 4px;
+    border-bottom: 1px solid #edf0f6;
+  }
+</style>
 
 
 <?php
@@ -108,6 +122,66 @@ $CI = &get_instance();
     <div class="navbar-custom-menu">
 
       <ul class="nav navbar-nav">
+
+        <li class="dropdown user user-menu">
+          <?php
+          $user_id = $this->session->userdata('inv_userid');
+          $states_ids = [];
+
+          // Get user states
+          $s1 = $this->db->select("state_id")->where("user_id", $user_id)->get("db_userstates");
+          if ($s1->num_rows() > 0) {
+            foreach ($s1->result() as $sres1) {
+              $states_ids[] = $sres1->state_id;
+            }
+          }
+
+          // Get orders matching user states and status
+          $reschedule_orders = [];
+
+          if (!empty($states_ids)) {
+            $reschedule_orders = $this->db->select('*')
+              ->from('db_orders')
+              ->where('status', 'rescheduled')
+              ->where_in('state', $states_ids)
+              ->get()
+              ->result_array();
+
+            // print_r($reschedule_orders);
+          }
+          $reschedule_orders_count = count($reschedule_orders);
+          ?>
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" title="Click To View Rescheduled Orders">
+            <span class="">Orders</span>
+            <span class="label label-danger hold_invoice_list_count"><?= $reschedule_orders_count; ?></span>
+          </a>
+
+          <ul class="dropdown-menu dropdown-width-lg">
+            <li class="user-body">
+              <div class="row">
+                <div class="col-xs-12 text-center" style="max-height:300px;overflow-y: scroll;">
+                  <?php if (!empty($reschedule_orders)): ?>
+                    <ul class="list-unstyled" style="text-align: left;">
+                      <li class="dropdown-header" style="background-color: #d2d6df;font-size: 14px;text-align: center;font-weight: 800;">
+                        TODAY’S REMINDER ⏰
+                      </li>
+                      <?php foreach ($reschedule_orders as $order): ?>
+                        <li class="dropdown-item">
+                          <a href="<?= base_url('orders/rescheduled?order_number=' . $order['order_number']); ?>">
+                            Order #<?= $order['order_number']; ?> - <?= $order['customer_name']; ?>
+                          </a>
+                        </li>
+                      <?php endforeach; ?>
+                    </ul>
+
+                  <?php else: ?>
+                    <p>No rescheduled orders found.</p>
+                  <?php endif; ?>
+                </div>
+              </div>
+            </li>
+          </ul>
+        </li>
 
         <!-- User Account Menu -->
 
