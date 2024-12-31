@@ -735,12 +735,12 @@ class Orders extends MY_Controller
             <small class="">' . $orders->customer_email . ' - ' . $orders->customer_phone . ' </small>';
             $row[] = show_date($orders->updated_at);
             $row[] = $orders->order_number;
-            $row[] = $orders->ref;
+            // $row[] = $orders->ref;
             $row[] = $orders->bundle_name;
             $row[] = format_qty($orders->quantity);
             $row[] = store_number_format($orders->amount);
-            $row[] = store_number_format($orders->fees);
-            $row[] = $orders->country;
+            // $row[] = store_number_format($orders->fees);
+            $row[] = $orders->state;
 
             $row[] = $orders->status;
             $row[] = show_date($orders->order_date);
