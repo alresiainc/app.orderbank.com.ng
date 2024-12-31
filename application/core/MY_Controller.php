@@ -11,6 +11,8 @@ use Alresia\LaravelWassenger\Messages;
 use Alresia\LaravelWassenger\Devices;
 use Alresia\LaravelWassenger\Exceptions\LaravelWassengerException;
 use Alresia\LaravelWassenger\Session;
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
 
 class MY_Controller extends CI_Controller
 {
@@ -354,7 +356,7 @@ class MY_Controller extends CI_Controller
       $subject = $this->resolveTemplate($order, $template[0]->subject);
 
       // Prepare attachments (image and PDF)
-      $media = '';
+      $media = [];
 
       // Prepare image attachment
       $imagePath = !empty($order->bundle_image)
@@ -382,45 +384,90 @@ class MY_Controller extends CI_Controller
         $media[] = ['url' => $pdfFileUrl];
       }
 
-      // Send Email
+      // // Send Email
+      // if ($type === 'email') {
+      //   $store_id = (isset($store_id) && !empty($store_id)) ? $store_id : get_current_store_id();
+      //   $store_rec = get_store_details();
+      //   $smtp_status = $store_rec->smtp_status;
+
+      //   $this->load->library('email');
+      //   if ($smtp_status == 1) {
+      //     $config = array(
+      //       'protocol' => 'smtp',
+      //       'smtp_host' => $store_rec->smtp_host,
+      //       'smtp_port' => $store_rec->smtp_port,
+      //       'smtp_user' => $store_rec->smtp_user,
+      //       'smtp_pass' => $store_rec->smtp_pass,
+      //       'smtp_crypto' => 'ssl',
+      //       'mailtype' => 'text',
+      //       'smtp_timeout' => '4',
+      //       'charset' => 'iso-8859-1',
+      //       'wordwrap' => TRUE
+      //     );
+      //     $this->email->initialize($config);
+      //   }
+
+      //   $this->email->set_mailtype("html");
+      //   $this->email->set_newline("\r\n");
+      //   $this->email->from($store_rec->smtp_user, $store_rec->store_name);
+      //   $this->email->to($order->customer_email);
+      //   $this->email->subject($subject);
+      //   $this->email->message($message);
+
+      //   // Attach files
+      //   if (isset($media[0]['url'])) {
+      //     $this->email->attach($media['url']);
+      //   }
+
+      //   if (!$this->email->send()) {
+      //     log_message('error', "Email sending failed: " . $this->email->print_debugger());
+      //   } else {
+      //     log_message('error', "Email sent: " . $this->email->print_debugger());
+      //   }
+      // }
+      // Send Email using PHPMailer
       if ($type === 'email') {
         $store_id = (isset($store_id) && !empty($store_id)) ? $store_id : get_current_store_id();
         $store_rec = get_store_details();
         $smtp_status = $store_rec->smtp_status;
 
-        $this->load->library('email');
-        if ($smtp_status == 1) {
-          $config = array(
-            'protocol' => 'smtp',
-            'smtp_host' => $store_rec->smtp_host,
-            'smtp_port' => $store_rec->smtp_port,
-            'smtp_user' => $store_rec->smtp_user,
-            'smtp_pass' => $store_rec->smtp_pass,
-            'smtp_crypto' => 'ssl',
-            'mailtype' => 'text',
-            'smtp_timeout' => '4',
-            'charset' => 'iso-8859-1',
-            'wordwrap' => TRUE
-          );
-          $this->email->initialize($config);
-        }
+        // Load PHPMailer
+        $mail = new PHPMailer();
 
-        $this->email->set_mailtype("html");
-        $this->email->set_newline("\r\n");
-        $this->email->from($store_rec->smtp_user, $store_rec->store_name);
-        $this->email->to($order->customer_email);
-        $this->email->subject($subject);
-        $this->email->message($message);
+        try {
+          // Configure SMTP if enabled
+          if ($smtp_status == 1) {
+            $mail->isSMTP();
+            $mail->Host = $store_rec->smtp_host;
+            $mail->SMTPAuth = true;
+            $mail->Username = $store_rec->smtp_user;
+            $mail->Password = $store_rec->smtp_pass;
+            $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
+            $mail->Port = $store_rec->smtp_port;
+          }
 
-        // Attach files
-        if (isset($media[0]['url'])) {
-          $this->email->attach($media['url']);
-        }
+          // Email sender and recipient
+          $mail->setFrom($store_rec->smtp_user, $store_rec->store_name);
+          $mail->addAddress($order->customer_email);
 
-        if (!$this->email->send()) {
-          log_message('error', "Email sending failed: " . $this->email->print_debugger());
-        } else {
-          log_message('error', "Email sent: " . $this->email->print_debugger());
+          // Subject and message
+          $mail->Subject = $subject;
+          $mail->isHTML(true); // Set email format to HTML
+          $mail->Body = $message;
+
+          // Attach files if any
+          if (isset($media[0]['url'])) {
+            $mail->addAttachment($media[0]['url']);
+          }
+
+          // Send email
+          if ($mail->send()) {
+            log_message('error', "Email sent successfully.");
+          } else {
+            log_message('error', "Email sending failed: " . $mail->ErrorInfo);
+          }
+        } catch (Exception $e) {
+          log_message('error', "PHPMailer error: " . $mail->ErrorInfo);
         }
       }
 
@@ -433,10 +480,24 @@ class MY_Controller extends CI_Controller
           'media' => $media,
         ]));
 
+        // try {
+        //   Messages::message($this->toCountryCode($order->customer_whatsapp), '*' . $subject . '* \n\n' . $message)
+        //     ->media($media[0] ?? [])
+        //     ->send();
+        // } catch (LaravelWassengerException $e) {
+        //   log_message('error', "WhatsApp Message Error: " . $e->getMessage());
+        // }
         try {
-          Messages::message($this->toCountryCode($order->customer_whatsapp), '*' . $subject . '* \n\n' . $message)
-            ->media($media[0] ?? [])
-            ->send();
+          // Send the message
+          $message = Messages::message($this->toCountryCode($order->customer_whatsapp), '*' . $subject . '* \n\n' . $message);
+
+          // Attach media if it exists
+          if (isset($media[0]['url'])) {
+            $message->media($media[0]['url']);
+          }
+
+          // Send the message
+          $message->send();
         } catch (LaravelWassengerException $e) {
           log_message('error', "WhatsApp Message Error: " . $e->getMessage());
         }
