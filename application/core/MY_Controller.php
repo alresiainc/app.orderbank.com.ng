@@ -493,7 +493,7 @@ class MY_Controller extends CI_Controller
 
           // Attach media if it exists
           if (isset($media[0]['url'])) {
-            $message->media($media[0]['url']);
+            $message->media($media[0]);
           }
 
           // Send the message
