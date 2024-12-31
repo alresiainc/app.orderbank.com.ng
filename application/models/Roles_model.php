@@ -425,10 +425,12 @@ class Roles_model extends CI_Model
 			'update_message_templates',
 
 
+			'view_form',
 			'create_form',
 			'edit_form',
 			'delete_form',
 			'duplicate_form',
+			'view_form_bundle',
 			'create_form_bundle',
 			'edit_form_bundle',
 			'delete_form_bundle',

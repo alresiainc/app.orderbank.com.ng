@@ -1097,6 +1097,9 @@
                                   <input type="checkbox" class="form_all" id="create_form" name="permission[create_form]"> Create Form
                                 </label></div>
                               <div class="checkbox icheck"><label>
+                                  <input type="checkbox" class="form_all" id="view_form" name="permission[view_form]"> View Form
+                                </label></div>
+                              <div class="checkbox icheck"><label>
                                   <input type="checkbox" class="form_all" id="edit_form" name="permission[edit_form]"> Edit Form
                                 </label></div>
                               <div class="checkbox icheck"><label>
@@ -1107,6 +1110,9 @@
                                 </label></div>
                               <div class="checkbox icheck"><label>
                                   <input type="checkbox" class="form_all" id="create_form_bundle" name="permission[create_form_bundle]"> Create Form Bundle
+                                </label></div>
+                              <div class="checkbox icheck"><label>
+                                  <input type="checkbox" class="form_all" id="view_form_bundle" name="permission[view_form_bundle]"> View Form Bundle
                                 </label></div>
                               <div class="checkbox icheck"><label>
                                   <input type="checkbox" class="form_all" id="edit_form_bundle" name="permission[edit_form_bundle]"> Edit Form Bundle

@@ -28,3 +28,9 @@ ERROR - 2024-12-31 00:31:09 --> Severity: Warning --> Undefined array key "descr
 ERROR - 2024-12-31 00:31:09 --> Severity: Warning --> Undefined array key "description" /Applications/AMPPS/www/backend.myproda.test/application/views/sidebar.php 155
 ERROR - 2024-12-31 00:35:01 --> 404 Page Not Found: 
 ERROR - 2024-12-31 00:52:43 --> Severity: error --> Exception: syntax error, unexpected token "endif", expecting end of file /Applications/AMPPS/www/backend.myproda.test/application/views/orders/list-by-statuses.php 349
+ERROR - 2024-12-31 01:14:57 --> Severity: Warning --> Undefined variable $ci /Applications/AMPPS/www/backend.myproda.test/application/views/forms/sidebar.php 1
+ERROR - 2024-12-31 01:14:57 --> Severity: error --> Exception: Call to a member function permissions() on null /Applications/AMPPS/www/backend.myproda.test/application/views/forms/sidebar.php 1
+ERROR - 2024-12-31 01:15:01 --> Severity: Warning --> Undefined variable $ci /Applications/AMPPS/www/backend.myproda.test/application/views/forms/sidebar.php 1
+ERROR - 2024-12-31 01:15:01 --> Severity: error --> Exception: Call to a member function permissions() on null /Applications/AMPPS/www/backend.myproda.test/application/views/forms/sidebar.php 1
+ERROR - 2024-12-31 01:15:08 --> Severity: Warning --> Undefined variable $ci /Applications/AMPPS/www/backend.myproda.test/application/views/forms/sidebar.php 1
+ERROR - 2024-12-31 01:15:08 --> Severity: error --> Exception: Call to a member function permissions() on null /Applications/AMPPS/www/backend.myproda.test/application/views/forms/sidebar.php 1

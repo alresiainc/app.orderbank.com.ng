@@ -1,4 +1,6 @@
-<?php if (!is_user()) { ?>
+<?php
+$ci = &get_instance();
+if (!is_user() && ($ci->permissions('view_form') || $ci->permissions('view_form_bundle'))) { ?>
 
     <li class="index-form-li new-form-li   treeview">
         <a href="#">
@@ -8,12 +10,13 @@
             </span>
         </a>
         <ul class="treeview-menu">
-
-            <li class="index-form-li">
-                <a href="<?php echo $base_url; ?>forms">
-                    <i class="fa fa-list"></i><span>Forms </span>
-                </a>
-            </li>
+            <?php if ($ci->permissions('view_form')) { ?>
+                <li class="index-form-li">
+                    <a href="<?php echo $base_url; ?>forms">
+                        <i class="fa fa-list"></i><span>Forms </span>
+                    </a>
+                </li>
+            <?php } ?>
 
             <!-- <li class="new-form-li">
                 <a href="<?php echo $base_url; ?>forms/new">
@@ -21,15 +24,15 @@
 
                 </a>
             </li> -->
+            <?php if ($ci->permissions('view_form_bundle')) { ?>
+                <li class="new-active-li">
+                    <a href="<?php echo $base_url; ?>forms/bundles">
+                        <i class="fa fa-paperclip"></i><span>Bundles</span>
 
-            <li class="new-active-li">
-                <a href="<?php echo $base_url; ?>forms/bundles">
-                    <i class="fa fa-paperclip"></i><span>Bundles</span>
+                    </a>
+                </li>
 
-                </a>
-            </li>
-
-
+            <?php } ?>
 
         </ul>
     </li>
