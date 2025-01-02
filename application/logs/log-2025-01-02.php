@@ -1,7 +1,0 @@
-<?php defined('BASEPATH') OR exit('No direct script access allowed'); ?>
-
-ERROR - 2025-01-02 06:43:17 --> 404 Page Not Found: F/dd00e43be3da05eddc15aa85b16dda2f
-ERROR - 2025-01-02 08:20:50 --> Requested status: whatsapp
-ERROR - 2025-01-02 08:33:22 --> Sending WhatsApp message: {"customer_whatsapp":"1234567890","customer_phone":"08055995704","message":"Fidelis Peter Egegbul, your order is ready for delivery in *.* The delivery person will call you to deliver your order today - *Tuesday, 10th December, 2024*. Please pick up your call or return the call if you missed it. \r\n\r\n*Please let me know once you receive your order, so I can send you the video guide on how to set it up and connect it to your phone.* \r\n\r\nYour order number is *#06653268.* Looking forward to hearing from you soon. Thanks!","media":{"url":"http:\/\/backend.myproda.test\/uploads\/items\/bundle_1733586442_thumb.jpg"}}
-ERROR - 2025-01-02 08:33:23 --> WhatsApp Message Error: Wassenger phone:invalid[400]: Phone number is not a valid international mobile number (+2341234567890). Fixed lines, VoIP, UAN or toll numbers are not allowed. Number must be in E164 format, including the country code with no spaces (e.g: +1234567890).
-ERROR - 2025-01-02 08:33:24 --> Severity: error --> Exception: preg_match(): Argument #2 ($subject) must be of type string, array given /Applications/AMPPS/www/backend.myproda.test/vendor/phpmailer/phpmailer/src/PHPMailer.php 1875

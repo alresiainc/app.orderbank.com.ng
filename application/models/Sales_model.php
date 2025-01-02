@@ -748,7 +748,6 @@ class Sales_model extends CI_Model
 	public function delete_sales($ids)
 	{
 		$this->db->trans_begin();
-
 		$q12 = $this->db->select("*")->where("sales_id in ($ids)")->get("db_salesreturn");
 		if ($q12->num_rows() > 0) {
 			foreach ($q12->result() as $res12) {
@@ -767,8 +766,29 @@ class Sales_model extends CI_Model
 		//ACCOUNT RESET END
 
 		##############################################START
-		//FIND THE PREVIOUSE ITEM LIST ID'S
-		$prev_item_ids = $this->db->select("item_id")->from("db_salesitems")->where("sales_id in ($ids)")->get()->result_array();
+		//FIND THE PREVIOUSE ITEM LIST ID'S 
+		// Fetch both item_id and order_id
+		// Fetch both item_id and order_id
+		$results = $this->db->select("item_id, order_id")
+			->from("db_salesitems")
+			->where("sales_id in ($ids)")
+			->get()
+			->result_array();
+
+		// Separate the results into different formats
+		$prev_item_ids = array_map(function ($row) {
+			return ['item_id' => $row['item_id']];
+		}, $results);
+
+		$prev_item_order_details = array_map(function ($row) {
+			return ['order_id' => $row['order_id']];
+		}, $results);
+
+
+		// $prev_item_ids = $this->db->select("item_id")->from("db_salesitems")->where("sales_id in ($ids)")->get()->result_array();
+
+		log_message("error", "prev_item_order_details: " . json_encode($prev_item_order_details));
+		log_message("error", "prev_item_ids: " . json_encode($prev_item_ids));
 		##############################################END
 
 		//RESET QUOTATION RESET
@@ -807,6 +827,25 @@ class Sales_model extends CI_Model
 					return "failed";
 				}
 			}
+		}
+
+		//Change the order Statuses
+		log_message("error", "prev_item_order_details: " . json_encode($prev_item_order_details));
+
+		$prev_items_orders = [];
+
+		foreach ($prev_item_order_details as $order) {
+
+			$item_order_id = $order['order_id'];
+			$prev_items_orders[] = $item_order_id;
+		}
+
+		log_message("error", "prev_item_order_details" . json_encode($prev_items_orders));
+		if (count($prev_items_orders) > 0) {
+			$this->orders->change_order_status([
+				'status' => 'delivered',
+				'id' => $prev_items_orders,
+			]);
 		}
 
 
