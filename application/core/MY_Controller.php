@@ -369,7 +369,7 @@ class MY_Controller extends CI_Controller
         : base_url("theme/images/no_image.png");
 
       if ($template[0]->send_image) {
-        $whatsAppMedia[] = ['url' => $imageUrl];
+        $whatsAppMedia[] = ['url', $imageUrl];
         $emailMedia[] = $imagePath;
       }
 
@@ -383,7 +383,7 @@ class MY_Controller extends CI_Controller
       $pdfFileUrl = base_url('/orders/receipt/' . $order->id . '?file_name=' . $fileName);
 
       if ($template[0]->send_pdf) {
-        $whatsAppMedia[] = ['url' => $pdfFileUrl];
+        $whatsAppMedia[] = ['url', $pdfFileUrl];
         $emailMedia[] = $pdfFilePath;
       }
 
@@ -497,6 +497,7 @@ class MY_Controller extends CI_Controller
 
           // Attach media if it exists
           if (isset($whatsAppMedia[0])) {
+
 
             $message->media($whatsAppMedia[0]);
             log_message('error', "whatsapp attaching  media." . json_encode($whatsAppMedia[0]));
