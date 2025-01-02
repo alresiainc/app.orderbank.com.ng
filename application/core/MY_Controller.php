@@ -361,11 +361,11 @@ class MY_Controller extends CI_Controller
 
       // Prepare image attachment
       $imagePath = !empty($order->bundle_image)
-        ? FCPATH . return_item_image_thumb($order->bundle_image)
+        ? FCPATH . $order->bundle_image
         : FCPATH . "theme/images/no_image.png";
 
       $imageUrl = file_exists($imagePath)
-        ? base_url(return_item_image_thumb($order->bundle_image))
+        ? base_url($order->bundle_image)
         : base_url("theme/images/no_image.png");
 
       if ($template[0]->send_image) {
