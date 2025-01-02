@@ -356,7 +356,8 @@ class MY_Controller extends CI_Controller
       $subject = $this->resolveTemplate($order, $template[0]->subject);
 
       // Prepare attachments (image and PDF)
-      $media = [];
+      $whatsAppMedia = [];
+      $emailMedia = [];
 
       // Prepare image attachment
       $imagePath = !empty($order->bundle_image)
@@ -368,7 +369,8 @@ class MY_Controller extends CI_Controller
         : base_url("theme/images/no_image.png");
 
       if ($template[0]->send_image) {
-        $media[] = ['url' => $imageUrl];
+        $whatsAppMedia[] = ['url' => $imageUrl];
+        $emailMedia[] = $imagePath;
       }
 
       // Prepare PDF receipt
@@ -381,7 +383,8 @@ class MY_Controller extends CI_Controller
       $pdfFileUrl = base_url('/orders/receipt/' . $order->id . '?file_name=' . $fileName);
 
       if ($template[0]->send_pdf) {
-        $media[] = ['url' => $pdfFileUrl];
+        $whatsAppMedia[] = ['url' => $pdfFileUrl];
+        $emailMedia[] = $pdfFilePath;
       }
 
       // // Send Email
@@ -456,8 +459,8 @@ class MY_Controller extends CI_Controller
           $mail->Body = $message;
 
           // Attach files if any
-          if (isset($media[0]['url'])) {
-            $mail->addAttachment($media[0]['url']);
+          if (isset($emailMedia[0])) {
+            $mail->addAttachment($emailMedia);
           }
 
           // Send email
@@ -477,7 +480,7 @@ class MY_Controller extends CI_Controller
           'customer_whatsapp' => $order->customer_whatsapp,
           'customer_phone' => $order->customer_phone,
           'message' => $message,
-          'media' => $media,
+          'media' => $whatsAppMedia[0],
         ]));
 
         // try {
@@ -492,7 +495,7 @@ class MY_Controller extends CI_Controller
           $message = Messages::message($this->toCountryCode($order->customer_whatsapp), '*' . $subject . '* \n\n' . $message);
 
           // Attach media if it exists
-          if (isset($media[0]['url'])) {
+          if (isset($media[0])) {
             $message->media($media[0]);
           }
 
