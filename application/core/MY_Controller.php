@@ -460,7 +460,8 @@ class MY_Controller extends CI_Controller
 
           // Attach files if any
           if (isset($emailMedia[0])) {
-            $mail->addAttachment($emailMedia);
+            $mail->addAttachment($emailMedia[0]);
+            log_message('error', "Email attaching  media." . json_encode($emailMedia[0]));
           }
 
           // Send email
@@ -496,7 +497,9 @@ class MY_Controller extends CI_Controller
 
           // Attach media if it exists
           if (isset($media[0])) {
+
             $message->media($media[0]);
+            log_message('error', "Email attaching  media." . json_encode($media[0]));
           }
 
           // Send the message
