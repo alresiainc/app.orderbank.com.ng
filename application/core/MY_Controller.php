@@ -447,7 +447,7 @@ class MY_Controller extends CI_Controller
           }
 
           // Email sender and recipient
-          $mail->setFrom($store_rec->smtp_user, $store_rec->store_name);
+          $mail->setFrom($store_rec->email, $store_rec->store_name);
           $mail->addAddress($order->customer_email);
 
           // Subject and message
