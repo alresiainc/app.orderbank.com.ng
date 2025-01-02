@@ -496,15 +496,15 @@ class MY_Controller extends CI_Controller
           $message = Messages::message($this->toCountryCode($order->customer_whatsapp), '*' . $subject . '* \n\n' . $message);
 
           // Attach media if it exists
-          if (isset($media[0])) {
+          if (isset($whatsAppMedia[0])) {
 
-            $message->media($media[0]);
-            log_message('error', "Email attaching  media." . json_encode($media[0]));
+            $message->media($whatsAppMedia[0]);
+            log_message('error', "whatsapp attaching  media." . json_encode($whatsAppMedia[0]));
           }
 
           // Send the message
           $whatsapp = $message->send();
-          log_message('error', "Email sent successfully." . json_encode($whatsapp));
+          log_message('error', "whatsapp sent successfully." . json_encode($whatsapp));
         } catch (LaravelWassengerException $e) {
           log_message('error', "WhatsApp Message Error: " . $e->getMessage());
         }
