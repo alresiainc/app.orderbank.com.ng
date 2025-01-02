@@ -465,7 +465,7 @@ class MY_Controller extends CI_Controller
 
           // Send email
           if ($mail->send()) {
-            log_message('error', "Email sent successfully.");
+            log_message('error', "Email sent successfully." . json_encode($mail));
           } else {
             log_message('error', "Email sending failed: " . $mail->ErrorInfo);
           }
@@ -500,7 +500,8 @@ class MY_Controller extends CI_Controller
           }
 
           // Send the message
-          $message->send();
+          $whatsapp = $message->send();
+          log_message('error', "Email sent successfully." . json_encode($whatsapp));
         } catch (LaravelWassengerException $e) {
           log_message('error', "WhatsApp Message Error: " . $e->getMessage());
         }
