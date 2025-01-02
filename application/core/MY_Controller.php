@@ -553,6 +553,7 @@ class MY_Controller extends CI_Controller
     $today = new DateTime('today');
     $tomorrow = new DateTime('tomorrow');
     $order_date =  date('jS \of M, Y \a\t g:ia', strtotime($order->order_date)); // Use your date formatting function
+    $rescheduled_date =  date('jS \of M, Y \a\t g:ia', strtotime($order->rescheduled_date)); // Use your date formatting function
     if ($date->format('Y-m-d') == $today->format('Y-m-d')) {
       $delivery_date = 'Today, ' . $date->format('jS F, Y');
     } elseif ($date->format('Y-m-d') == $tomorrow->format('Y-m-d')) {
@@ -570,7 +571,7 @@ class MY_Controller extends CI_Controller
       '[customer_email]' => $order->customer_email,
       '[customer_address]' => $order->address,
       '[order_date]' => $order_date,
-      '[rescheduled_date]' => $order->rescheduled_date,
+      '[rescheduled_date]' => $rescheduled_date,
       '[delivery_date]' => $delivery_date,
       '[status]' => $status,
       '[country]' => $order->country,
@@ -582,17 +583,19 @@ class MY_Controller extends CI_Controller
       '[bundle_description]' => $order->bundle_description,
       '[bundle_price]' => $this->currency($order->bundle_price, true),
       '[discount_type]' => $order->discount_type,
-      '[discount_amount]' => $order->discount_amount,
+      // '[discount_amount]' => $order->discount_amount,
     ];
 
     // Calculate the discount price
     if ($order->discount_type === 'percentage') {
+      $discount_amount = $order->discount_amount . '%';
       $discount_price = $order->amount - ($order->amount * ($order->discount_amount / 100));
     } else {
+      $discount_amount = $this->currency($order->discount_amount, true);
       $discount_price = $order->amount - $order->discount_amount;
     }
-    $placeholders['[discount_price]'] = $discount_price;
-
+    $placeholders['[discount_price]'] = $this->currency($discount_price, true);
+    $placeholders['[discount_amount]'] = $discount_amount;
     // Replace all placeholders in the template
     foreach ($placeholders as $placeholder => $value) {
       $template = str_replace($placeholder, $value, $template);
