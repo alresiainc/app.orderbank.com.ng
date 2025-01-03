@@ -211,7 +211,7 @@ class Orders_model extends CI_Model
             $this->db->order_by(key($order), $order[key($order)]);
         }
 
-        log_message('error',  "last_query:" . $this->db->last_query());
+        // log_message('error',  "last_query:" . $this->db->last_query());
 
         // ... existing code ...
     }
@@ -513,6 +513,7 @@ class Orders_model extends CI_Model
             }
 
             $query = $this->db->get();
+            log_message('error', "query->result():" . json_encode($query->result()));
             return $query->result(); // Returns paginated messages
 
             # code...
@@ -528,6 +529,7 @@ class Orders_model extends CI_Model
             }
 
             $query = $this->db->get();
+            log_message('error', "$query->result() else :" . json_encode($query->result()));
             return $query->result(); // Returns paginated messages
 
         }
