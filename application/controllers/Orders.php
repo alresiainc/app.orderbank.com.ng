@@ -341,7 +341,7 @@ class Orders extends MY_Controller
         echo json_encode($output);
     }
 
-    public function order_message_json_data()
+    public function order_message_json_datas()
     {
         $type = trim($_POST['type'] ?? 'whatsapp');
 
@@ -356,7 +356,7 @@ class Orders extends MY_Controller
         $list = $this->orders->get_or_create_messages_by_status($type);
 
 
-
+        log_message('error', "list:" . json_encode($list));
         foreach ($list as $message) {
 
             $no++;
@@ -393,9 +393,59 @@ class Orders extends MY_Controller
             "data" => $data,
             "type" => $type,
         ];
-
+        log_message('error', "output:" . json_encode($output));
         echo json_encode($output);
     }
+
+    public function order_message_json_data()
+    {
+        $type = trim($_POST['type'] ?? 'whatsapp');
+
+        $data = [];
+        log_message('error', "Requested type: $type");
+        $no = $_POST['start'];
+
+        $list = $this->orders->get_or_create_messages_by_status($type);
+
+        log_message('error', "list:" . json_encode($list));
+        foreach ($list as $message) {
+
+            $no++;
+            $row = [];
+
+            // Column 1: Serial number
+            $row[] = $no;
+
+            // Sanitize and escape the HTML content
+            $messageCol = "<div style='text-align:left;'>";
+            $messageCol .= "<div style='font-weight:600;'>" . htmlspecialchars($message->title, ENT_QUOTES, 'UTF-8') . "</div>";
+            $messageCol .= "<small> " . htmlspecialchars($this->break_text($message->subject, 50), ENT_QUOTES, 'UTF-8') . " ... " . htmlspecialchars($this->break_text($message->message, 100), ENT_QUOTES, 'UTF-8') . "</small>";
+            $messageCol .= "</div>";
+
+            $row[] = $messageCol;
+
+            $row[] = $message->created_at ? date('jS \of M, Y', strtotime($message->created_at)) : '-';
+
+            $row[] = "
+                <a style='cursor:pointer' onclick=\"update_message_template('{$message->id}')\" class='btn btn-sm btn-primary'>
+                   Edit Template 
+                </a>
+                ";
+            $data[] = $row;
+        }
+
+        // Output JSON
+        $output = [
+            "draw" => $_POST['draw'],
+            "recordsTotal" => $this->orders->count_order_messages_by_type($type),
+            "recordsFiltered" => $this->orders->filtered_order_messages_count_by_type($type),
+            "data" => $data,
+            "type" => $type,
+        ];
+        log_message('error', "output:" . json_encode($output));
+        echo json_encode($output);
+    }
+
 
     public function message_json_data($id)
     {

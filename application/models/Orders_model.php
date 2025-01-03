@@ -513,7 +513,7 @@ class Orders_model extends CI_Model
             }
 
             $query = $this->db->get();
-            log_message('error', "query->result():" . json_encode($query->result()));
+            // log_message('error', "query->result():" . json_encode($query->result()));
             return $query->result(); // Returns paginated messages
 
             # code...
@@ -529,7 +529,7 @@ class Orders_model extends CI_Model
             }
 
             $query = $this->db->get();
-            log_message('error', "$query->result() else :" . json_encode($query->result()));
+            // log_message('error', "$query->result() else :" . json_encode($query->result()));
             return $query->result(); // Returns paginated messages
 
         }
