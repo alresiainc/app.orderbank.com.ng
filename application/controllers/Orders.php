@@ -407,7 +407,7 @@ class Orders extends MY_Controller
 
         $list = $this->orders->get_or_create_messages_by_status($type);
 
-        log_message('error', "list:" . json_encode($list));
+        // log_message('error', "list:" . json_encode($list));
         foreach ($list as $message) {
 
             $no++;
@@ -442,7 +442,7 @@ class Orders extends MY_Controller
             "data" => $data,
             "type" => $type,
         ];
-        log_message('error', "output:" . json_encode($output));
+        // log_message('error', "output:" . json_encode($output));
         echo json_encode($output);
     }
 
