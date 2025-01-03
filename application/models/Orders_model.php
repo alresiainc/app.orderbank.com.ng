@@ -181,6 +181,28 @@ class Orders_model extends CI_Model
             $this->db->where_in('a.status', $statuses);
         }
 
+
+        if (!(is_admin() || is_store_admin())) {
+            $user_id = $this->session->userdata('inv_userid');
+            // Fetch all states data for the user
+            $states_data = get_user_states($user_id);
+
+            // Extract state IDs
+            $states_ids = array_map(function ($state) {
+                return $state->state_id;
+            }, $states_data);
+            // $this->db->where_in('a.state', $states_ids);
+            // Ensure states_ids isn't empty before using it in the where_in
+            if (!empty($states_ids)) {
+                $this->db->where_in('a.state', $states_ids);
+            } else {
+                // Optionally log or handle the scenario when no states are found
+                echo "No states found for the given user.";
+            }
+        }
+
+
+
         if (isset($_POST['order'])) // here order processing
         {
             $this->db->order_by($this->column_order[$_POST['order']['0']['column']], $_POST['order']['0']['dir']);
@@ -189,6 +211,8 @@ class Orders_model extends CI_Model
             $this->db->order_by(key($order), $order[key($order)]);
         }
 
+        log_message('error',  "last_query:" . $this->db->last_query());
+
         // ... existing code ...
     }
 
@@ -196,37 +220,40 @@ class Orders_model extends CI_Model
     {
         $this->_get_datatables_query();
 
+
+
         log_message('error', json_encode($_POST));
         // If country selected
-        $country = $this->input->post('country');
-        if (!empty($country) && is_array($country)) {
-            $this->db->where_in('a.country', $country);
-        }
+        // $country = $this->input->post('country');
+        // if (!empty($country) && is_array($country)) {
+        //     $this->db->where_in('a.country', $country);
+        // }
 
-        $state = $this->input->post('state');
-        if (!empty($state) && is_array($state)) {
-            $this->db->where('a.state', $state);
-        }
 
-        // If from_date selected
-        $fromDate = $this->input->post('from_date');
-        if (!empty($fromDate)) {
-            $formattedFromDate = date('Y-m-d', strtotime($fromDate));
-            $this->db->where('a.delivery_date >=', $formattedFromDate);
-        }
+        // $state = $this->input->post('state');
+        // if (!empty($state) && is_array($state)) {
+        //     $this->db->where('a.state', $state);
+        // }
 
-        // If to_date selected
-        $toDate = $this->input->post('to_date');
-        if (!empty($toDate)) {
-            $formattedToDate = date('Y-m-d', strtotime($toDate));
-            $this->db->where('a.delivery_date <=', $formattedToDate);
-        }
+        // // If from_date selected
+        // $fromDate = $this->input->post('from_date');
+        // if (!empty($fromDate)) {
+        //     $formattedFromDate = date('Y-m-d', strtotime($fromDate));
+        //     $this->db->where('a.delivery_date >=', $formattedFromDate);
+        // }
 
-        // If status selected (multi-select)
-        $statuses = $this->input->post('status');
-        if (!empty($statuses) && is_array($statuses)) {
-            $this->db->where_in('a.status', $statuses);
-        }
+        // // If to_date selected
+        // $toDate = $this->input->post('to_date');
+        // if (!empty($toDate)) {
+        //     $formattedToDate = date('Y-m-d', strtotime($toDate));
+        //     $this->db->where('a.delivery_date <=', $formattedToDate);
+        // }
+
+        // // If status selected (multi-select)
+        // $statuses = $this->input->post('status');
+        // if (!empty($statuses) && is_array($statuses)) {
+        //     $this->db->where_in('a.status', $statuses);
+        // }
 
         if ($_POST['length'] != -1)
             $this->db->limit($_POST['length'], $_POST['start']);

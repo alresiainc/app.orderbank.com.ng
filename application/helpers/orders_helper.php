@@ -7,12 +7,39 @@
 function orders_count($status = 'All')
 {
     $CI = &get_instance();
-    if ($status == 'All') {
-        return $CI->db->from('db_orders')->count_all_results();
-    } else {
-        return $CI->db->from('db_orders')->where("status", $status)->count_all_results();
+
+    $CI->db->from('db_orders'); // Start the query from db_orders
+
+    // If status is not 'All', filter by status
+    if ($status != 'All') {
+        $CI->db->where("status", $status);
     }
+
+    // If the user is admin or store admin, filter by states
+    if (!(is_admin() || is_store_admin())) {
+        $user_id = $CI->session->userdata('inv_userid');
+
+        // Fetch all states data for the user
+        $states_data = get_user_states($user_id);
+
+        // Extract state IDs
+        $states_ids = array_map(function ($state) {
+            return $state->state_id;
+        }, $states_data);
+
+        // Apply the state filter if the states_ids are not empty
+        if (!empty($states_ids)) {
+            $CI->db->where_in('state', $states_ids);  // Fixed the table prefix here
+        } else {
+            // Optionally log or handle the case when no states are found
+            echo "No states found for the given user.";
+        }
+    }
+
+    // Return the count of results
+    return $CI->db->count_all_results();
 }
+
 
 /**
  * Function to get the count of new orders in the 'db_orders' table.

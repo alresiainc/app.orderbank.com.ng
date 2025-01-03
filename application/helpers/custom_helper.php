@@ -623,6 +623,49 @@ function get_warehouse_name($id)
   $CI = &get_instance();
   return $CI->db->select('warehouse_name')->where('id', $id)->get('db_warehouse')->row()->warehouse_name;
 }
+
+function get_user_statess($user_id)
+{
+  $CI = &get_instance();
+
+  // Reset query builder to avoid interference from previous queries
+  $CI->db->reset_query();
+
+  $states_data = $CI->db->from("db_userstates")
+    ->select("*")
+    ->where("user_id", $user_id)
+    ->get()
+    ->result(); // Fetch all rows as an array of objects
+
+  // Log the query for debugging
+  log_message('error', "get_user_states() last_query: " . $CI->db->last_query());
+
+  // Reset again to prevent interference
+  $CI->db->reset_query();
+  return $states_data; // Return the full state data
+}
+
+function get_user_states($user_id)
+{
+  $CI = &get_instance();
+
+  // Create a new database connection
+  $db = $CI->load->database('default', TRUE);
+
+  $states_data = $db->from("db_userstates")
+    ->select("*")
+    ->where("user_id", $user_id)
+    ->get()
+    ->result();
+
+  log_message('error', "get_user_states() last_query: " . $db->last_query());
+
+  return $states_data; // Return the full state data
+}
+
+
+
+
 function get_total_qty_of_warehouse_item($item_id, $warehouse_id = '', $store_id = '')
 {
   if (empty($warehouse_id)) {

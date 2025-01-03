@@ -553,7 +553,7 @@ class MY_Controller extends CI_Controller
     $today = new DateTime('today');
     $tomorrow = new DateTime('tomorrow');
     $order_date =  date('jS \of M, Y \a\t g:ia', strtotime($order->order_date)); // Use your date formatting function
-    $rescheduled_date =  date('jS \of M, Y \a\t g:ia', strtotime($order->rescheduled_date)); // Use your date formatting function
+    $rescheduled_date =  date('l, jS F, Y', strtotime($order->rescheduled_date)); // Use your date formatting function
     if ($date->format('Y-m-d') == $today->format('Y-m-d')) {
       $delivery_date = 'Today, ' . $date->format('jS F, Y');
     } elseif ($date->format('Y-m-d') == $tomorrow->format('Y-m-d')) {
