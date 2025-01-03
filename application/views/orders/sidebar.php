@@ -59,13 +59,13 @@ if (!is_user() && (is_admin() || is_store_admin() || $ci->permissions('view_orde
             <?php }
             } ?>
 
-            <?php if (is_admin() || is_store_admin() ||  $ci->permissions('view_reports')) { ?>
+            <!-- <?php if (is_admin() || is_store_admin() ||  $ci->permissions('view_reports')) { ?>
                 <li class="<?= 'reports' == $current_segment ? 'active' : ''; ?>">
                     <a href="<?php echo $base_url; ?>orders/reports">
                         <i class="fa fa-files-o "></i><span>Reports</span>
                     </a>
                 </li>
-            <?php } ?>
+            <?php } ?> -->
             <?php if (is_admin() || is_store_admin() || $ci->permissions('update_message_templates')) { ?>
                 <li class="<?= 'message-settings' == $current_segment ? 'active' : ''; ?>">
                     <a href="<?php echo $base_url; ?>orders/message-settings">
