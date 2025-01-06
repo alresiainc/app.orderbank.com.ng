@@ -140,10 +140,11 @@ $CI = &get_instance();
           $reschedule_orders = [];
 
           if (!empty($states_ids)) {
-            $reschedule_orders = $this->db->select('*')
-              ->from('db_orders')
-              ->where('status', 'rescheduled')
-              ->where_in('state', $states_ids)
+            $reschedule_orders = $this->db->select('o.id, o.order_number, o.rescheduled_date, s.state')
+              ->from('db_orders as o')
+              ->join('db_states as s', 's.id = o.state', 'left')
+              ->where('o.status', 'rescheduled')
+              ->where_in('o.state', $states_ids)
               ->get()
               ->result_array();
 
@@ -163,12 +164,13 @@ $CI = &get_instance();
                   <?php if (!empty($reschedule_orders)): ?>
                     <ul class="list-unstyled" style="text-align: left;">
                       <li class="dropdown-header" style="background-color: #d2d6df;font-size: 14px;text-align: center;font-weight: 800;">
-                        TODAY’S REMINDER ⏰
+                        REMINDER ⏰
                       </li>
                       <?php foreach ($reschedule_orders as $order): ?>
                         <li class="dropdown-item">
                           <a href="<?= base_url('orders/rescheduled?order_number=' . $order['order_number']); ?>">
-                            Order #<?= $order['order_number']; ?> - <?= $order['customer_name']; ?>
+                            <h4 style="font-weight: 600; margin: 0; color:#5e5e5e;">Order #<?= $order['order_number']; ?> - <?= $order['state']; ?></h4>
+                            <p style="margin: 0; font-size: 11px;"> (<?= date('l, jS F, Y', strtotime($order['rescheduled_date'])); ?>)</p>
                           </a>
                         </li>
                       <?php endforeach; ?>
