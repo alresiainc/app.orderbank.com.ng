@@ -471,6 +471,8 @@ class MY_Controller extends CI_Controller
             log_message('error', "Email sending failed: " . $mail->ErrorInfo);
           }
         } catch (Exception $e) {
+          log_message('error', "Email Error." . $e->getMessage());
+          log_message('error', "Email Error." . json_encode($mail));
           log_message('error', "PHPMailer error: " . $mail->ErrorInfo);
         }
       }
