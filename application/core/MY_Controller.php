@@ -272,81 +272,11 @@ class MY_Controller extends CI_Controller
     }
   }
 
-  public function send_order_messages($order, $status, $type = 'whatsapp')
-  {
-    $template = $this->orders->get_message($status, $type);
-    $fileName = strtolower(str_replace(' ', '-', $order->customer_name . '-' . $order->state . '-' . $order->order_number));
-
-    if ($template[0]->send_message) {
-      $message = $this->resolveTemplate($order, $template[0]->message);
-      $subject = $this->resolveTemplate($order, $template[0]->subject);
-
-      $media = [];
-
-
-      $imagePath = !empty($order->bundle_image)
-        ? FCPATH . return_item_image_thumb($order->bundle_image)
-        : FCPATH . "theme/images/no_image.png";
-
-      $imageUrl = file_exists($imagePath)
-        ? base_url(return_item_image_thumb($order->bundle_image))
-        : base_url("theme/images/no_image.png");
-
-      $data = $this->data;
-      $data['page_title'] = "Orders Receipt";
-      $data['order_id'] = $order->id;
-
-      // Load the view and capture its HTML content
-      $html = $this->load->view('orders/receipt-pdf', $data, true);
-
-      // Generate and return the PDF (temporary file)
-      $pdfFilePath = $this->generatePDFfromPage($html, null, false);
-      $pdfFileUrl = base_url('/orders/receipt/' . $order->id . '?file_name=' . $fileName);
-
-
-      if ($template[0]->send_image) {
-        // $media[] = ['url' => $imageUrl];
-        $media = ['url', $imageUrl];
-      }
-
-      if ($template[0]->send_pdf) {
-        // $media[] = ['url' => $pdfFilePath];
-        $media = ['url', $pdfFileUrl];
-      }
-
-
-      log_message('error', "Sending to customer_whatsapp:" . json_encode([
-        'customer_whatsapp' => $order->customer_whatsapp,
-        'customer_phone' => $order->customer_phone,
-        'message' => $message,
-        'media' => $media,
-      ]));
-
-      try {
-        // Send WhatsApp message via Messages API
-        Messages::message($this->toCountryCode($order->customer_whatsapp), '*' . $subject . '* \n\n' . $message)
-          ->media($media)
-          ->send();
-
-        // if ($order->customer_whatsapp != $order->customer_phone) {
-        //   Messages::message($this->toCountryCode($order->customer_phone), '*' . $subject . '* \n\n' . $message)
-        //     ->media($media)
-        //     ->send();
-        // }
-      } catch (LaravelWassengerException $e) {
-        // Handle exception
-        log_message('error', "LaravelWassengerException:" . $e->getMessage());
-      }
-
-      // Clean up temporary file
-      if (file_exists($pdfFilePath)) {
-        unlink($pdfFilePath);
-      }
-    }
-  }
-
   public function send_order_message($order, $status, $type = 'whatsapp')
   {
+
+    log_message('error', "send_order_message()  order:." . json_encode($order));
+
     $template = $this->orders->get_message($status, $type);
     $fileName = strtolower(str_replace(' ', '-', $order->customer_name . '-' . $order->state . '-' . $order->order_number));
 
@@ -387,47 +317,8 @@ class MY_Controller extends CI_Controller
         $emailMedia[] = $pdfFilePath;
       }
 
-      // // Send Email
-      // if ($type === 'email') {
-      //   $store_id = (isset($store_id) && !empty($store_id)) ? $store_id : get_current_store_id();
-      //   $store_rec = get_store_details();
-      //   $smtp_status = $store_rec->smtp_status;
 
-      //   $this->load->library('email');
-      //   if ($smtp_status == 1) {
-      //     $config = array(
-      //       'protocol' => 'smtp',
-      //       'smtp_host' => $store_rec->smtp_host,
-      //       'smtp_port' => $store_rec->smtp_port,
-      //       'smtp_user' => $store_rec->smtp_user,
-      //       'smtp_pass' => $store_rec->smtp_pass,
-      //       'smtp_crypto' => 'ssl',
-      //       'mailtype' => 'text',
-      //       'smtp_timeout' => '4',
-      //       'charset' => 'iso-8859-1',
-      //       'wordwrap' => TRUE
-      //     );
-      //     $this->email->initialize($config);
-      //   }
 
-      //   $this->email->set_mailtype("html");
-      //   $this->email->set_newline("\r\n");
-      //   $this->email->from($store_rec->smtp_user, $store_rec->store_name);
-      //   $this->email->to($order->customer_email);
-      //   $this->email->subject($subject);
-      //   $this->email->message($message);
-
-      //   // Attach files
-      //   if (isset($media[0]['url'])) {
-      //     $this->email->attach($media['url']);
-      //   }
-
-      //   if (!$this->email->send()) {
-      //     log_message('error', "Email sending failed: " . $this->email->print_debugger());
-      //   } else {
-      //     log_message('error', "Email sent: " . $this->email->print_debugger());
-      //   }
-      // }
       // Send Email using PHPMailer
       if ($type === 'email' && !empty($order->customer_email)) {
         $store_id = (isset($store_id) && !empty($store_id)) ? $store_id : get_current_store_id();
