@@ -193,13 +193,13 @@ class Forms extends MY_Controller
             );
         }
 
-        if ($form_data->show_email) {
-            $this->form_validation->set_rules(
-                'customer_email',
-                $form_data->email_label ?? 'Customer Email',
-                'trim|valid_email|required'
-            );
-        }
+        // if ($form_data->show_email) {
+        //     $this->form_validation->set_rules(
+        //         'customer_email',
+        //         $form_data->email_label ?? 'Customer Email',
+        //         'trim|valid_email|required'
+        //     );
+        // }
 
         if ($form_data->show_whatsapp) {
             $this->form_validation->set_rules(
@@ -258,7 +258,7 @@ class Forms extends MY_Controller
                 'order_date' => $currentDateTime,
                 'delivery_date' => $form_data->show_delivery ? date("Y-m-d", strtotime($delivery_date)) : null,
                 'customer_name' => $formData['customer_name'] ?? null,
-                'customer_email' => $formData['customer_email'] ?? null,
+                'customer_email' => $formData['customer_email'] ?? 'connectwithproda@gmail.com',
                 'customer_phone' => $formData['customer_phone'] ?? null,
                 'customer_whatsapp' => $formData['customer_whatsapp'] ?? null,
                 'address' => $formData['address'] ?? null,

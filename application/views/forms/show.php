@@ -650,7 +650,7 @@ $CI = &get_instance();
                         <option value="">Select Delivery Date</option>
                         <option value="<?= date('Y-m-d'); ?>">Today</option>
                         <option value="<?= date('Y-m-d', strtotime('+1 day')); ?>">Tomorrow</option>
-                        <option value="custom">Custom Date</option>
+                        <option value="custom">Pick a specific date.</option>
                     </select>
                     <span id="delivery_select_msg" class="text-danger"></span>
                     <small><?= $form->delivery_desc; ?></small>
@@ -930,11 +930,11 @@ $CI = &get_instance();
                     isInvalid = check_field("customer_name");
                 }
 
-                if ($('#email') != undefined) {
-                    if (check_field("email") == true) {
-                        var flag = false;
-                    }
-                }
+                // if ($('#email') != undefined) {
+                //     if (check_field("email") == true) {
+                //         var flag = false;
+                //     }
+                // }
 
                 if ($('#phone') != undefined) {
                     if (check_field("phone") == true) {
@@ -993,7 +993,7 @@ $CI = &get_instance();
                 //for the state lets get the option text
                 $('.show-customer-state').text($('#state option:selected').text());
 
-                $('.show-delivery-date').text('Your Order Will Be deliver your order ' + delivery_date);
+                $('.show-delivery-date').text('Expect our delivery person to call you ' + delivery_date + ' to deliver your order.');
                 $('.show-selected-bundle-img').attr('src', selected_bundle_img);
                 $('.show-selected-bundle-name').text(selected_bundle_name);
                 $('.show-selected-bundle-description').text(selected_bundle_description);

@@ -253,12 +253,12 @@ function get_expense_category_select_list($select_id = '', $store_id = '')
 	}
 	return $str;
 }
-function get_warehouse_select_list($select_id = '', $store_id = '', $show_select = false)
+function get_warehouse_select_list($select_id = '', $store_id = '', $show_select = false, $by_user_assigned = false)
 {
 	$CI = &get_instance();
 
 
-
+	$user_warehouses_ids = array();
 	//Only Allowed Warehouse show to loged in user
 	if (!is_admin()) {
 		//Find the previllaged wareshouses to the user
@@ -266,6 +266,7 @@ function get_warehouse_select_list($select_id = '', $store_id = '', $show_select
 		$ids = array();
 		foreach ($q3->result() as $res3) {
 			$ids[] = $res3->warehouse_id;
+			$user_warehouses_ids[] = $res3->warehouse_id;
 		}
 		$ids = implode(',', $ids);
 		//$CI->db->where("id in ($ids)");
@@ -278,13 +279,20 @@ function get_warehouse_select_list($select_id = '', $store_id = '', $show_select
 		$CI->db->where("store_id", get_current_store_id());
 	}
 
-	$q1 = $CI->db->select("*")->where("status=1")->from("db_warehouse")->get();
+
+	$q1 = $CI->db->select("*")->where("status=1")->from("db_warehouse");
+	if (count($user_warehouses_ids) > 0) {
+		$q1->where_in('id', $user_warehouses_ids);
+	}
+	$w1 = $q1->get();
+
+
 	$str = '';
-	if ($q1->num_rows($q1) > 0) {
+	if ($w1->num_rows($w1) > 0) {
 		if ($show_select == true) {
 			$str .= '<option value="">-Select-</option>';
 		}
-		foreach ($q1->result() as $res1) {
+		foreach ($w1->result() as $res1) {
 			$selected = ($select_id == $res1->id) ? 'selected' : '';
 			$str .= "<option $selected value='" . $res1->id . "'>" . $res1->warehouse_name . "</option>";
 		}

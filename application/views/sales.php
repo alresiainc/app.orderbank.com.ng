@@ -162,7 +162,7 @@
 
                         <!-- Warehouse Code end -->
                         <div class="form-group">
-                           <label for="warehouse_id" class="col-sm-2 control-label"><?= $this->lang->line('warehouse'); ?><label class="text-danger">*</label></label>
+                           <label for="warehouse_id" class="col-sm-2 control-label"><?= $this->lang->line('warehouse'); ?><label class="text-danger">**</label></label>
                            <div class="col-sm-3">
                               <select class="form-control select2 " id="warehouse_id" name="warehouse_id">
                                  <?= get_warehouse_select_list($warehouse_id, get_current_store_id()); ?>
