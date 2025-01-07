@@ -197,7 +197,7 @@ class Orders_model extends CI_Model
                 $this->db->where_in('a.state', $states_ids);
             } else {
                 // Optionally log or handle the scenario when no states are found
-                echo "No states found for the given user.";
+                // echo "No states found for the given user.";
             }
         }
 

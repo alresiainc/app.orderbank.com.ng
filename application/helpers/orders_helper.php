@@ -32,7 +32,7 @@ function orders_count($status = 'All')
             $CI->db->where_in('state', $states_ids);  // Fixed the table prefix here
         } else {
             // Optionally log or handle the case when no states are found
-            echo "No states found for the given user.";
+            // echo "No states found for the given user.";
         }
     }
 

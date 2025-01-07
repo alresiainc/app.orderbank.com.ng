@@ -174,6 +174,8 @@ class Forms extends MY_Controller
             'Form Id',
             'trim|required'
         );
+
+
         $form_id = $this->input->post('form_id');
         log_message('error', 'form_id:' . json_encode($form_id));  // Log form data (ensure this is safe for production)
         // Fetch form configuration
