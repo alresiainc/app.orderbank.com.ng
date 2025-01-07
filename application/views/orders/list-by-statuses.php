@@ -169,11 +169,16 @@ $order_statuses = $CI->config->item('order_status');
                                                             <!-- Date Filter -->
                                                             <div class="filter-row col-md-5">
                                                                 <label for="date-filter">Filter by Date</label>
-                                                                <input type="text" id="date-filter" class="form-control" placeholder="Select Date Range"
+                                                                <!-- <input type="text" id="date-filter" class="form-control" placeholder="Select Date Range"
                                                                     <?php if (in_array($order_status, ['new'])): ?>
                                                                     value="<?php echo date('Y-m-d', strtotime('-1 days')); ?> to <?php echo date('Y-m-d'); ?>"
                                                                     <?php elseif (in_array($order_status, ['rescheduled'])): ?>
                                                                     value="<?php echo date('Y-m-d'); ?> to <?php echo date('Y-m-d'); ?>"
+                                                                    <?php endif; ?>
+                                                                    > -->
+                                                                <input type="text" id="date-filter" class="form-control" placeholder="Select Date Range"
+                                                                    <?php if (in_array($order_status, ['new'])): ?>
+                                                                    value="<?php echo date('Y-m-d', strtotime('-1 days')); ?> to <?php echo date('Y-m-d'); ?>"
                                                                     <?php endif; ?>>
                                                             </div>
 
