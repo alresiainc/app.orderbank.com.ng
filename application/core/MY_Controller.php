@@ -468,6 +468,7 @@ class MY_Controller extends CI_Controller
           if ($mail->send()) {
             log_message('error', "Email sent successfully." . json_encode($mail));
           } else {
+            log_message('error', "Email Error." . json_encode($mail));
             log_message('error', "Email sending failed: " . $mail->ErrorInfo);
           }
         } catch (Exception $e) {
