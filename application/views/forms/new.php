@@ -28,11 +28,14 @@
     <?php
 
     $CI = &get_instance();
+    $length = 60;
+
+
     // Generate a random string
     $randomString = substr(md5(uniqid(rand(), true)), 0, $length);
 
     // Create the slug
-    $form_link = url_title($string . '-' . $randomString, 'dash', true);
+    $form_link = url_title($randomString, 'dash', true);
 
 
     ?>

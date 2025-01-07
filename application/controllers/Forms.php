@@ -258,7 +258,7 @@ class Forms extends MY_Controller
                 'order_date' => $currentDateTime,
                 'delivery_date' => $form_data->show_delivery ? date("Y-m-d", strtotime($delivery_date)) : null,
                 'customer_name' => $formData['customer_name'] ?? null,
-                'customer_email' => $formData['customer_email'] ?? 'connectwithproda@gmail.com',
+                'customer_email' =>  isset($formData['customer_email']) && !empty($formData['customer_email']) ? $formData['customer_email'] : 'connectwithproda@gmail.com',
                 'customer_phone' => $formData['customer_phone'] ?? null,
                 'customer_whatsapp' => $formData['customer_whatsapp'] ?? null,
                 'address' => $formData['address'] ?? null,
@@ -495,16 +495,22 @@ class Forms extends MY_Controller
                 'form_bundles' => json_encode($form_bundles)  // Store selected products as JSON
             );
 
-            log_message('info', json_encode($form_data));  // Log form data (ensure this is safe for production)
+            // log_message('error', "id:" . json_encode($id));
+            // log_message('error', "form_data:" . json_encode($form_data));  // Log form data (ensure this is safe for production)
 
-            // Save the form data
-            if ($this->forms->update_form_by_id($id, $form_data)) {
-                // Success message or redirection
-                echo json_encode(['success' => true, 'message' => 'Form updated successfully.']);
-            } else {
-                // Error message if form saving fails
-                echo json_encode(['success' => false, 'message' => 'Failed to update form data.']);
+            try {
+                if ($this->forms->update_form_by_id($id, $form_data)) {
+                    // Success message or redirection
+                    echo json_encode(['success' => true, 'message' => 'Form updated successfully.']);
+                } else {
+                    // Error message if form saving fails
+                    echo json_encode(['success' => false, 'message' => 'Failed to update form data.']);
+                }
+            } catch (\Exception $e) {
+                echo json_encode(['success' => false, 'message' => $e->getMessage()]);
             }
+            // Save the form data
+
         } else {
             // Validation errors
             echo json_encode(['success' => false, 'message' => validation_errors()]);

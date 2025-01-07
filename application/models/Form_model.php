@@ -193,9 +193,17 @@ class Form_model extends CI_Model
             $formData['product_bundle'] = json_encode($formData['product_bundle']);
         }
 
+        // Add or update 'updated_at' field manually
+        $formData['updated_at'] = date('Y-m-d H:i:s');
+        log_message('error', "id:" . json_encode($id));
+        log_message('error', "formData:" . json_encode($formData));
+
         $this->db->where('id', $id);
         $this->db->update('db_forms', $formData);
-        return $this->db->affected_rows(); // Return the number of affected rows
+
+        $result = $this->db->affected_rows();
+        log_message('error', "result:" . json_encode($result));
+        return $result; // Return the number of affected rows
     }
 
     public function delete_forms($ids)
