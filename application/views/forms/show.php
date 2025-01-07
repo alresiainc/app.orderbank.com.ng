@@ -1097,11 +1097,13 @@ $CI = &get_instance();
                                         const redirectUrl = "<?= $form->redirect_url; ?>"; // Ensure this is defined in PHP
                                         if (redirectUrl) {
                                             window.location.href = redirectUrl; // Redirect to URL after a successful submission
-                                        }
-                                        $('#confirm-order-modal').fadeOut();
+                                        } else {
+                                            $('#confirm-order-modal').fadeOut();
 
-                                        $('.form-container').hide();
-                                        $('.success-message').show();
+                                            $('.form-container').hide();
+                                            $('.success-message').show();
+                                        }
+
                                     }, 500);
 
                                     toastr["success"](data.message);
