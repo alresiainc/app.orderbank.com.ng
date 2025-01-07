@@ -322,7 +322,7 @@ class MY_Controller extends CI_Controller
       // Send Email using PHPMailer
       if ($type === 'email' && !empty($order->customer_email)) {
         $store_id = (isset($store_id) && !empty($store_id)) ? $store_id : get_current_store_id();
-        $store_rec = get_store_details();
+        $store_rec = get_store_details($store_id ?? 2);
         $smtp_status = $store_rec->smtp_status;
 
         // Load PHPMailer
