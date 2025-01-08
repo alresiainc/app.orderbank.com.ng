@@ -714,7 +714,7 @@ $CI = &get_instance();
 
       <!-- SMS -->
       <?php if ($CI->permissions('send_sms') || $CI->permissions('send_email') || $CI->permissions('email_template_view') || $CI->permissions('sms_template_view')) { ?>
-        <li class="sms-active-li sms-templates-list-active-li email-active-li email-templates-list-active-li treeview">
+        <li class="sms-active-li sms-templates-list-active-li email-active-li email-templates-list-active-li broadcast-active-li treeview">
           <a href="#">
             <i class="fa fa-envelope text-aqua"></i> <span><?= $this->lang->line('messaging'); ?></span>
             <span class="pull-right-container">
@@ -735,6 +735,7 @@ $CI = &get_instance();
             <?php if ($CI->permissions('email_template_view') && false) { ?>
               <li class="email-templates-list-active-li "><a href="<?php echo $base_url; ?>email_templates/email"><i class="fa fa-list "></i> <span><?= $this->lang->line('email_templates'); ?></span></a></li>
             <?php } ?>
+            <li class="broadcast-active-li "><a href="<?php echo $base_url; ?>broadcast"><i class="fa fa-list "></i> <span>Broadcast</span></a></li>
 
           </ul>
         </li>

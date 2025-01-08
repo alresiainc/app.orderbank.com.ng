@@ -91,7 +91,7 @@ $order_status = $ci->config->item('order_status');
                                             <label for="old_customers">Include Old Customers *</label>
                                             <select name="old_customers" id="old_customers" class="form-control select2" style="width: 100%;">
                                                 <option value="yes">Yes</option>
-                                                <option value="no">No</option>
+                                                <option value="no" selected>No</option>
                                             </select>
                                             <span id="old_customers_msg" class="text-danger"></span>
                                         </div>
@@ -294,9 +294,10 @@ $order_status = $ci->config->item('order_status');
                         const data = JSON.parse(response);
                         if (data.success) {
                             toastr["success"](data.message);
-                            $('#broadcast_form')[0].reset();
-                            $(".select2").val(null).trigger("change");
-                            $('#whatsapp_message_section, #email_message_section').hide();
+                            window.location.reload();
+                            // $('#broadcast_form')[0].reset();
+                            // $(".select2").val(null).trigger("change");
+                            // $('#whatsapp_message_section, #email_message_section').hide();
                         } else {
                             toastr["error"](data.message);
                         }
@@ -319,7 +320,7 @@ $order_status = $ci->config->item('order_status');
 
     <!-- Make sidebar menu hughlighter/selector -->
     <script>
-        $(".<?php echo basename(__FILE__, '.php'); ?>-form-li").addClass("active");
+        $(".<?php echo basename(__FILE__, '.php'); ?>-active-li").addClass("active");
     </script>
 </body>
 
