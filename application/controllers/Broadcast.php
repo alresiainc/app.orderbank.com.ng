@@ -69,9 +69,9 @@ class Broadcast extends MY_Controller
         // Get orders by status
 
         if ($status) {
-            log_message('error', 'status ' . json_encode($status));
+            // log_message('error', 'status ' . json_encode($status));
             $orders = $this->orders->get_orders_by_status($status);
-            log_message('error', 'orders ' . json_encode($orders));
+            // log_message('error', 'orders ' . json_encode($orders));
             foreach ($orders as $order) {
                 $recipients[] = [
                     'email' => $order->customer_email ?? null,
@@ -83,7 +83,7 @@ class Broadcast extends MY_Controller
         // Include old customers
         if ($include_old_customers) {
             $customers = $this->get_old_customers();
-            log_message('error', 'customers ' . json_encode($customers));
+            // log_message('error', 'customers ' . json_encode($customers));
             foreach ($customers as $customer) {
                 $recipients[] = [
                     'email' => $customer->email ?? null,
@@ -188,9 +188,10 @@ class Broadcast extends MY_Controller
      */
     private function send_whatsapp($phone, $subject, $message, $media = null)
     {
-        if (Wassenger::numberExist($phone)) {
+        $formattedPhone = $this->toCountryCode($phone);
+        if (Wassenger::numberExist($formattedPhone)) {
             try {
-                $msg = Messages::message($this->toCountryCode($phone), '*' . $subject . '* \n\n' . $message);
+                $msg = Messages::message($formattedPhone, '*' . $subject . '* \n\n' . $message);
                 if ($media) {
                     $msg->media($media);
                 }
