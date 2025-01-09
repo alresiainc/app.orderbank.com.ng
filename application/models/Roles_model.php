@@ -439,7 +439,7 @@ class Roles_model extends CI_Model
 		$this->load->config('order_status');
 		$order_status = $this->config->item('order_status');
 		foreach ($order_status as $key => $status):
-			if ($key != 'all'):
+			if ($key != 'allll'):
 				$permissions[] = "view_" . $key;
 			endif;
 		endforeach;
