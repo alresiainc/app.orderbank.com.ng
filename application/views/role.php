@@ -1071,12 +1071,12 @@
 
                               ?>
                               <?php foreach ($order_status as $key => $status): ?>
-                                <?php if ($key != 'all'): ?>
-                                  <div class="checkbox icheck"><label>
-                                      <input type="checkbox" class="orders_all" id='view_<?= $key; ?>' name="permission[view_<?= $key; ?>]"> <?= $status['label']; ?>
-                                    </label></div>
-                                <?php endif; ?>
-                              <?php endforeach; ?>
+                                <!-- <?php if ($key != 'alllll'): ?> -->
+                                <div class="checkbox icheck"><label>
+                                    <input type="checkbox" class="orders_all" id='view_<?= $key; ?>' name="permission[view_<?= $key; ?>]"> <?= $status['label']; ?>
+                                  </label></div>
+                              <?php endif; ?>
+                            <?php endforeach; ?>
 
                             </td>
                           </tr>
