@@ -52,7 +52,7 @@ class Naija
      *
      * @return array
      */
-    public static function where(string|null $key = null, string $operator, string|int $value = null): array
+    public static function where(string $key = null, string $operator, string $value = null): array
     {
         if (func_num_args() === 2) {
             $value = $operator;
@@ -60,7 +60,7 @@ class Naija
         }
 
         if (! isset(static::$states['longlist'])) {
-            static::$states['longlist'] = json_decode(static::getFile(__DIR__.'/../resources/data/states.json'), true);
+            static::$states['longlist'] = json_decode(static::getFile(__DIR__ . '/../resources/data/states.json'), true);
         }
 
         return static::filter(static::$states['longlist'], static::operatorForWhere($key, $operator, $value));
@@ -83,15 +83,23 @@ class Naija
             switch ($operator) {
                 default:
                 case '=':
-                case '==':  return $retrieved == $value;
+                case '==':
+                    return $retrieved == $value;
                 case '!=':
-                case '<>':  return $retrieved != $value;
-                case '<':   return $retrieved < $value;
-                case '>':   return $retrieved > $value;
-                case '<=':  return $retrieved <= $value;
-                case '>=':  return $retrieved >= $value;
-                case '===': return $retrieved === $value;
-                case '!==': return $retrieved !== $value;
+                case '<>':
+                    return $retrieved != $value;
+                case '<':
+                    return $retrieved < $value;
+                case '>':
+                    return $retrieved > $value;
+                case '<=':
+                    return $retrieved <= $value;
+                case '>=':
+                    return $retrieved >= $value;
+                case '===':
+                    return $retrieved === $value;
+                case '!==':
+                    return $retrieved !== $value;
             }
         };
     }
