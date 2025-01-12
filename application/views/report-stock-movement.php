@@ -126,7 +126,27 @@
                         <div class="box">
                             <div class="box-header">
                                 <h3 class="box-title">Records Table</h3>
-                                <?php $this->load->view('components/export_btn', array('tableId' => 'report-data')); ?>
+                                <!-- <?php $this->load->view('components/export_btn', array('tableId' => 'report-data')); ?> -->
+                                <!-- <div class="btn-group pull-right" title="View Account">
+                                    <a class="btn btn-primary btn-o dropdown-toggle export-to-pdf" data-toggle="dropdown" href="#" aria-expanded="true">
+                                        <i class="fa fa-fw fa-bars"></i> Export <span class="caret"></span>
+                                    </a>
+                                </div> -->
+                                <div class="btn-group pull-right" title="View Account">
+                                    <a class="btn btn-primary btn-o dropdown-toggle" data-toggle="dropdown" href="#">
+                                        <i class="fa fa-fw fa-bars"></i> Export <span class="caret"></span>
+                                    </a>
+                                    <ul role="menu" class="dropdown-menu dropdown-light pull-right">
+                                        <li>
+                                            <a style="cursor:pointer" class="downloadExcel" data-table-id="report-data" title="Download Excel Format" data-toggle="tooltip" data-placement="top">
+                                                <i class="fa fa-fw fa-file-excel-o text-red"></i>Excel
+                                            </a>
+                                            <a style="cursor:pointer" class="export-to-pdf" title="Download PDF Format" data-toggle="tooltip" data-placement="top">
+                                                <i class="fa fa-fw fa-file-pdf-o text-red"></i>PDF
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
                             </div>
                             <!-- /.box-header -->
                             <div class="box-body table-responsive no-padding">
@@ -201,6 +221,28 @@
             }, function(result) {
                 result = '<option value="">All</option>' + result;
                 $("#category_id").html('').append(result).select2();
+            });
+        });
+    </script>
+
+    <script>
+        $(document).ready(function() {
+
+            $(".export-to-pdf").on("click", function(e) {
+                // alert("export-to-pdf");
+                e.preventDefault();
+                var base_url = $("#base_url").val();
+                var from_date = document.getElementById("from_date").value;
+                var to_date = document.getElementById("to_date").value;
+                var warehouse_id = document.getElementById("warehouse_id").value;
+                var products = document.getElementById("products").value;
+
+                // Construct the URL with parameters
+                const url =
+                    base_url +
+                    `reports/stock-movements-pdf?warehouse_id=${warehouse_id}&from_date=${from_date}&to_date=${to_date}&item_id=${products}`;
+
+                location.href = url;
             });
         });
     </script>

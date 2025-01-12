@@ -558,6 +558,165 @@ class Reports extends MY_Controller
 		exit;
 	}
 
+	public function stock_movements_pdf()
+	{
+		$file_name = $this->input->get('file_name'); // Get the file_name parameter from the URL
+		$download = $this->input->get('download') !== null; // Check if 'download' exists in the URL (true if present)
+		// Fetch POST parameters from DataTable
+		$store_id = $this->input->get('store_id');
+		$item_id = $this->input->get('item_id');
+		$search = $this->input->get('search')['value'] ?? null; // DataTable sends search in 'search[value]'
+		$transaction_type = $this->input->get('transaction_type');
+		$start_date = $this->input->get('from_date');
+		$end_date = $this->input->get('to_date');
+		$offset = (int)$this->input->get('start'); // DataTable uses 'start' for offset
+		$warehouse_id = $this->input->get('warehouse_id');
+
+
+		$item_ids = $item_id ? [$item_id] : null;
+
+
+		if (!is_array($transaction_type)) {
+			$transaction_type = [];
+		}
+
+		if (!is_array($warehouse_id)) {
+			$warehouse_id = [];
+		}
+
+		if (!is_array($store_id)) {
+			$store_id = [];
+		}
+
+		if (empty($start_date)) {
+			$start_date = date('Y-m-d');
+		}
+
+		if (empty($end_date)) {
+			$end_date = date('Y-m-d');
+			# code...
+		}
+
+		// Options to pass to the report function
+		$options = [
+			'store_id' => $store_id,
+			'item_ids' => $item_ids,
+			'search' => $search,
+			'transaction_type' => $transaction_type,
+			'start_date' => $start_date,
+			'end_date' => $end_date,
+			'warehouse_id' => $warehouse_id
+		];
+
+		// Log options for debugging
+		log_message('error', json_encode($options));
+
+		// Fetch the report
+		$list = $this->movements_reports($options);
+		$body = '';
+		if (empty($list['data'])) {
+			$body .=  "<tr><td colspan='10' class='text-center'>No data available</td></tr>";
+		} else {
+
+
+
+			$no = $offset; // Start counter from offset
+			$total_stock_in = 0; // Initialize total stock in
+			$opening_stock = 0; // Opening stock initialization
+
+			$body .= "<tr>";
+			$body .= "<td></td>";
+			$body .= "<td></td>";
+			$body .= "<td></td>";
+			$body .= "<td></td>";
+			$body .= "<td></td>";
+			$body .= "<td></td>";
+			$body .= "<td></td>";
+			$body .= "<td></td>";
+			$body .= "<td></td>";
+			$body .= "<td>" . $list['data'][0]->opening_quantity . "</td>"; // Placeholder for remarks
+			$body .= "</tr>";
+
+			foreach ($list['data'] as $item) {
+				$no++;
+				if ($item->transaction_type == 'transfer') {
+					log_message('error', 'warehouse_from ' . $item->warehouse_from);
+					log_message('error', 'warehouse_to ' . $item->warehouse_to);
+					log_message('error', 'warehouse ' . $warehouse_id);
+				}
+
+				// Set the opening stock for the first record
+				if ($no == 1) {
+					$opening_stock = $item->opening_quantity;
+				}
+
+				// Determine readable transaction type
+				$transaction_type = ucfirst(str_replace('_', ' ', $item->transaction_type));
+				$transaction_type_map = [
+
+					'sales' => 'Sales',
+					'waybill_sent' => 'Waybill Sent',
+					'waybill_received' => 'Waybill Received',
+					'purchased' => 'Purchased',
+					'purchased_return' => 'Faulty'
+				];
+
+
+				$transaction_type = $transaction_type_map[$item->transaction_type] ?? $transaction_type;
+
+				$get_warehouse_from_name = $item->warehouse_from ?  get_warehouse_name($item->warehouse_from) : '';
+				$get_warehouse_to_name = $item->warehouse_to ?  get_warehouse_name($item->warehouse_to) : '';
+
+				$remark_map = [
+					'sales' => 'Sold recorded on Revenue',
+					'waybill_received' => 'Waybill sent from ' . $get_warehouse_from_name . ' to ' . $get_warehouse_to_name . '',
+					'waybill_sent' => 'Waybill sent from ' . $get_warehouse_to_name . ' to ' . $get_warehouse_from_name . '',
+					'purchased' => 'Stock added from purchase record',
+					'purchased_return' => 'Stock deducted as faulty product'
+				];
+				$remark = $remark_map[$item->transaction_type] ?? '';
+
+
+				// Calculate total stock in
+				$total_stock_in += $item->quantity;
+
+				// Render table row
+				$body .= "<tr>";
+				$body .= "<td>" . $no . "</td>";
+				$body .= "<td>" . show_date($item->transaction_date) . "</td>";
+				$body .= "<td>" . $item->transaction_id . "</td>";
+				$body .= "<td>" . $transaction_type . "</td>";
+				$body .= "<td>" . $item->item_name . "</td>";
+				$body .= "<td>" . $item->opening_quantity . "</td>";
+				$body .= "<td>" . $item->quantity . "</td>";
+				$body .= "<td>" . $item->closing_quantity . "</td>";
+				$body .= "<td>" . $remark . "</td>"; // Placeholder for remarks
+				$body .= "<td></td>"; // Placeholder for remarks
+				$body .= "</tr>";
+			}
+
+			// Totals Row: Total Stock In
+			$body .= "<tr>
+              <td class='text-right text-bold' colspan='6'><b>TOTAL STOCK IN:</b></td>
+              <td class='text-right text-bold'>" . $total_stock_in . "</td>
+              <td colspan='3'></td>
+          </tr>";
+
+			// Totals Row: Opening Stock
+			$body .= "<tr>
+              <td class='text-right text-bold' colspan='6'><b>OPENING STOCK:</b></td>
+              <td class='text-right text-bold'>" . ($total_stock_in + $opening_stock) . "</td>
+              <td colspan='3'></td>
+          </tr>";
+		}
+
+		$data = $this->data;
+		$data['page_title'] = "Stock Movements";
+		$data['body'] = $body;
+		$html = $this->load->view('report-stock-movement-pdf', $data, true);
+		$this->generatePDFfromPage($html, $file_name ?? 'Orders_receipt.pdf', true, $download ?? true);
+	}
+
 
 
 	public function stock_movements()
