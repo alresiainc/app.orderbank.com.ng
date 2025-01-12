@@ -1134,12 +1134,11 @@ $CI = &get_instance();
                                             $('#confirm-order-modal').fadeOut();
 
                                             $('.form-container').hide();
-                                            $('.success-message').show();
                                         }
 
                                     }, 500);
 
-                                    toastr["success"](data.message);
+                                    // toastr["success"](data.message);
 
                                 } else {
                                     toastr["error"](data.message);
