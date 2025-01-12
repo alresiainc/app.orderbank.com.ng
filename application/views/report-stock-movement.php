@@ -242,7 +242,9 @@
                     base_url +
                     `reports/stock-movements-pdf?warehouse_id=${warehouse_id}&from_date=${from_date}&to_date=${to_date}&item_id=${products}`;
 
-                location.href = url;
+                // location.href = url;
+                // Open the URL in a new tab
+                window.open(url, '_blank');
             });
         });
     </script>
