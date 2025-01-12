@@ -299,3 +299,6 @@ ERROR - 2025-01-12 22:38:58 --> warehouse_from 87
 ERROR - 2025-01-12 22:38:58 --> warehouse_to 97
 ERROR - 2025-01-12 22:38:58 --> Severity: Warning --> Array to string conversion /Applications/AMPPS/www/backend.myproda.test/application/controllers/Reports.php 645
 ERROR - 2025-01-12 22:38:58 --> warehouse Array
+ERROR - 2025-01-12 22:45:14 --> Severity: Error --> Maximum execution time of 300 seconds exceeded /Applications/AMPPS/www/backend.myproda.test/vendor/dompdf/dompdf/src/Css/Stylesheet.php 1040
+ERROR - 2025-01-12 22:45:14 --> Severity: Warning --> Undefined variable $privileged_warehouses /Applications/AMPPS/www/backend.myproda.test/application/views/warehouse/warehouse_code.php 51
+ERROR - 2025-01-12 22:45:14 --> Severity: Warning --> Undefined variable $privileged_warehouses /Applications/AMPPS/www/backend.myproda.test/application/views/warehouse/warehouse_code.php 51
