@@ -16,6 +16,7 @@ return array(
     'Laminas\\ServiceManager\\' => array($vendorDir . '/laminas/laminas-servicemanager/src'),
     'Laminas\\Barcode\\' => array($vendorDir . '/laminas/laminas-barcode/src'),
     'FontLib\\' => array($vendorDir . '/phenx/php-font-lib/src/FontLib'),
+    'Emmadonjo\\Naija\\' => array($vendorDir . '/emmadonjo/naija/src'),
     'Dompdf\\' => array($vendorDir . '/dompdf/dompdf/src'),
     'Alresia\\LaravelWassenger\\' => array($vendorDir . '/alresia/laravel-wassenger/src'),
 );

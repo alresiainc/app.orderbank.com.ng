@@ -593,14 +593,7 @@ $CI = &get_instance();
                 </div>
             <?php endif; ?>
 
-            <?php if ($form->show_email): ?>
-                <div class="form-group">
-                    <label><?= $form->email_label; ?></label>
-                    <input type="email" name="customer_email" id="email">
-                    <span id="email_msg" class="text-danger"></span>
-                    <small><?= $form->email_desc; ?></small>
-                </div>
-            <?php endif; ?>
+
 
             <?php if ($form->show_phone): ?>
                 <div class="form-group">
@@ -630,15 +623,41 @@ $CI = &get_instance();
             <?php endif; ?>
 
             <?php if ($form->show_states): ?>
-                <div class="form-group">
-                    <label><?= $form->states_label; ?></label>
-                    <select name="state" id="state">
-                        <!-- <option value=""><?= $form->state_desc; ?></option> -->
-                        <?= get_state_select_list(null, true); ?>
-                    </select>
-                    <span id="state_msg" class="text-danger"></span>
-                    <small><?= $form->state_desc; ?></small>
+                <div class="row">
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            <label><?= $form->states_label; ?></label>
+                            <select name="state" id="state">
+                                <!-- <option value=""><?= $form->state_desc; ?></option> -->
+                                <?= get_state_select_list(null, true); ?>
+                            </select>
+                            <span id="state_msg" class="text-danger"></span>
+                            <small><?= $form->state_desc; ?></small>
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            <label>LGA</label>
+                            <select name="lga" id="lga" disabled>
+                                <option value="">Select LGA</option>
+                            </select>
+                            <span id="lga_msg" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            <label>City/Town</label>
+                            <select name="city" id="city" disabled>
+                                <option value="">Select City/Town</option>
+                            </select>
+                            <span id="city_msg" class="text-danger"></span>
+                        </div>
+                    </div>
                 </div>
+
+
+
+
             <?php endif; ?>
 
 
@@ -662,6 +681,15 @@ $CI = &get_instance();
                     class="form-controls datepicker"
                     placeholder="Pick a date">
             </div>
+
+            <?php if ($form->show_email): ?>
+                <div class="form-group">
+                    <label><?= $form->email_label; ?></label>
+                    <input type="email" name="customer_email" id="email">
+                    <span id="email_msg" class="text-danger"></span>
+                    <small><?= $form->email_desc; ?></small>
+                </div>
+            <?php endif; ?>
 
 
             <div class="form-group">
@@ -921,6 +949,7 @@ $CI = &get_instance();
                 $('#confirm-order-modal').fadeOut(); // Hide the modal with a fade effect
             });
 
+
             $("#show-confirm-order-modal").on("click", function(e) {
                 e.preventDefault(); // Prevent form's default submission
 
@@ -1153,6 +1182,85 @@ $CI = &get_instance();
                 });
 
             });
+
+            // When State changes, fetch LGAs
+            $("#state").on("change", function() {
+                var stateId = $(this).val();
+                var stateName = $(this).find("option:selected").text(); // Get the name (state name)
+                if (stateName) {
+                    alert(stateName);
+                    // Fetch LGAs via AJAX
+                    $.ajax({
+                        url: "<?= base_url('/forms/get_lgas_by_state'); ?>", // Replace with your route or API endpoint
+                        type: "GET",
+                        data: {
+                            state_name: stateName
+                        },
+                        dataType: "json",
+                        success: function(response) {
+                            $("#lga").empty().append('<option value="">Select LGA</option>');
+                            $("#city").empty().append('<option value="">Select City/Town</option>').prop("disabled", true);
+
+                            if (response.success) {
+                                console.log("response.success:", response);
+
+                                $.each(response.lgas, function(key, value) {
+                                    $("#lga").append('<option value="' + value.name + '">' + value.name + '</option>');
+                                });
+
+                                $.each(response.cities, function(key, value) {
+                                    $("#city").append('<option value="' + value.name + '">' + value.name + '</option>');
+                                });
+
+
+                                $("#lga").prop("disabled", false);
+                                $("#city").prop("disabled", false);
+                            }
+                        },
+                        error: function() {
+                            alert("Error fetching LGAs.");
+                        },
+                    });
+                } else {
+                    $("#lga").empty().append('<option value="">Select LGA</option>').prop("disabled", true);
+                    $("#city").empty().append('<option value="">Select City/Town</option>').prop("disabled", true);
+                }
+            });
+
+            // When LGA changes, fetch Cities/Towns
+            // $("#lga").on("change", function() {
+            //     var lgaId = $(this).val();
+
+            //     if (lgaId) {
+            //         // Fetch Cities via AJAX
+            //         $.ajax({
+            //             url: "<?= base_url('forms/get_cities_by_lga'); ?>", // Replace with your route or API endpoint
+            //             type: "POST",
+            //             data: {
+            //                 lga_id: lgaId
+            //             },
+            //             dataType: "json",
+            //             success: function(response) {
+            //                 $("#city").empty().append('<option value="">Select City/Town</option>');
+
+            //                 if (response.success) {
+            //                     $.each(response.cities, function(key, value) {
+            //                         $("#city").append('<option value="' + value.id + '">' + value.name + '</option>');
+            //                     });
+
+
+            //                     //--ignore-platform-reqs
+            //                     $("#city").prop("disabled", false);
+            //                 }
+            //             },
+            //             error: function() {
+            //                 alert("Error fetching Cities/Towns.");
+            //             },
+            //         });
+            //     } else {
+            //         $("#city").empty().append('<option value="">Select City/Town</option>').prop("disabled", true);
+            //     }
+            // });
         });
     </script>
 </body>

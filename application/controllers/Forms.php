@@ -1,7 +1,7 @@
 <?php
 defined('BASEPATH') or exit('No direct script access allowed');
 
-
+use Emmadonjo\Naija\Naija;
 // include_once('./Orders.php');
 include_once(APPPATH . 'controllers/Orders.php'); // Path to your controller
 class Forms extends MY_Controller
@@ -12,7 +12,8 @@ class Forms extends MY_Controller
         // $this->load_global();
         // Bypass `load_global` for the `show_form` method
         $method = $this->router->fetch_method();
-        if ($method !== 'show_form' && $method !== 'submit' && $method !== 'submit_alt') {
+        log_message('error', 'method' . $method);
+        if ($method !== 'show_form' && $method !== 'submit' && $method !== 'submit_alt' && $method !== 'get_cities_by_lga' && $method !== 'get_lgas_by_state') {
             $this->load_global();
         }
 
@@ -727,5 +728,47 @@ class Forms extends MY_Controller
     {
         $id = $_POST['id'];
         echo $this->form_bundles->delete_bundle($id);
+    }
+
+    public function get_lgas_by_state()
+    {
+        $this->form_validation->set_rules(
+            'state_name',
+            'State Name',
+            'trim|required'
+        );
+
+        // if ($this->form_validation->run() === TRUE) {
+        $state_name = $this->input->post('state_name');
+        // get the comprehensive information of a state
+        $state = Naija::state($state_name ?? 'Enugu');
+        log_message('error', 'states' . json_encode($state->get()));
+        // get LGAs
+        $lgas = $state->getLgas();
+
+        $cities = $state->getAreas();
+
+
+        if ($lgas || $cities) {
+            echo json_encode(['success' => true, 'lgas' => $lgas, 'cities' => $cities]);
+        } else {
+            echo json_encode(['success' => false, 'message' => 'No LGAs found.']);
+        }
+        // } else {
+        //     echo json_encode(['success' => false, 'message' => validation_errors()]);
+        //     exit; // Stop any further output
+        // }
+    }
+
+    public function get_cities_by_lga()
+    {
+        $lga_id = $this->input->post('lga_id');
+        $cities = $this->lga_model->get_cities($lga_id); // Fetch cities based on lga_id from your database
+
+        if ($cities) {
+            echo json_encode(['success' => true, 'cities' => $cities]);
+        } else {
+            echo json_encode(['success' => false, 'message' => 'No Cities found.']);
+        }
     }
 }

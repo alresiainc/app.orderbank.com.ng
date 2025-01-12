@@ -36,6 +36,10 @@ class ComposerStaticInitcdcd42b039ac0fa6dafd359776bb2c3c
         array (
             'FontLib\\' => 8,
         ),
+        'E' => 
+        array (
+            'Emmadonjo\\Naija\\' => 16,
+        ),
         'D' => 
         array (
             'Dompdf\\' => 7,
@@ -86,6 +90,10 @@ class ComposerStaticInitcdcd42b039ac0fa6dafd359776bb2c3c
         'FontLib\\' => 
         array (
             0 => __DIR__ . '/..' . '/phenx/php-font-lib/src/FontLib',
+        ),
+        'Emmadonjo\\Naija\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/emmadonjo/naija/src',
         ),
         'Dompdf\\' => 
         array (
