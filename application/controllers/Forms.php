@@ -755,9 +755,10 @@ class Forms extends MY_Controller
         if ($state_name == 'abuja') {
             $state_name = 'fct';
         }
+        log_message('error', 'state_name' . $state_name);
         // get the comprehensive information of a state
         $state = Naija::state($state_name ?? 'Enugu');
-        log_message('error', 'states' . json_encode($state->get()));
+
         // get LGAs
         $lgas = $state->getLgas();
 
