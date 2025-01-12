@@ -985,12 +985,12 @@ $CI = &get_instance();
                     if (check_field("state") == true) {
                         var flag = false;
                     }
-                    if (check_field("lga") == true) {
-                        var flag = false;
-                    }
-                    if (check_field("city") == true) {
-                        var flag = false;
-                    }
+                    // if (check_field("lga") == true) {
+                    //     var flag = false;
+                    // }
+                    // if (check_field("city") == true) {
+                    //     var flag = false;
+                    // }
                 }
 
                 if ($('#delivery_select') != undefined) {

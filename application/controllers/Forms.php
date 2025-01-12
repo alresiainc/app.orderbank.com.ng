@@ -234,16 +234,16 @@ class Forms extends MY_Controller
                 $form_data->states_label ?? 'State',
                 'trim|required'
             );
-            $this->form_validation->set_rules(
-                'lga',
-                'Local Government Area',
-                'trim|required'
-            );
-            $this->form_validation->set_rules(
-                'city',
-                'City',
-                'trim|required'
-            );
+            // $this->form_validation->set_rules(
+            //     'lga',
+            //     'Local Government Area',
+            //     'trim|required'
+            // );
+            // $this->form_validation->set_rules(
+            //     'city',
+            //     'City',
+            //     'trim|required'
+            // );
         }
 
         if ($form_data->show_delivery) {
@@ -752,6 +752,9 @@ class Forms extends MY_Controller
 
         // if ($this->form_validation->run() === TRUE) {
         $state_name = $this->input->post('state_name');
+        if ($state_name == 'abuja') {
+            $state_name = 'fct';
+        }
         // get the comprehensive information of a state
         $state = Naija::state($state_name ?? 'Enugu');
         log_message('error', 'states' . json_encode($state->get()));
