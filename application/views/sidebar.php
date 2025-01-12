@@ -743,7 +743,7 @@ $CI = &get_instance();
 
       <!--<li class="header">REPORTS</li>-->
       <?php if ($CI->permissions('supplier_items_report') || $CI->permissions('sales_report') || $CI->permissions('item_sales_report') || $CI->permissions('purchase_report') || $CI->permissions('purchase_return_report') || $CI->permissions('expense_report') || $CI->permissions('profit_report') || $CI->permissions('stock_report') || $CI->permissions('purchase_payments_report') || $CI->permissions('sales_payments_report') || $CI->permissions('expired_items_report') || $CI->permissions('seller_points_report') || $CI->permissions('customer_orders_report')) { ?>
-        <li class="report-sales-active-li report-sales-return-active-li report-purchase-active-li report-purchase-return-active-li report-expense-active-li report-stock-active-li report-purchase-payments-active-li report-sales-item-active-li report-sales-payments-active-li report-expired-items-active-li report-supplier_items-active-li report-seller-points-active-li report-sales-tax-active-li report-purchase-tax-active-li  report-delivery-sheet-active-li report-load-sheet-active-li report-return-item-active-li report-sales-active-li  reports-menu treeview">
+        <li class="report-sales-active-li report-stock-movement-active-li report-sales-return-active-li report-purchase-active-li report-purchase-return-active-li report-expense-active-li report-stock-active-li report-purchase-payments-active-li report-sales-item-active-li report-sales-payments-active-li report-expired-items-active-li report-supplier_items-active-li report-seller-points-active-li report-sales-tax-active-li report-purchase-tax-active-li  report-delivery-sheet-active-li report-load-sheet-active-li report-return-item-active-li report-sales-active-li  reports-menu treeview">
           <a href="#">
             <i class="fa fa-bar-chart text-aqua"></i> <span><?= $this->lang->line('reports'); ?></span>
             <span class="pull-right-container">
@@ -754,6 +754,10 @@ $CI = &get_instance();
 
             <?php if ($CI->permissions('profit_report')) { ?>
               <li class="report-income-statement-active-li"><a href="<?php echo $base_url; ?>reports/income_statement"><i class="fa fa-files-o "></i> <span><?= $this->lang->line('income_statement'); ?></span>
+                </a></li>
+            <?php } ?>
+            <?php if ($CI->permissions('profit_report')) { ?>
+              <li class="report-stock-movement-active-li"><a href="<?php echo $base_url; ?>reports/stock-movements"><i class="fa fa-files-o "></i> <span>Stock Movement Report</span>
                 </a></li>
             <?php } ?>
 

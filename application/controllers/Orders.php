@@ -517,7 +517,7 @@ class Orders extends MY_Controller
                     <li><strong>Address:</strong> {$order->address}</li>
                     <li><strong>State:</strong> {$order->state}</li>
                     <li><strong>Customer Phone:</strong> {$order->customer_phone}</li>
-                    <li><strong>Alternative Number:</strong> {$order->customer_whatsapp}</li>
+                    <li><strong>WhatsApp Number:</strong> {$order->customer_whatsapp}</li>
                     <li><strong>Order Number:</strong> {$order->order_number}</li>
                     <li><strong>Product Details:</strong> {$quantity} {$order->bundle_name}</li>
                     <li><strong>Product Price:</strong> {$this->currency($order->bundle_price ??$order->bundle_price, TRUE)}</li>
