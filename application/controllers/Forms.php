@@ -751,7 +751,7 @@ class Forms extends MY_Controller
         );
 
         // if ($this->form_validation->run() === TRUE) {
-        $state_name = $this->input->post('state_name');
+        $state_name = $this->input->get('state_name');
         if ($state_name == 'abuja') {
             $state_name = 'fct';
         }
