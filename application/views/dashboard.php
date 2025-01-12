@@ -105,8 +105,8 @@
               <div class="info-box ">
                 <span class="info-box-icon bg-5"><i class="fa fa-credit-card"></i></span>
                 <div class="info-box-content">
-                  <span class="info-box-text tot_sale_payment" style="font-size: 25px;"><?= $CI->currency(0); ?></span>
-                  <span class="info-box-number" style="">Payments</span>
+                  <span class="info-box-text tot_sale_paymentsssss tot_orders_generated" style="font-size: 25px;"><?= $CI->currency(0); ?></span>
+                  <span class="info-box-number" style="">Orders</span>
                   <!--<span class="info-box-number" style=""><?= $this->lang->line('customers'); ?></span>-->
                 </div>
 
