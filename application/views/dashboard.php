@@ -52,9 +52,9 @@
           <div class="row">
             <div class="box-header">
               <div class="btn-group pull-right">
-                <button type="button" title="Today" class="btn btn-default btn-info get_tab_records ">Today</button>
+                <button type="button" title="Today" class="btn btn-default btn-info get_tab_records active">Today</button>
                 <button type="button" title="Current Week" class="btn btn-default btn-info get_tab_records">Weekly</button>
-                <button type="button" title="Current Month" class="btn btn-default btn-info get_tab_records active">Monthly</button>
+                <button type="button" title="Current Month" class="btn btn-default btn-info get_tab_records ">Monthly</button>
                 <button type="button" title="Current Year" class="btn btn-default btn-info get_tab_records">Yearly</button>
                 <button type="button" title="All Years" class="btn btn-default btn-info get_tab_records">All</button>
               </div>
@@ -949,7 +949,7 @@
       $("#dashboard_form").submit();
     });
     jQuery(document).ready(function($) {
-      get_dashboard_values('Monthly');
+      get_dashboard_values('Today');
     });
 
     $(".get_tab_records").on("click", function(event) {
