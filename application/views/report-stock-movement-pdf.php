@@ -24,13 +24,13 @@
 
                                         <div>
                                             <div style="font-size: 16px; font-weight: 500; margin-bottom: 5px;">
-                                                From: <span class="display-from-date"></span>
+                                                From: <span class="display-from-date"><?= $from_date ?? ''; ?></span>
                                             </div>
                                             <div style="font-size: 16px; font-weight: 500; margin-bottom: 5px;">
-                                                To: <span class="display-to-date"></span>
+                                                To: <span class="display-to-date"><?= $to_date ?? ''; ?></span>
                                             </div>
                                             <div style="font-size: 20px; font-weight: 500;">
-                                                <strong>For:</strong> <span class="display-distribution-center"></span>
+                                                <strong>For:</strong> <span class="display-distribution-center"><?= $warehouse ?? ''; ?></span>
                                             </div>
                                         </div>
 

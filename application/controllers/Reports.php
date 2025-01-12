@@ -573,29 +573,19 @@ class Reports extends MY_Controller
 		$warehouse_id = $this->input->get('warehouse_id');
 
 
-		$item_ids = $item_id ? [$item_id] : null;
+		$item_ids = !empty($item_id) ? [$item_id] : null;
 
 
-		if (!is_array($transaction_type)) {
-			$transaction_type = [];
-		}
 
-		if (!is_array($warehouse_id)) {
-			$warehouse_id = [];
-		}
 
-		if (!is_array($store_id)) {
-			$store_id = [];
-		}
+		// if (empty($start_date)) {
+		// 	$start_date = date('Y-m-d');
+		// }
 
-		if (empty($start_date)) {
-			$start_date = date('Y-m-d');
-		}
-
-		if (empty($end_date)) {
-			$end_date = date('Y-m-d');
-			# code...
-		}
+		// if (empty($end_date)) {
+		// 	$end_date = date('Y-m-d');
+		// 	# code...
+		// }
 
 		// Options to pass to the report function
 		$options = [
@@ -713,6 +703,9 @@ class Reports extends MY_Controller
 		$data = $this->data;
 		$data['page_title'] = "Stock Movements";
 		$data['body'] = $body;
+		$data['warehouse'] = $warehouse_id ? get_warehouse_name($warehouse_id) : '';
+		$data['from_date'] = $start_date ? date('jS M, Y ', strtotime($start_date)) : '';
+		$data['to_date'] = $start_date ? date('jS M, Y ', strtotime($end_date)) : '';
 		$html = $this->load->view('report-stock-movement-pdf', $data, true);
 		$this->generatePDFfromPage($html, $file_name ?? 'Orders_receipt.pdf', true, $download ?? true);
 	}
