@@ -234,6 +234,16 @@ class Forms extends MY_Controller
                 $form_data->states_label ?? 'State',
                 'trim|required'
             );
+            $this->form_validation->set_rules(
+                'lga',
+                'Local Government Area',
+                'trim|required'
+            );
+            $this->form_validation->set_rules(
+                'city',
+                'City',
+                'trim|required'
+            );
         }
 
         if ($form_data->show_delivery) {
@@ -267,6 +277,8 @@ class Forms extends MY_Controller
                 'customer_whatsapp' => $formData['customer_whatsapp'] ?? null,
                 'address' => $formData['address'] ?? null,
                 'state' => $formData['state'] ?? null,
+                'lga' => $formData['lga'] ?? null,
+                'city' => $formData['city'] ?? null,
                 'amount' => $form_bundle->price,
                 'quantity' => $form_bundle->quantity
             ];

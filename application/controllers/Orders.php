@@ -516,6 +516,8 @@ class Orders extends MY_Controller
                     <li><strong>Customer Name:</strong> {$order->customer_name}</li>
                     <li><strong>Address:</strong> {$order->address}</li>
                     <li><strong>State:</strong> {$order->state}</li>
+                    <li><strong>LGA:</strong> {$order->lga}</li>
+                    <li><strong>City:</strong> {$order->city}</li>
                     <li><strong>Customer Phone:</strong> {$order->customer_phone}</li>
                     <li><strong>WhatsApp Number:</strong> {$order->customer_whatsapp}</li>
                     <li><strong>Order Number:</strong> {$order->order_number}</li>

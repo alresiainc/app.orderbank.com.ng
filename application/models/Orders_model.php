@@ -29,6 +29,8 @@ class Orders_model extends CI_Model
         'c.country',                // Country name
         'c.id as country_id',       // Country ID
         'd.state',                  // State name
+        'a.lga',
+        'a.city',
         'd.id as state_id',         // State ID
         'a.quantity',               // Quantity of items in order
         'a.amount',                 // Order amount
@@ -80,6 +82,8 @@ class Orders_model extends CI_Model
         'b.service_bit',
         'c.country',
         'd.state',
+        'a.lga',
+        'a.city',
         'a.status',
         'a.quantity',
         'a.amount',

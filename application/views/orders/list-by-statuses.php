@@ -478,6 +478,8 @@ Customer Name: ${form_has_customer_name == '1' ? customerName.trim() : ''}
 Email:         ${form_has_email == '1' ? customerEmail.trim() : ''} 
 Address:       ${form_has_address == '1' ? address.trim() : ''} 
 State:         ${form_has_states == '1' ? state.trim() : ''} 
+LGA:         ${form_has_states == '1' ? lga.trim() : ''} 
+City:         ${form_has_states == '1' ? city.trim() : ''} 
 Customer Phone:${form_has_phone == '1' ? customerPhone.trim() : ''} 
 WhatsApp:      ${form_has_whatsapp == '1' ? customerWhatsapp.trim() : ''} 
 Order Number:  ${orderNumber.trim()} 

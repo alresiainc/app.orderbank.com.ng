@@ -624,7 +624,7 @@ $CI = &get_instance();
 
             <?php if ($form->show_states): ?>
                 <div class="row">
-                    <div class="col-sm-4">
+                    <div class="col-sm-12">
                         <div class="form-group">
                             <label><?= $form->states_label; ?></label>
                             <select name="state" id="state">
@@ -635,7 +635,7 @@ $CI = &get_instance();
                             <small><?= $form->state_desc; ?></small>
                         </div>
                     </div>
-                    <div class="col-sm-4">
+                    <div class="col-sm-12">
                         <div class="form-group">
                             <label>LGA</label>
                             <select name="lga" id="lga" disabled>
@@ -644,12 +644,10 @@ $CI = &get_instance();
                             <span id="lga_msg" class="text-danger"></span>
                         </div>
                     </div>
-                    <div class="col-sm-4">
+                    <div class="col-sm-12">
                         <div class="form-group">
                             <label>City/Town</label>
-                            <select name="city" id="city" disabled>
-                                <option value="">Select City/Town</option>
-                            </select>
+                            <input type="text" name="city" id="city">
                             <span id="city_msg" class="text-danger"></span>
                         </div>
                     </div>
@@ -987,6 +985,12 @@ $CI = &get_instance();
                     if (check_field("state") == true) {
                         var flag = false;
                     }
+                    if (check_field("lga") == true) {
+                        var flag = false;
+                    }
+                    if (check_field("city") == true) {
+                        var flag = false;
+                    }
                 }
 
                 if ($('#delivery_select') != undefined) {
@@ -1188,7 +1192,7 @@ $CI = &get_instance();
                 var stateId = $(this).val();
                 var stateName = $(this).find("option:selected").text(); // Get the name (state name)
                 if (stateName) {
-                    alert(stateName);
+                    // alert(stateName);
                     // Fetch LGAs via AJAX
                     $.ajax({
                         url: "<?= base_url('/forms/get_lgas_by_state'); ?>", // Replace with your route or API endpoint
@@ -1218,7 +1222,7 @@ $CI = &get_instance();
                             }
                         },
                         error: function() {
-                            alert("Error fetching LGAs.");
+                            // alert("Error fetching LGAs.");
                         },
                     });
                 } else {
