@@ -264,7 +264,7 @@ class Dashboard_model extends CI_Model
 		$info['tot_sale_payment'] = $tot_sale_payment;
 
 
-		$this->get_by_date('order_date'); //DATES FUNCTION
+		$this->get_by_date('order_date', true); //DATES FUNCTION
 		$this->db->select("coalesce(count(*),0) as tot_orders_generated");
 		$this->db->from("db_orders");
 		// $this->db->where("status=1");
