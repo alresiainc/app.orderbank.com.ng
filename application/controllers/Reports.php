@@ -723,7 +723,7 @@ class Reports extends MY_Controller
 		$data['from_date'] = $start_date ? date('jS M, Y ', strtotime($start_date)) : '';
 		$data['to_date'] = $start_date ? date('jS M, Y ', strtotime($end_date)) : '';
 		$html = $this->load->view('report-stock-movement-pdf', $data, true);
-		$this->generatePDFfromPage($html, $file_name ?? 'Orders_receipt.pdf', true, $download ?? true);
+		$this->generatePDFfromPage($html, $file_name ?? 'Orders_receipt.pdf', true, $download ?? true, 'A4', 'landscape');
 	}
 
 

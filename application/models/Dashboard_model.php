@@ -187,8 +187,8 @@ class Dashboard_model extends CI_Model
 		$dates = $this->input->post('dates');
 		if ($dates == 'Today') {
 
-			$this->db->where("$table_date > DATE(NOW())");
-			// $this->db->where("$table_date", date("Y-m-d"));
+			// $this->db->where("$table_date > DATE(NOW())");
+			$this->db->where("$table_date", date("Y-m-d"));
 		}
 		if ($dates == 'Weekly') {
 			$this->db->where("$table_date > DATE_SUB(NOW(), INTERVAL 1 WEEK)");

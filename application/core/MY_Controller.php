@@ -498,7 +498,7 @@ class MY_Controller extends CI_Controller
     return $template;
   }
 
-  public function generatePDFfromPage($htmlContent, $fileName = null, $stream = true, $download = false)
+  public function generatePDFfromPage($htmlContent, $fileName = null, $stream = true, $download = false, $paper_size = 'A4', $paper_type = 'portrait')
   {
     // Load Dompdf
     $options = new Options();
@@ -521,7 +521,7 @@ class MY_Controller extends CI_Controller
 
 
     // Set the paper size and orientation
-    $dompdf->setPaper('A4', 'portrait');
+    $dompdf->setPaper($paper_size, $paper_type);
 
     // Render the HTML as a PDF
     $dompdf->render();

@@ -149,29 +149,26 @@
                                 </div>
                             </div>
                             <!-- /.box-header -->
+                            <div class="text-center mb-3" style="margin-bottom: px;">
+                                <h1 style="font-weight: 800;">PRODA STOCK MOVEMENT REPORT</h1>
+
+                                <div>
+                                    <div style="font-size: 16px; font-weight: 500; margin-bottom: 5px;">
+                                        From: <span class="display-from-date"></span>
+                                    </div>
+                                    <div style="font-size: 16px; font-weight: 500; margin-bottom: 5px;">
+                                        To: <span class="display-to-date"></span>
+                                    </div>
+                                    <div style="font-size: 20px; font-weight: 500;">
+                                        <strong>For:</strong> <span class="display-distribution-center"></span>
+                                    </div>
+                                </div>
+
+                            </div>
                             <div class="box-body table-responsive no-padding">
                                 <table class="table table-bordered table-hover  " id='report-data'>
                                     <thead>
-                                        <tr class="">
-                                            <th style="" colspan='10'>
-                                                <div class="text-center">
-                                                    <h1 style="font-weight: 800;">PRODA STOCK MOVEMENT REPORT</h1>
 
-                                                    <div>
-                                                        <div style="font-size: 16px; font-weight: 500; margin-bottom: 5px;">
-                                                            From: <span class="display-from-date"></span>
-                                                        </div>
-                                                        <div style="font-size: 16px; font-weight: 500; margin-bottom: 5px;">
-                                                            To: <span class="display-to-date"></span>
-                                                        </div>
-                                                        <div style="font-size: 20px; font-weight: 500;">
-                                                            <strong>For:</strong> <span class="display-distribution-center"></span>
-                                                        </div>
-                                                    </div>
-
-                                                </div>
-                                            </th>
-                                        </tr>
                                         <tr class="bg-blue">
                                             <th style="">S/N</th>
 

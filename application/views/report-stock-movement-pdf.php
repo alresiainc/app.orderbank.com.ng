@@ -15,40 +15,37 @@
 
                 <!-- /.box-header -->
                 <div class="box-boddy table-responsivee no-paddingg">
+                    <div class="text-center mb-3">
+                        <h1 style="font-weight: 800;">PRODA STOCK MOVEMENT REPORT</h1>
+
+                        <div>
+                            <div style="font-size: 16px; font-weight: 500; margin-bottom: 5px;">
+                                From: <span class="display-from-date"><?= $from_date ?? ''; ?></span>
+                            </div>
+                            <div style="font-size: 16px; font-weight: 500; margin-bottom: 5px;">
+                                To: <span class="display-to-date"><?= $to_date ?? ''; ?></span>
+                            </div>
+                            <div style="font-size: 20px; font-weight: 500;">
+                                <strong>For:</strong> <span class="display-distribution-center"><?= $warehouse ?? ''; ?></span>
+                            </div>
+                        </div>
+
+                    </div>
                     <table class="tablee table-borderedd table-hoverr  " id='report-data' style="max-width: 100%;">
                         <thead>
-                            <tr class="">
-                                <th style="" colspan='10'>
-                                    <div class="text-center">
-                                        <h1 style="font-weight: 800;">PRODA STOCK MOVEMENT REPORT</h1>
 
-                                        <div>
-                                            <div style="font-size: 16px; font-weight: 500; margin-bottom: 5px;">
-                                                From: <span class="display-from-date"><?= $from_date ?? ''; ?></span>
-                                            </div>
-                                            <div style="font-size: 16px; font-weight: 500; margin-bottom: 5px;">
-                                                To: <span class="display-to-date"><?= $to_date ?? ''; ?></span>
-                                            </div>
-                                            <div style="font-size: 20px; font-weight: 500;">
-                                                <strong>For:</strong> <span class="display-distribution-center"><?= $warehouse ?? ''; ?></span>
-                                            </div>
-                                        </div>
-
-                                    </div>
-                                </th>
-                            </tr>
                             <tr class="bg-blue">
-                                <th style="">S/N</th>
+                                <th style="padding: 5px 10px;">S/N</th>
 
-                                <th style="">Date Recorded</th>
-                                <th style="">Transaction Reference</th>
-                                <th style="">Transaction Type</th>
-                                <th style="">Product Name</th>
-                                <th style="">Opening</th>
-                                <th style="">Quantity</th>
-                                <th style="">Closing</th>
-                                <th style="">Remarks</th>
-                                <th style="">Initial Stock</th>
+                                <th style="padding: 5px 10px;">Date Recorded</th>
+                                <th style="padding: 5px 10px;">Transaction Reference</th>
+                                <th style="padding: 5px 10px;">Transaction Type</th>
+                                <th style="padding: 5px 10px;">Product Name</th>
+                                <th style="padding: 5px 10px;">Opening</th>
+                                <th style="padding: 5px 10px;">Quantity</th>
+                                <th style="padding: 5px 10px;">Closing</th>
+                                <th style="padding: 5px 10px;">Remarks</th>
+                                <th style="padding: 5px 10px;">Initial Stock</th>
                             </tr>
                         </thead>
                         <tbody id="tbodyid">
