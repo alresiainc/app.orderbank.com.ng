@@ -2,6 +2,13 @@
 $ci = &get_instance();
 $ci->load->config('order_status');
 $order_status = $ci->config->item('order_status');
+
+$old_customers_total = $ci->db
+    ->select('id, fullname as customer_name, email as customer_email, phonenumber as customer_whatsapp, phonenumber as customer_phone, state, address')
+    ->from('customers')
+    ->count_all_results();
+
+
 ?>
 <!DOCTYPE html>
 <html>
@@ -88,7 +95,7 @@ $order_status = $ci->config->item('order_status');
                                     <!-- Old Customers -->
                                     <div class="col-md-6">
                                         <div class="form-group">
-                                            <label for="old_customers">Include Old Customers *</label>
+                                            <label for="old_customers">Include Old Customers (<?= number_format($old_customers_total); ?>) *</label>
                                             <select name="old_customers" id="old_customers" class="form-control select2" style="width: 100%;">
                                                 <option value="yes">Yes</option>
                                                 <option value="no" selected>No</option>
