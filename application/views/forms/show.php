@@ -343,7 +343,7 @@ $CI = &get_instance();
             width: 100%;
             height: 100vh;
             /* backdrop-filter: blur(8px); */
-            background: rgba(255, 255, 255, 0.7);
+            background: #fff;
             z-index: 999999;
         }
 
