@@ -342,7 +342,7 @@ $CI = &get_instance();
             left: 0;
             width: 100%;
             height: 100vh;
-            backdrop-filter: blur(8px);
+            /* backdrop-filter: blur(8px); */
             background: rgba(255, 255, 255, 0.7);
             z-index: 999999;
         }
@@ -355,6 +355,9 @@ $CI = &get_instance();
             text-align: center;
             animation: fade-in 0.5s ease-in-out;
             min-width: 400px;
+            background-color: #ffffff;
+            padding: 15px;
+            border-radius: 15px;
         }
 
         @keyframes fade-in {
@@ -414,7 +417,7 @@ $CI = &get_instance();
         }
 
         #loading-text {
-            font-size: 1.1rem;
+            font-size: 15px;
             color: #666;
         }
 
@@ -745,7 +748,10 @@ $CI = &get_instance();
     <div id="loader-container" class="hidden">
         <div class="loader-wrapper">
             <div class="spinner"></div>
-            <p id="funny-messagee">Please wait while we process your order...</p>
+            <p id="funny-messagee" style="
+    font-size: 20px;
+    font-weight: 600;
+">Please wait while we process your order...</p>
             <div class="progress-bar">
                 <div class="progress-fill"></div>
             </div>
