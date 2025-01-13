@@ -169,11 +169,13 @@ class Reports extends MY_Controller
 		$sales = $this->db->from('db_stocktransferitems as a');
 		$sales->join('db_stocktransfer as b', 'b.id=a.stocktransfer_id', 'left');
 		$sales->join('db_items as c', 'c.id=a.item_id', 'left');
+
 		if ($item_ids && is_array($item_ids)) {
 			$sales->where_in('c.id', $item_ids);
 		}
 		if ($store_id) {
 			$sales->where('b.store_id', $store_id);
+			$sales->or_where('b.to_store_id', $store_id);
 		}
 
 		if ($warehouse_id) {
