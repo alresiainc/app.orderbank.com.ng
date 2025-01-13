@@ -138,11 +138,15 @@
                                     </a>
                                     <ul role="menu" class="dropdown-menu dropdown-light pull-right">
                                         <li>
-                                            <a style="cursor:pointer" class="downloadExcel" data-table-id="report-data" title="Download Excel Format" data-toggle="tooltip" data-placement="top">
+                                            <a style="cursor:pointer" class="downloadExcel" data-table-id="report-data" data-file-name="" title="Download Excel Format" data-toggle="tooltip" data-placement="top">
                                                 <i class="fa fa-fw fa-file-excel-o text-red"></i>Excel
                                             </a>
-                                            <a style="cursor:pointer" class="export-to-pdf" title="Download PDF Format" data-toggle="tooltip" data-placement="top">
+
+                                            <a style="cursor:pointer" class="downloadPdf" data-table-id="report-data" data-file-name="" title="Download PDF Format" data-toggle="tooltip" data-placement="top">
                                                 <i class="fa fa-fw fa-file-pdf-o text-red"></i>PDF
+                                            </a>
+                                            <a style="cursor:pointer" class="export-to-pdf" title="Download PDF Format" data-toggle="tooltip" data-placement="top">
+                                                <i class="fa fa-fw fa-file-pdf-o text-red"></i>Customized PDF
                                             </a>
                                         </li>
                                     </ul>

@@ -25,7 +25,18 @@ $("#view,#view_all").on("click", function () {
     day: "numeric",
   });
 
+  var file_name =
+    "Stock Movement for " +
+    warehouse_name +
+    " from " +
+    from_date +
+    " to " +
+    to_date;
+
+  // data-file-name
   // Populate the display elements
+  $(".downloadExcel").attr("data-file-name", file_name);
+  $(".downloadPdf").attr("data-file-name", file_name);
   $(".display-from-date").text(formatted_from_date || "N/A");
   $(".display-to-date").text(formatted_to_date || "N/A");
   $(".display-distribution-center").text(warehouse_name || "N/A");

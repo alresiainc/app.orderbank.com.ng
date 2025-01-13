@@ -118,3 +118,12 @@ ERROR - 2025-01-13 11:49:33 --> Severity: Warning --> Undefined array key "limit
 ERROR - 2025-01-13 11:51:14 --> Severity: Warning --> Undefined variable $privileged_warehouses /Applications/AMPPS/www/backend.myproda.test/application/views/warehouse/warehouse_code.php 51
 ERROR - 2025-01-13 11:51:23 --> {"store_id":null,"item_ids":null,"search":null,"transaction_type":null,"start_date":"13-01-2025","end_date":"13-01-2025","warehouse_id":"2"}
 ERROR - 2025-01-13 11:51:23 --> Severity: Warning --> Undefined array key "limit" /Applications/AMPPS/www/backend.myproda.test/application/controllers/Reports.php 273
+ERROR - 2025-01-13 12:26:56 --> Severity: Warning --> Undefined variable $privileged_warehouses /Applications/AMPPS/www/backend.myproda.test/application/views/warehouse/warehouse_code.php 51
+ERROR - 2025-01-13 12:27:13 --> {"store_id":null,"item_ids":null,"search":null,"transaction_type":null,"start_date":"01-01-2024","end_date":"31-12-2024","warehouse_id":"2"}
+ERROR - 2025-01-13 12:27:13 --> Severity: Warning --> Undefined array key "limit" /Applications/AMPPS/www/backend.myproda.test/application/controllers/Reports.php 275
+ERROR - 2025-01-13 12:38:39 --> Severity: Warning --> Undefined variable $privileged_warehouses /Applications/AMPPS/www/backend.myproda.test/application/views/warehouse/warehouse_code.php 51
+ERROR - 2025-01-13 12:41:23 --> Severity: Warning --> Undefined variable $privileged_warehouses /Applications/AMPPS/www/backend.myproda.test/application/views/warehouse/warehouse_code.php 51
+ERROR - 2025-01-13 12:42:00 --> Severity: Warning --> Undefined variable $privileged_warehouses /Applications/AMPPS/www/backend.myproda.test/application/views/warehouse/warehouse_code.php 51
+ERROR - 2025-01-13 12:42:12 --> Severity: Warning --> Undefined variable $privileged_warehouses /Applications/AMPPS/www/backend.myproda.test/application/views/warehouse/warehouse_code.php 51
+ERROR - 2025-01-13 12:45:10 --> {"store_id":null,"item_ids":null,"search":null,"transaction_type":null,"start_date":"13-01-2025","end_date":"13-01-2025","warehouse_id":"2"}
+ERROR - 2025-01-13 12:45:10 --> Severity: Warning --> Undefined array key "limit" /Applications/AMPPS/www/backend.myproda.test/application/controllers/Reports.php 275
