@@ -182,7 +182,7 @@ class Dashboard_model extends CI_Model
 		}
 		return $bar_chart;
 	}
-	public function get_by_date($table_date, $now_query_for_today = true)
+	public function get_by_date($table_date, $now_query_for_today = false)
 	{
 		$dates = $this->input->post('dates');
 		if ($dates == 'Today') {
