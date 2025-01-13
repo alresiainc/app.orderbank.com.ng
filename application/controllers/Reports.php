@@ -557,19 +557,19 @@ class Reports extends MY_Controller
 			echo "</tr>";
 		}
 
-		// Totals Row: Total Stock In
-		echo "<tr>
-              <td class='text-right text-bold' colspan='6'><b>TOTAL STOCK IN:</b></td>
-              <td class='text-right text-bold'>" . $total_stock_in . "</td>
-              <td colspan='3'></td>
-          </tr>";
+		// // Totals Row: Total Stock In
+		// echo "<tr>
+		//       <td class='text-right text-bold' colspan='6'><b>TOTAL STOCK IN:</b></td>
+		//       <td class='text-right text-bold'>" . $total_stock_in . "</td>
+		//       <td colspan='3'></td>
+		//   </tr>";
 
-		// Totals Row: Opening Stock
-		echo "<tr>
-              <td class='text-right text-bold' colspan='6'><b>OPENING STOCK:</b></td>
-              <td class='text-right text-bold'>" . ($total_stock_in + $opening_stock) . "</td>
-              <td colspan='3'></td>
-          </tr>";
+		// // Totals Row: Opening Stock
+		// echo "<tr>
+		//       <td class='text-right text-bold' colspan='6'><b>OPENING STOCK:</b></td>
+		//       <td class='text-right text-bold'>" . ($total_stock_in + $opening_stock) . "</td>
+		//       <td colspan='3'></td>
+		//   </tr>";
 
 		exit;
 	}
@@ -701,19 +701,19 @@ class Reports extends MY_Controller
 				$body .= "</tr>";
 			}
 
-			// Totals Row: Total Stock In
-			$body .= "<tr>
-              <td class='text-right text-bold' colspan='6'><b>TOTAL STOCK IN:</b></td>
-              <td class='text-right text-bold'>" . $total_stock_in . "</td>
-              <td colspan='3'></td>
-          </tr>";
+			// 	// Totals Row: Total Stock In
+			// 	$body .= "<tr>
+			//       <td class='text-right text-bold' colspan='6'><b>TOTAL STOCK IN:</b></td>
+			//       <td class='text-right text-bold'>" . $total_stock_in . "</td>
+			//       <td colspan='3'></td>
+			//   </tr>";
 
-			// Totals Row: Opening Stock
-			$body .= "<tr>
-              <td class='text-right text-bold' colspan='6'><b>OPENING STOCK:</b></td>
-              <td class='text-right text-bold'>" . ($total_stock_in + $opening_stock) . "</td>
-              <td colspan='3'></td>
-          </tr>";
+			// 	// Totals Row: Opening Stock
+			// 	$body .= "<tr>
+			//       <td class='text-right text-bold' colspan='6'><b>OPENING STOCK:</b></td>
+			//       <td class='text-right text-bold'>" . ($total_stock_in + $opening_stock) . "</td>
+			//       <td colspan='3'></td>
+			//   </tr>";
 		}
 
 		$data = $this->data;
