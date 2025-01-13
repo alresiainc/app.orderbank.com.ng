@@ -1209,7 +1209,7 @@ $CI = &get_instance();
                         dataType: "json",
                         success: function(response) {
                             $("#lga").empty().append('<option value="">Select LGA</option>');
-                            $("#city").empty().append('<option value="">Select City/Town</option>').prop("disabled", true);
+                            // $("#city").empty().append('<option value="">Select City/Town</option>').prop("disabled", true);
 
                             if (response.success) {
                                 console.log("response.success:", response);
