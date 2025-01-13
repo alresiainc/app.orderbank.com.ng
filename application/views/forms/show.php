@@ -1188,6 +1188,7 @@ $CI = &get_instance();
 
             // When State changes, fetch LGAs
             $("#state").on("change", function() {
+                $("#lga").empty().append('<option value="">Select LGA</option>').prop("disabled", true);
                 var stateId = $(this).val();
                 var stateName = $(this).find("option:selected").text(); // Get the name (state name)
                 if (stateName) {
@@ -1211,13 +1212,13 @@ $CI = &get_instance();
                                     $("#lga").append('<option value="' + value.name + '">' + value.name + '</option>');
                                 });
 
-                                $.each(response.cities, function(key, value) {
-                                    $("#city").append('<option value="' + value.name + '">' + value.name + '</option>');
-                                });
+                                // $.each(response.cities, function(key, value) {
+                                //     $("#city").append('<option value="' + value.name + '">' + value.name + '</option>');
+                                // });
 
 
                                 $("#lga").prop("disabled", false);
-                                $("#city").prop("disabled", false);
+                                // $("#city").prop("disabled", false);
                             }
                         },
                         error: function() {
@@ -1226,7 +1227,7 @@ $CI = &get_instance();
                     });
                 } else {
                     $("#lga").empty().append('<option value="">Select LGA</option>').prop("disabled", true);
-                    $("#city").empty().append('<option value="">Select City/Town</option>').prop("disabled", true);
+                    // $("#city").empty().append('<option value="">Select City/Town</option>').prop("disabled", true);
                 }
             });
 

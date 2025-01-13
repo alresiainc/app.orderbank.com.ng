@@ -752,14 +752,14 @@ class Forms extends MY_Controller
 
         // if ($this->form_validation->run() === TRUE) {
         $state_name = $this->input->get('state_name');
-        if ($state_name == 'abuja') {
+        if ($state_name == 'Abuja') {
             $state_name = 'fct';
         }
-        log_message('error', 'state_name' . $state_name);
+
         // get the comprehensive information of a state
         $formatted_state = str_replace(' ', '_', strtolower($state_name));
-
-        $state = Naija::state($formatted_state ?? 'Enugu');
+        log_message('error', 'formatted_state: ' . $formatted_state);
+        $state = Naija::state($formatted_state ?? 'fct');
 
         // get LGAs
         $lgas = $state->getLgas();
