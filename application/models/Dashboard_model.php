@@ -182,13 +182,16 @@ class Dashboard_model extends CI_Model
 		}
 		return $bar_chart;
 	}
-	public function get_by_date($table_date)
+	public function get_by_date($table_date, $now_query_for_today = true)
 	{
 		$dates = $this->input->post('dates');
 		if ($dates == 'Today') {
 
-			// $this->db->where("$table_date > DATE(NOW())");
-			$this->db->where("$table_date", date("Y-m-d"));
+			if ($now_query_for_today) {
+				$this->db->where("$table_date > DATE(NOW())");
+			} else {
+				$this->db->where("$table_date", date("Y-m-d"));
+			}
 		}
 		if ($dates == 'Weekly') {
 			$this->db->where("$table_date > DATE_SUB(NOW(), INTERVAL 1 WEEK)");
