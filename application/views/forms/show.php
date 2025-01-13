@@ -98,7 +98,7 @@ $CI = &get_instance();
             font-weight: 400;
             margin-bottom: 10px;
             text-align: center;
-            color: #7f8c8d;
+            color: #800000;
         }
 
         .form-group {
