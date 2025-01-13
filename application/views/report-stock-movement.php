@@ -250,7 +250,7 @@
     </script>
 
     <!-- <script src="<?php echo $theme_link; ?>js/report-expense.js"></script> -->
-    <script src="<?php echo $theme_link; ?>js/report-stock-movement.js"></script>
+    <script src="<?php echo $theme_link; ?>js/report-stock-movement.js?<?php echo time(); ?>"></script>
     <!-- Make sidebar menu hughlighter/selector -->
     <script>
         $(".<?php echo basename(__FILE__, '.php'); ?>-active-li").addClass("active");

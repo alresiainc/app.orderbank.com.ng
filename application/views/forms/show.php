@@ -637,7 +637,7 @@ $CI = &get_instance();
                     </div>
                     <div class="col-sm-12">
                         <div class="form-group">
-                            <label>LGA</label>
+                            <label>Select The Local Government Area (Optional)</label>
                             <select name="lga" id="lga" disabled>
                                 <option value="">Select LGA</option>
                             </select>
@@ -646,7 +646,7 @@ $CI = &get_instance();
                     </div>
                     <div class="col-sm-12">
                         <div class="form-group">
-                            <label>City/Town</label>
+                            <label>Enter The City/Town (Optional)</label>
                             <input type="text" name="city" id="city">
                             <span id="city_msg" class="text-danger"></span>
                         </div>

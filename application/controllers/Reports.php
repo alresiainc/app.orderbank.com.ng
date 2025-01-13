@@ -178,7 +178,7 @@ class Reports extends MY_Controller
 
 		if ($warehouse_id) {
 			$sales->where('b.warehouse_from', $warehouse_id);
-			$sales->where('b.warehouse_to', $warehouse_id);
+			$sales->or_where('b.warehouse_to', $warehouse_id);
 		}
 
 		$sales->select($sales_select);
@@ -319,21 +319,37 @@ class Reports extends MY_Controller
 			}
 
 			// Ensure product tracking is initialized
+			// $product_id = $item->item_id; // Replace with `item_id` if available
+			// if (!isset($product_opening[$product_id])) {
+			// 	$product_opening[$product_id] = 0; // Default opening quantity for the product
+			// }
+
+			// // Calculate opening and closing quantities for the product
+			// $item->opening_quantity = $product_opening[$product_id];
+
+			// if ($item->movement_type == 'incoming') {
+			// 	$product_opening[$product_id] += $item->quantity; // Add for incoming
+			// } elseif ($item->movement_type == 'outgoing') {
+			// 	$product_opening[$product_id] -= $item->quantity; // Subtract for outgoing
+			// }
+
+			// $item->closing_quantity = $product_opening[$product_id];
+
 			$product_id = $item->item_id; // Replace with `item_id` if available
-			if (!isset($product_opening[$product_id])) {
-				$product_opening[$product_id] = 0; // Default opening quantity for the product
+			if (!isset($product_opening[$warehouse_id ?? $item->warehouse_from][$product_id])) {
+				$product_opening[$warehouse_id ?? $item->warehouse_from][$product_id] = 0; // Default opening quantity for the product
 			}
 
 			// Calculate opening and closing quantities for the product
-			$item->opening_quantity = $product_opening[$product_id];
+			$item->opening_quantity = $product_opening[$warehouse_id ?? $item->warehouse_from][$product_id];
 
 			if ($item->movement_type == 'incoming') {
-				$product_opening[$product_id] += $item->quantity; // Add for incoming
+				$product_opening[$warehouse_id ?? $item->warehouse_from][$product_id] += $item->quantity; // Add for incoming
 			} elseif ($item->movement_type == 'outgoing') {
-				$product_opening[$product_id] -= $item->quantity; // Subtract for outgoing
+				$product_opening[$warehouse_id ?? $item->warehouse_from][$product_id] -= $item->quantity; // Subtract for outgoing
 			}
 
-			$item->closing_quantity = $product_opening[$product_id];
+			$item->closing_quantity = $product_opening[$warehouse_id ?? $item->warehouse_from][$product_id];
 
 			return $item;
 		}, $merged);

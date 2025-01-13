@@ -4,6 +4,8 @@ $("#view,#view_all").on("click", function () {
   var to_date = document.getElementById("to_date").value;
   var warehouse_id = document.getElementById("warehouse_id").value;
   var products = document.getElementById("products").value;
+  console.log("from_date:", from_date);
+  console.log("to_date:", to_date);
 
   // Find the option text for the selected warehouse_id
   var warehouse_name = $(
@@ -11,12 +13,13 @@ $("#view,#view_all").on("click", function () {
   ).text();
 
   // Format the dates (optional: customize the format as needed)
-  var formatted_from_date = new Date(from_date).toLocaleDateString("en-GB", {
+  // Parse and format the dates
+  var formatted_from_date = parseDate(from_date).toLocaleDateString("en-GB", {
     year: "numeric",
     month: "long",
     day: "numeric",
   });
-  var formatted_to_date = new Date(to_date).toLocaleDateString("en-GB", {
+  var formatted_to_date = parseDate(to_date).toLocaleDateString("en-GB", {
     year: "numeric",
     month: "long",
     day: "numeric",
@@ -28,6 +31,11 @@ $("#view,#view_all").on("click", function () {
   $(".display-distribution-center").text(warehouse_name || "N/A");
 
   item_ids = products ? [products] : null;
+
+  function parseDate(input) {
+    const [day, month, year] = input.split("-").map(Number); // Split and parse day, month, year
+    return new Date(year, month - 1, day); // Month is zero-based
+  }
 
   if (from_date == "") {
     toastr["warning"]("Select From Date!");

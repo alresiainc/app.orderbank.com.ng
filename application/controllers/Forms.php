@@ -757,7 +757,9 @@ class Forms extends MY_Controller
         }
         log_message('error', 'state_name' . $state_name);
         // get the comprehensive information of a state
-        $state = Naija::state($state_name ?? 'Enugu');
+        $formatted_state = str_replace(' ', '_', strtolower($state_name));
+
+        $state = Naija::state($formatted_state ?? 'Enugu');
 
         // get LGAs
         $lgas = $state->getLgas();
