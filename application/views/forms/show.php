@@ -91,6 +91,7 @@ $CI = &get_instance();
             font-weight: 600;
             margin-bottom: 10px;
             text-align: center;
+            line-height: 40px;
         }
 
         .form-header-text {
