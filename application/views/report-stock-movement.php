@@ -234,10 +234,33 @@
                 var warehouse_id = document.getElementById("warehouse_id").value;
                 var products = document.getElementById("products").value;
 
+                var warehouse_name = $(
+                    "#warehouse_id option[value='" + warehouse_id + "']"
+                ).text();
+
+
+                // var file_name =
+                //     "stock-movement-" +
+                //     warehouse_name.replace(/ /g, "-").toLowerCase() +
+                //     "-" +
+                //     from_date +
+                //     "-to-" +
+                //     to_date;
+                // file_name = file_name.replace(/\//g, "-");
+
+                var file_name =
+                    "Stock Movement for " +
+                    warehouse_name +
+                    " from " +
+                    from_date +
+                    " to " +
+                    to_date;
+
+                // alert(file_name)
                 // Construct the URL with parameters
                 const url =
                     base_url +
-                    `reports/stock-movements-pdf?warehouse_id=${warehouse_id}&from_date=${from_date}&to_date=${to_date}&item_id=${products}`;
+                    `reports/stock-movements-pdf?warehouse_id=${warehouse_id}&from_date=${from_date}&to_date=${to_date}&item_id=${products}&file_name=${file_name}&download`;
 
                 // location.href = url;
                 // Open the URL in a new tab
