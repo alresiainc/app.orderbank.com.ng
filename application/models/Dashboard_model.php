@@ -188,7 +188,8 @@ class Dashboard_model extends CI_Model
 		if ($dates == 'Today') {
 
 			if ($now_query_for_today) {
-				$this->db->where("$table_date > DATE(NOW())");
+				// $this->db->where("$table_date > DATE(NOW())");
+				$this->db->where("$table_date > CURDATE()");
 			} else {
 				$this->db->where("$table_date", date("Y-m-d"));
 			}
@@ -202,6 +203,8 @@ class Dashboard_model extends CI_Model
 		if ($dates == 'Yearly') {
 			$this->db->where("$table_date > DATE_SUB(NOW(), INTERVAL 1 YEAR)");
 		}
+		$sql_query = $this->db->last_query(); // Get the last executed SQL query
+		log_message('error', 'Executed SQL Query: ' . $sql_query); // Logs the SQL query
 	}
 	public function breadboard_values()
 	{

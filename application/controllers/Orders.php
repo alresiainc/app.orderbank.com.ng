@@ -18,7 +18,6 @@ class Orders extends MY_Controller
         $this->load->model('Orders_model', 'orders');
         $this->load->model('Form_model', 'forms');
         $this->load->config('order_status');
-        log_message('error', 'current_time:' . date('d-m-Y H:iA'));
     }
 
     public function _remap($method, $arguments = [])
