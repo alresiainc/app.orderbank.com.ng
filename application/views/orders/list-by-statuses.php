@@ -583,10 +583,10 @@ Amount:        ${orderAmount || bundlePrice || 'N/A'}
 
                             }
 
-                            if (form_has_email && check_field("current_customer_email")) {
-                                var flag = false;
+                            // if (form_has_email && check_field("current_customer_email")) {
+                            //     var flag = false;
 
-                            }
+                            // }
 
                             if (form_has_phone && check_field("current_customer_phone")) {
                                 var flag = false;

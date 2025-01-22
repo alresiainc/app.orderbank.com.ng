@@ -122,6 +122,11 @@ $CI = &get_instance();
     <div class="navbar-custom-menu">
 
       <ul class="nav navbar-nav">
+        <li class="dropdown user user-menu">
+          <a class="text-center">
+            <div style="color:#ffffff;font-size:10px;"><?= date('l, jS F \(g:iA\)'); ?></div>
+          </a>
+        </li>
 
         <li class="dropdown user user-menu">
           <?php
@@ -144,6 +149,7 @@ $CI = &get_instance();
               ->from('db_orders as o')
               ->join('db_states as s', 's.id = o.state', 'left')
               ->where('o.status', 'rescheduled')
+              ->where("rescheduled_date = DATE(NOW())")
               ->where_in('o.state', $states_ids)
               ->get()
               ->result_array();
@@ -152,6 +158,7 @@ $CI = &get_instance();
           }
           $reschedule_orders_count = count($reschedule_orders);
           ?>
+
           <a href="#" class="dropdown-toggle" data-toggle="dropdown" title="Click To View Rescheduled Orders">
             <span class="">Orders</span>
             <span class="label label-danger hold_invoice_list_count"><?= $reschedule_orders_count; ?></span>

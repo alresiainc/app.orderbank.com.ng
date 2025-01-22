@@ -18,6 +18,7 @@ class Orders extends MY_Controller
         $this->load->model('Orders_model', 'orders');
         $this->load->model('Form_model', 'forms');
         $this->load->config('order_status');
+        log_message('error', 'current_time:' . date('d-m-Y H:iA'));
     }
 
     public function _remap($method, $arguments = [])
@@ -194,13 +195,13 @@ class Orders extends MY_Controller
                 );
             }
 
-            if ($form_data->show_email) {
-                $this->form_validation->set_rules(
-                    'customer_email',
-                    $form_data->email_label ?? 'Customer Email',
-                    'trim|valid_email|required'
-                );
-            }
+            // if ($form_data->show_email) {
+            //     $this->form_validation->set_rules(
+            //         'customer_email',
+            //         $form_data->email_label ?? 'Customer Email',
+            //         'trim|valid_email|required'
+            //     );
+            // }
 
             if ($form_data->show_whatsapp) {
                 $this->form_validation->set_rules(
@@ -930,8 +931,6 @@ class Orders extends MY_Controller
             // Send any necessary order message
             $updatedOrder = $this->orders->get_orders_by_id($id);
 
-            $this->send_order_message($updatedOrder[0], $status, 'whatsapp');
-            $this->send_order_message($updatedOrder[0], $status, 'email');
 
             // Add the order history with the dynamically built description
             $this->orders->add_order_history(
@@ -941,6 +940,11 @@ class Orders extends MY_Controller
                 null, // user_id (optional)
                 $this->session->userdata('inv_username')
             );
+
+            $this->send_order_message($updatedOrder[0], $status, 'email');
+            $this->send_order_message($updatedOrder[0], $status, 'whatsapp');
+
+
 
             echo $result;
         } else {

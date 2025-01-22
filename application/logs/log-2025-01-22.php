@@ -1,0 +1,32 @@
+ERROR - 2025-01-22 08:40:01 --> send_order_message()  order:.{"id":"29","customer_name":"Fidelis Peter Egegbul","customer_email":"fidelisepeter@gmail.com","customer_phone":"1234567890","customer_whatsapp":"1234567890","address":"Junior Secondary School, Anagada.","order_date":"2025-01-13 10:00:51","rescheduled_date":"2025-01-22 00:00:00","order_number":"847888","delivery_date":"2025-01-14 00:00:00","ref":null,"item_name":null,"item_code":null,"status":"rescheduled","fulfilment_id":null,"form_id":"2","product_id":null,"country_id":null,"state_id":"103","service_bit":null,"country":null,"state":"Adamawa","lga":"","city":null,"quantity":"1","amount":"12.00","fees":null,"form_bundle_id":"1","sales_id":null,"form_has_customer_name":"1","form_has_email":"1","form_has_phone":"1","form_has_whatsapp":"1","form_has_address":"1","form_has_states":"1","form_has_delivery":"1","form_delivery_choices":"7","form_accent_color":"#6f09b3","form_background_color":"#7239b4","form_bundles":"[\"1\", \"5\"]","store_id":"2","bundle_name":"Blood Pressure Monitor (BMP) 20222","bundle_image":"uploads\/items\/bundle_1733586442.jpg","bundle_description":"Blood Pressure Monitor (BMP)","bundle_price":"12.00","discount_type":null,"discount_amount":null,"created_at":"2025-01-13 11:00:51","updated_at":"2025-01-22 08:40:01","last_update_date":null}
+ERROR - 2025-01-22 08:40:01 --> send_order_message()  order:.{"id":"29","customer_name":"Fidelis Peter Egegbul","customer_email":"fidelisepeter@gmail.com","customer_phone":"1234567890","customer_whatsapp":"1234567890","address":"Junior Secondary School, Anagada.","order_date":"2025-01-13 10:00:51","rescheduled_date":"2025-01-22 00:00:00","order_number":"847888","delivery_date":"2025-01-14 00:00:00","ref":null,"item_name":null,"item_code":null,"status":"rescheduled","fulfilment_id":null,"form_id":"2","product_id":null,"country_id":null,"state_id":"103","service_bit":null,"country":null,"state":"Adamawa","lga":"","city":null,"quantity":"1","amount":"12.00","fees":null,"form_bundle_id":"1","sales_id":null,"form_has_customer_name":"1","form_has_email":"1","form_has_phone":"1","form_has_whatsapp":"1","form_has_address":"1","form_has_states":"1","form_has_delivery":"1","form_delivery_choices":"7","form_accent_color":"#6f09b3","form_background_color":"#7239b4","form_bundles":"[\"1\", \"5\"]","store_id":"2","bundle_name":"Blood Pressure Monitor (BMP) 20222","bundle_image":"uploads\/items\/bundle_1733586442.jpg","bundle_description":"Blood Pressure Monitor (BMP)","bundle_price":"12.00","discount_type":null,"discount_amount":null,"created_at":"2025-01-13 11:00:51","updated_at":"2025-01-22 08:40:01","last_update_date":null}
+ERROR - 2025-01-22 08:44:54 --> current_time:22-01-2025 08:44AM
+ERROR - 2025-01-22 08:44:56 --> current_time:22-01-2025 08:44AM
+ERROR - 2025-01-22 08:46:02 --> current_time:22-01-2025 08:46AM
+ERROR - 2025-01-22 08:46:04 --> current_time:22-01-2025 08:46AM
+ERROR - 2025-01-22 08:46:21 --> current_time:22-01-2025 08:46AM
+ERROR - 2025-01-22 08:46:23 --> current_time:22-01-2025 08:46AM
+ERROR - 2025-01-22 08:46:45 --> current_time:22-01-2025 08:46AM
+ERROR - 2025-01-22 08:46:46 --> current_time:22-01-2025 08:46AM
+ERROR - 2025-01-22 08:47:13 --> current_time:22-01-2025 08:47AM
+ERROR - 2025-01-22 08:47:14 --> current_time:22-01-2025 08:47AM
+ERROR - 2025-01-22 08:47:26 --> current_time:22-01-2025 08:47AM
+ERROR - 2025-01-22 08:47:27 --> current_time:22-01-2025 08:47AM
+ERROR - 2025-01-22 08:48:11 --> current_time:22-01-2025 08:48AM
+ERROR - 2025-01-22 08:48:13 --> current_time:22-01-2025 08:48AM
+ERROR - 2025-01-22 08:49:13 --> current_time:22-01-2025 08:49AM
+ERROR - 2025-01-22 08:49:17 --> current_time:22-01-2025 08:49AM
+ERROR - 2025-01-22 08:50:16 --> current_time:22-01-2025 08:50AM
+ERROR - 2025-01-22 08:50:19 --> current_time:22-01-2025 08:50AM
+ERROR - 2025-01-22 08:51:15 --> current_time:22-01-2025 08:51AM
+ERROR - 2025-01-22 08:51:18 --> current_time:22-01-2025 08:51AM
+ERROR - 2025-01-22 08:53:37 --> current_time:22-01-2025 08:53AM
+ERROR - 2025-01-22 08:53:40 --> current_time:22-01-2025 08:53AM
+ERROR - 2025-01-22 08:54:05 --> current_time:22-01-2025 08:54AM
+ERROR - 2025-01-22 08:54:06 --> current_time:22-01-2025 08:54AM
+ERROR - 2025-01-22 08:54:34 --> current_time:22-01-2025 08:54AM
+ERROR - 2025-01-22 08:54:35 --> current_time:22-01-2025 08:54AM
+ERROR - 2025-01-22 08:55:04 --> current_time:22-01-2025 08:55AM
+ERROR - 2025-01-22 08:55:04 --> current_time:22-01-2025 08:55AM
+ERROR - 2025-01-22 08:55:14 --> current_time:22-01-2025 08:55AM
+ERROR - 2025-01-22 08:55:15 --> current_time:22-01-2025 08:55AM
