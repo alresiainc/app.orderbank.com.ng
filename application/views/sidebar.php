@@ -176,7 +176,7 @@ $CI = &get_instance();
                       <?php foreach ($reschedule_orders as $order): ?>
                         <li class="dropdown-item">
                           <a href="<?= base_url('orders/rescheduled?order_number=' . $order['order_number']); ?>">
-                            <div style="font-weight: 600; margin: 0; color:#5e5e5e;font-size: 21px;">Order #<?= $order['order_number']; ?> - <?= $order['state']; ?></div>
+                            <div style="font-weight: 600; margin: 0; color:#5e5e5e;font-size: 15px;">Order #<?= $order['order_number']; ?> - <?= $order['state']; ?></div>
                             <p style="margin: 0; font-size: 11px;"> (<?= date('l, jS F, Y', strtotime($order['rescheduled_date'])); ?>)</p>
                           </a>
                         </li>
