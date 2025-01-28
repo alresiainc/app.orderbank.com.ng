@@ -252,6 +252,14 @@ class Forms extends MY_Controller
                 $form_data->delivery_label ?? 'Delivery Date',
                 'trim|required'
             );
+
+            if ($this->input->post('delivery_date') == 'custom') {
+                $this->form_validation->set_rules(
+                    'custom_delivery_date',
+                    'Custom Delivery Date',
+                    'trim|required'
+                );
+            }
         }
 
         // Run validation

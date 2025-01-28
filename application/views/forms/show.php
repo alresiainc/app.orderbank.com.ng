@@ -682,6 +682,7 @@ $CI = &get_instance();
                 <input type="text" id="custom-date-picker" name="custom_delivery_date"
                     class="form-controls datepicker"
                     placeholder="Pick a date">
+                <span id="custom-date-picker_msg" class="text-danger"></span>
             </div>
 
             <?php if ($form->show_email): ?>
@@ -1002,6 +1003,12 @@ $CI = &get_instance();
 
                 if ($('#delivery_select') != undefined) {
                     if (check_field("delivery_select") == true) {
+                        var flag = false;
+                    }
+                }
+
+                if ($('#delivery_select').val() == 'custom') {
+                    if (check_field("custom-date-picker") == true) {
                         var flag = false;
                     }
                 }
