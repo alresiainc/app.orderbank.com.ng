@@ -53,6 +53,7 @@
             <div class="box-header">
               <div class="btn-group pull-right">
                 <button type="button" title="Today" class="btn btn-default btn-info get_tab_records active">Today</button>
+                <button type="button" title="Yesterday" class="btn btn-default btn-info get_tab_records">Yesterday</button>
                 <button type="button" title="Current Week" class="btn btn-default btn-info get_tab_records">Weekly</button>
                 <button type="button" title="Current Month" class="btn btn-default btn-info get_tab_records ">Monthly</button>
                 <button type="button" title="Current Year" class="btn btn-default btn-info get_tab_records">Yearly</button>
@@ -173,6 +174,7 @@
                   <h3 class="box-title"><?= $this->lang->line('stores_details'); ?></h3>
                   <div class="btn-group pull-right hide">
                     <button type="button" title="Today" class="btn btn-default btn-info get_storewise_details ">Today</button>
+                    <button type="button" title="Yesterday" class="btn btn-default btn-info get_storewise_details ">Yesterday</button>
                     <button type="button" title="Current Week" class="btn btn-default btn-info get_storewise_details">Weekly</button>
                     <button type="button" title="Current Month" class="btn btn-default btn-info get_storewise_details ">Monthly</button>
                     <button type="button" title="Current Year" class="btn btn-default btn-info get_storewise_details">Yearly</button>

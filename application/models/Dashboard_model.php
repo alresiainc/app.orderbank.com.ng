@@ -194,6 +194,10 @@ class Dashboard_model extends CI_Model
 				$this->db->where("$table_date", date("Y-m-d"));
 			}
 		}
+		if ($dates == 'Yesterday') {
+			$this->db->where("$table_date BETWEEN DATE_SUB(CURDATE(), INTERVAL 1 DAY) AND CURDATE() - INTERVAL 1 SECOND");
+		}
+
 		if ($dates == 'Weekly') {
 			$this->db->where("$table_date > DATE_SUB(NOW(), INTERVAL 1 WEEK)");
 		}
