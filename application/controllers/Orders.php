@@ -60,6 +60,7 @@ class Orders extends MY_Controller
         $data = $this->data;
         $data['page_title'] = $page_title;
         $data['order_status'] = $status;
+        $data['orders'] = $this->orders->get_orders_by_status($status);
 
         // You may want to fetch the orders based on status here
         // $data['orders'] = $this->order_model->get_orders_by_status($status);

@@ -3,158 +3,6 @@ $CI = &get_instance();
 $CI->load->config('order_status');
 $order_statuses = $CI->config->item('order_status');
 
-function formatStatusColumn($order)
-{
-
-    $CI = &get_instance();
-    $CI->load->config('order_status');
-    $order_status = $CI->config->item('order_status');
-    $last_updated = $order->last_update_date ? date('jS M, Y \a\t g:ia', strtotime($order->last_update_date)) : ($order->order_date ? date('jS M, Y \a\t g:ia', strtotime($order->order_date)) : '-');
-    $id = $order->id;
-    $current_status = $order->status;
-
-
-    // Get the appropriate button class
-
-
-    $buttonClass = isset($order_status[$current_status]) ? 'btn-' . $order_status[$current_status]['color'] : 'btn-default';
-    $label = isset($order_status[$current_status]) ? $order_status[$current_status]['label'] : 'Unknown';
-
-    // Dropdown for changing status
-    $dropdownOptions = '';
-    foreach ($order_status as $status => $item) {
-        $statusName = $item['label'];
-
-        if (!in_array($status, ['all', 'new', 'payment-received']) && ($status != $current_status)) {
-            $dropdownOptions .= "<li>
-                <a style='cursor:pointer' onclick=\"change_status('{$id}', '{$status}')\">
-                    {$statusName}
-                </a>
-             </li>";
-        }
-    }
-
-    if ($current_status != 'payment-received' && (is_admin() || is_store_admin() || $this->permissions('change_status'))) {
-        return "<div style='text-align: center; width: 100px;'><div class='btn-group'>
-                <button type='button' class='btn btn-sm {$buttonClass} dropdown-toggle' data-toggle='dropdown'>
-                    {$label} <span class='caret'></span>
-                </button>
-                <ul class='dropdown-menu dropdown-light pull-right'>
-                    {$dropdownOptions}
-                </ul>
-            </div><div style='text-wrap: wrap; word-wrap: break-word; font-size: 12px; margin-top: 5px; text-align: center'>" . $last_updated . "</div></div>";
-    } else {
-        return "<div style='text-align: center; width: 100px;'><div class='btn-group'>
-        <button type='button' class='btn btn-sm {$buttonClass} ' >
-            {$label}
-        </button>
-       
-    </div><div style='text-wrap: wrap; word-wrap: break-word; font-size: 12px; margin-top: 5px; text-align: center'>" . $last_updated . "</div></div>";
-    }
-}
-
-function formatActions($order)
-{
-    $CI = &get_instance();
-    $id = $order->id;
-    $sales_url = $order->sales_id ? base_url('/sales/invoice/' . $order->sales_id) : base_url('/sales');
-    $current_status = $order->status;
-
-    // Start building the dropdown menu
-    $actions = '<div class="btn-group" title="View Account">
-                    <a class="btn btn-sm btn-primary btn-o dropdown-toggle" data-toggle="dropdown" href="#">
-                        Action <span class="caret"></span>
-                    </a>
-                    <ul role="menu" class="dropdown-menu dropdown-light pull-right">';
-
-    // Add actions based on permissions
-    if ($current_status != 'payment-received') {
-        // Copy Order
-        if (is_admin() || is_store_admin() || $CI->permissions('copy_order')) {
-            $actions .= '<li>
-                            <a title="Copy Order Details" onclick="copy_order_details(\'' . $id . '\')">
-                                <i class="fa fa-fw fa-clipboard text-blue"></i>Copy
-                            </a>
-                        </li>';
-        }
-
-        // Edit Order
-        if (is_admin() || is_store_admin() || $CI->permissions('edit_orders')) {
-            $actions .= '<li>
-                            <a title="Edit Order" onclick="update_order_model(\'' . $id . '\')">
-                                <i class="fa fa-fw fa-edit text-blue"></i>Edit
-                            </a>
-                        </li>';
-        }
-
-        // Print Receipt
-        if (is_admin() || is_store_admin() || $CI->permissions('view_receipt')) {
-            $actions .= '<li>
-                        <a title="Print Receipt" target="_blank" href="' . base_url('/orders/receipt/' . $id) . '">
-                            <i class="fa fa-fw fa-newspaper-o text-blue"></i>Receipt
-                        </a>
-                    </li>';
-        }
-
-        // View History
-        if (is_admin() || is_store_admin() || $CI->permissions('view_history')) {
-            $actions .= '<li>
-                            <a title="View Order History" href="' . base_url('/orders/history/' . $id) . '">
-                                <i class="fa fa-fw fa-history text-blue"></i>History
-                            </a>
-                        </li>';
-        }
-
-        // Delete Order
-        if (is_admin() || is_store_admin() || $CI->permissions('delete_orders')) {
-            $actions .= '<li>
-                            <a style="cursor:pointer" title="Delete Record?" onclick="delete_order(\'' . $id . '\')">
-                                <i class="fa fa-fw fa-trash text-red"></i>Delete
-                            </a>
-                        </li>';
-        }
-    } else {
-        // View Sales
-        $actions .= '<li>
-                        <a title="View Order History" href="' . $sales_url . '">
-                            <i class="fa fa-fw fa-columns text-blue"></i>View Sales
-                        </a>
-                    </li>';
-
-        // Copy Order
-        if (is_admin() || is_store_admin() || $CI->permissions('copy_order')) {
-            $actions .= '<li>
-                            <a title="Copy Order Details" onclick="copy_order_details(\'' . $id . '\')">
-                                <i class="fa fa-fw fa-clipboard text-blue"></i>Copy
-                            </a>
-                        </li>';
-        }
-
-        // Print Receipt
-        if (is_admin() || is_store_admin() || $CI->permissions('view_receipt')) {
-            $actions .= '<li>
-                        <a title="Print Receipt" target="_blank" href="' . base_url('/orders/receipt/' . $id) . '">
-                            <i class="fa fa-fw fa-newspaper-o text-blue"></i>Receipt
-                        </a>
-                    </li>';
-        }
-
-        // View History
-        if (is_admin() || is_store_admin() || $CI->permissions('view_history')) {
-            $actions .= '<li>
-                            <a title="View Order History" href="' . base_url('/orders/history/' . $id) . '">
-                                <i class="fa fa-fw fa-history text-blue"></i>History
-                            </a>
-                        </li>';
-        }
-    }
-
-    // Close the dropdown menu
-    $actions .= '</ul></div>';
-
-    return $actions;
-}
-
 ?>
 <!DOCTYPE html>
 <html>
@@ -245,7 +93,7 @@ function formatActions($order)
             margin-bottom: 12px;
         }
     </style>
-    <meta name="current-order-status" content="<?= $order_status; ?>">
+    <meta name="current-order-status" content=" <?= $order_status; ?>">
 </head>
 
 
@@ -310,29 +158,27 @@ function formatActions($order)
                                                         <div class="input-group">
                                                             <span class="input-group-addon" title="Search Items"><i class="fa fa-barcode"></i></span>
                                                             <input type="text" class="form-control " placeholder="Search Product Name/Order Number" autofocus id="order_search" value="<?= isset($_GET['order_number']) ? htmlspecialchars($_GET['order_number']) : ''; ?>">
-                                                            <span id="toggle-filter" class="filter-btn  input-group-addon pointer text-green" title="Click to Filter View"><?= $this->input->get('from_date') || $this->input->get('to_date') || $this->input->get('state') ? 'Remove All Filters' : 'Click to Filter Orders' ?> </span>
+                                                            <span id="toggle-filter" class="filter-btn   input-group-addon pointer text-green" title="Click to Filter View">Click to Filter Orders</span>
 
                                                         </div>
                                                     </div>
                                                 </div>
                                                 <div class="box-body ">
-                                                    <div id="filter-container" class="filter-container mb-3"
-                                                        style="display: <?= $this->input->get('from_date') || $this->input->get('to_date') || $this->input->get('state') ? 'block' : 'none' ?>;">
-
+                                                    <div id="filter-container" class="filter-container mb-3">
                                                         <div class="row mb-3">
                                                             <!-- Date Filter -->
                                                             <div class="filter-row col-md-5">
                                                                 <label for="date-filter">Filter by Date</label>
                                                                 <!-- <input type="text" id="date-filter" class="form-control" placeholder="Select Date Range"
                                                                     <?php if (in_array($order_status, ['new'])): ?>
-                                                                    value="<?php echo $this->input->get('from_date') ?? date('Y-m-d', strtotime('-1 days')); ?> to <?php echo date('Y-m-d'); ?>"
+                                                                    value="<?php echo date('Y-m-d', strtotime('-1 days')); ?> to <?php echo date('Y-m-d'); ?>"
                                                                     <?php elseif (in_array($order_status, ['rescheduled'])): ?>
                                                                     value="<?php echo date('Y-m-d'); ?> to <?php echo date('Y-m-d'); ?>"
                                                                     <?php endif; ?>
                                                                     > -->
                                                                 <input type="text" id="date-filter" class="form-control" placeholder="Select Date Range"
                                                                     <?php if (in_array($order_status, ['new'])): ?>
-                                                                    value="<?php echo $this->input->get('from_date') ?? date('Y-m-d', strtotime('-1 days')); ?> to <?php echo $this->input->get('to_date') ?? date('Y-m-d'); ?>"
+                                                                    value="<?php echo date('Y-m-d', strtotime('-1 days')); ?> to <?php echo date('Y-m-d'); ?>"
                                                                     <?php endif; ?>>
                                                             </div>
 
@@ -340,25 +186,18 @@ function formatActions($order)
                                                             <div class="filter-row col-md-3">
                                                                 <label for="country-filter">Filter by Country</label>
                                                                 <select id="country-filter" class="form-control">
-                                                                    <?= get_country_select_list($this->input->get('country') ?? 134, false); ?>
+                                                                    <?= get_country_select_list(134, false); ?>
                                                                 </select>
                                                             </div>
                                                             <!-- State Filter -->
                                                             <div class="filter-row col-md-4">
                                                                 <label for="state-filter">Filter by State</label>
                                                                 <select id="state-filter" class="form-control">
-                                                                    <?= get_state_select_list($this->input->get('state') ?? null, true); ?>
+                                                                    <?= get_state_select_list(null, true); ?>
                                                                 </select>
                                                             </div>
 
 
-
-
-                                                        </div>
-                                                        <div style="display: flex;justify-content: end;align-items: center;">
-                                                            <button id="order_filter" type="button" class="btn btn-sm btn-primary btn-o">
-                                                                Filter Orders
-                                                            </button>
                                                         </div>
                                                     </div>
                                                     <div class="table-responsive" style="width: 100%">
@@ -379,78 +218,6 @@ function formatActions($order)
                                                                 </tr>
                                                             </thead>
                                                             <tbody>
-                                                                <?php
-                                                                $no = 0;
-                                                                foreach ($orders ?? [] as $order):
-                                                                    $no++;
-                                                                ?>
-                                                                    <tr>
-                                                                        <td class="text-center"> <?= $no ?></td>
-                                                                        <td>
-                                                                            <div style='display:flex; align-items:center; justify-content:start; gap:5px;'>
-                                                                                <div>
-                                                                                    <?php if (!empty($order->bundle_image)): ?>
-                                                                                        <a title='Click for Bigger!' href='" . base_url($order->bundle_image) . "' data-toggle='lightbox'>
-                                                                                            <img style="border:1px #72afd2 solid; height: 75px; width: 75px;"
-                                                                                                src="<?= base_url(return_item_image_thumb($order->bundle_image)); ?>" alt="Image">
-                                                                                        </a>
-                                                                                    <?php else: ?>
-                                                                                        <img style="border:1px #72afd2 solid; height: 75px; width: 75px;"
-                                                                                            src="<?= base_url() . 'theme/images/no_image.png'; ?>" title="No Image!" alt="No Image">
-                                                                                    <?php endif; ?>
-                                                                                </div>
-
-                                                                            </div>
-                                                                        </td>
-
-                                                                        <td>
-                                                                            <div style='text-align:center;'>
-                                                                                <div style='font-weight:600;'><?= $order->customer_email ?></div>
-                                                                                <small><?= date('l, jS F, Y \a\t g:ia', strtotime($order->order_date)) ?></small>
-                                                                                <?php if ($order->rescheduled_date): ?>
-                                                                                    <br><small><strong>Rescheduled date:</strong> <br> <?= date('l, jS F, Y \a\t g:ia', strtotime($order->rescheduled_date)); ?></small>
-                                                                                <?php endif; ?>
-                                                                            </div>
-                                                                        </td>
-                                                                        <td>
-                                                                            <ul style='margin:0; padding:0;'>
-                                                                                <li><strong>Customer Name:</strong> <?= $order->customer_name; ?></li>
-                                                                                <li><strong>Address:</strong> <?= $order->address; ?></li>
-                                                                                <li><strong>State:</strong> <?= $order->state; ?></li>
-                                                                                <li><strong>LGA:</strong> <?= $order->lga; ?></li>
-                                                                                <li><strong>City:</strong> <?= $order->city; ?></li>
-                                                                                <li><strong>Customer Phone:</strong> <?= $order->customer_phone; ?></li>
-                                                                                <li><strong>WhatsApp Number:</strong> <?= $order->customer_whatsapp; ?></li>
-                                                                                <li><strong>Order Number:</strong> <?= $order->order_number; ?></li>
-                                                                                <li><strong>Product Details:</strong> <?= $order->quantity ?? 1; ?> <?= $order->bundle_name; ?></li>
-                                                                                <li><strong>Product Price:</strong> <?= $CI->currency($order->bundle_price ?? $order->bundle_price, TRUE); ?></li>
-                                                                            </ul>
-                                                                        </td>
-
-                                                                        <td>
-                                                                            <?php if (!$order->delivery_date): ?>
-                                                                                <div style="text-wrap: wrap; word-wrap: break-word;  margin-top: 5px; text-align: center; width: 150px;">-</div>
-                                                                            <?php endif; ?>
-
-                                                                            <?php
-                                                                            $date = new DateTime($order->delivery_date);
-                                                                            $today = new DateTime('today');
-                                                                            $tomorrow = new DateTime('tomorrow');
-
-                                                                            ?>
-
-                                                                            <?php if ($date->format('Y-m-d') == $today->format('Y-m-d')): ?>
-                                                                                <div style="text-wrap: wrap; word-wrap: break-word;  margin-top: 5px; text-align: center; width: 150px;">Today, <?= $date->format('jS F, Y'); ?></div>
-                                                                            <?php elseif ($date->format('Y-m-d') == $tomorrow->format('Y-m-d')): ?>
-                                                                                <div style="text-wrap: wrap; word-wrap: break-word;  margin-top: 5px; text-align: center; width: 150px;">Tomorrow, <?= $date->format('jS F, Y'); ?></div>
-                                                                            <?php else: ?>
-                                                                                <div style="text-wrap: wrap; word-wrap: break-word;  margin-top: 5px; text-align: center; width: 150px;"> <?= $date->format('l, jS F, Y'); ?></div>
-                                                                            <?php endif; ?>
-                                                                        </td>
-                                                                        <td style="text-wrap: wrap; word-wrap: break-word;  margin-top: 5px; text-align: center; "> <?= formatStatusColumn($order); ?> </td>
-                                                                        <td> <?= formatActions($order); ?></td>
-                                                                    </tr>
-                                                                <?php endforeach; ?>
 
                                                             </tbody>
                                                             <tfoot>
@@ -518,24 +285,17 @@ function formatActions($order)
                 if (filterContainer.style.display === "none" || filterContainer.style.display === "") {
                     filterContainer.style.display = "block";
                     toggleButton.textContent = "Remove All Filters";
-
-
                 } else {
                     filterContainer.style.display = "none";
                     toggleButton.textContent = "Click to Filter Orders";
 
-                    // document.querySelector('#date-filter').value = '';
-                    // document.querySelector('#state-filter').value = '';
+                    document.querySelector('#date-filter').value = '';
+                    document.querySelector('#state-filter').value = '';
 
-                    // $("#date-filter").val('').trigger('change');
-                    // $("#state-filter").val('').trigger('change');
-
-                    // Create a URL object for the external redirect_url
-                    const url = new URL("<?= base_url('orders'); ?>/<?= $order_status; ?>");
-                    window.parent.location.href = url.toString();
+                    $("#date-filter").val('').trigger('change');
+                    $("#state-filter").val('').trigger('change');
                 }
             });
-
 
             // Initialize Flatpickr with shortcuts
             flatpickr("#date-filter", {
@@ -582,43 +342,6 @@ function formatActions($order)
             $("#order_search").removeClass('ui-autocomplete-loading');
         });
 
-        $("#order_filter").on("click", function(e) {
-            e.preventDefault();
-            status = document.querySelector('meta[name="current-order-status"]').getAttribute('content');
-            state = document.querySelector('#state-filter')?.value;
-            country = document.querySelector('#country-filter')?.value;
-            from_date = document.querySelector('#date-filter')?.value?.split(' to ')[0] || '';
-            to_date = document.querySelector('#date-filter')?.value?.split(' to ')[1] || '';
-
-            // Create a URL object for the external redirect_url
-            const url = new URL("<?= base_url('orders'); ?>/<?= $order_status; ?>");
-
-            // Use URLSearchParams to manage the query parameters
-            const params = new URLSearchParams(url.search);
-
-            // Append 
-            if (state) {
-                params.set('state', state);
-            }
-            if (country) {
-                params.set('country', country);
-            }
-            if (from_date) {
-                params.set('from_date', from_date);
-            }
-            if (to_date) {
-                params.set('to_date', to_date);
-            }
-
-
-
-            // Update the URL's search parameters
-            url.search = params.toString();
-
-
-            // Redirect to the updated URL
-            window.parent.location.href = url.toString();
-        });
 
 
         // $("#order_search").on("focusin", function() {
@@ -1277,7 +1000,7 @@ Amount:        ${orderAmount || bundlePrice || 'N/A'}
                 /* FOR EXPORT BUTTONS END */
 
                 "processing": true, //Feature control the processing indicator.
-                "serverSide": false, //Feature control DataTables' server-side processing mode.
+                "serverSide": true, //Feature control DataTables' server-side processing mode.
                 "order": [], //Initial no order.
                 "responsive": true,
                 // length: 2,
@@ -1285,7 +1008,7 @@ Amount:        ${orderAmount || bundlePrice || 'N/A'}
                     processing: '<div class="text-primary bg-primary" style="position: relative;z-index:100;overflow: visible;">Processing...</div>'
                 },
                 // Load data for the table's content from an Ajax source
-                "ajax__": {
+                "ajax": {
                     "url": "<?php echo site_url('orders/order_json_data') ?>",
                     "type": "POST",
                     // "data": { 

@@ -155,35 +155,40 @@ class Orders_model extends CI_Model
             $i++;
         }
         // If country selected
-        $country = $this->input->post('country');
+        $country = $this->input->post('country') ?? $this->input->get('country');
+
         if (!empty($country) && is_array($country)) {
             $this->db->where_in('a.country', $country);
         }
 
-        $state = $this->input->post('state');
-        if (!empty($state) && is_array($state)) {
+        $state = $this->input->post('state') ?? $this->input->get('state');
+
+        log_message("error", 'state post:' . $this->input->post('state'));
+        log_message("error", 'state get:' . $this->input->get('state'));
+        log_message("error", 'state:' . $state);
+        if (!empty($state)) {
             $this->db->where('a.state', $state);
         }
 
         // If from_date selected
-        $fromDate = $this->input->post('from_date');
+        $fromDate = $this->input->post('from_date') ?? $this->input->get('from_date');
         if (!empty($fromDate)) {
             $formattedFromDate = date('Y-m-d', strtotime($fromDate));
             $this->db->where('a.delivery_date >=', $formattedFromDate);
         }
 
         // If to_date selected
-        $toDate = $this->input->post('to_date');
+        $toDate = $this->input->post('to_date') ?? $this->input->get('to_date');
         if (!empty($toDate)) {
             $formattedToDate = date('Y-m-d', strtotime($toDate));
             $this->db->where('a.delivery_date <=', $formattedToDate);
         }
 
         // If status selected (multi-select)
-        $statuses = $this->input->post('status');
-        if (!empty($statuses) && is_array($statuses)) {
-            $this->db->where_in('a.status', $statuses);
-        }
+        // $statuses = $this->input->post('status' || $this->input->get('status'));
+        // if (!empty($statuses) && is_array($statuses)) {
+        //     $this->db->where_in('a.status', $statuses);
+        // }
 
 
         if (!(is_admin() || is_store_admin())) {
@@ -315,34 +320,34 @@ class Orders_model extends CI_Model
         }
 
 
-        $country = $this->input->post('country');
-        if (!empty($country) && is_array($country)) {
-            $this->db->where_in('a.country', $country);
-        }
+        // $country = $this->input->post('country');
+        // if (!empty($country) && is_array($country)) {
+        //     $this->db->where_in('a.country', $country);
+        // }
 
-        $state = $this->input->post('state');
+        // $state = $this->input->post('state');
 
-        if (!empty($state)) {
-            $this->db->where('a.state', $state);
-        }
+        // if (!empty($state)) {
+        //     $this->db->where('a.state', $state);
+        // }
 
-        // If from_date selected
-        $fromDate = $this->input->post('from_date');
-        if (!empty($fromDate)) {
-            $formattedFromDate = date('Y-m-d', strtotime($fromDate));
-            $this->db->where('a.delivery_date >=', $formattedFromDate);
-        }
+        // // If from_date selected
+        // $fromDate = $this->input->post('from_date');
+        // if (!empty($fromDate)) {
+        //     $formattedFromDate = date('Y-m-d', strtotime($fromDate));
+        //     $this->db->where('a.delivery_date >=', $formattedFromDate);
+        // }
 
-        // If to_date selected
-        $toDate = $this->input->post('to_date');
-        if (!empty($toDate)) {
-            $formattedToDate = date('Y-m-d', strtotime($toDate));
-            $this->db->where('a.delivery_date <=', $formattedToDate);
-        }
+        // // If to_date selected
+        // $toDate = $this->input->post('to_date');
+        // if (!empty($toDate)) {
+        //     $formattedToDate = date('Y-m-d', strtotime($toDate));
+        //     $this->db->where('a.delivery_date <=', $formattedToDate);
+        // }
 
         // print_r($_POST['length']);
 
-        if ($_POST['length'] != -1) {
+        if (isset($_POST['length']) && $_POST['length'] != -1) {
             $this->db->limit($_POST['length'], $_POST['start']);
         }
 
