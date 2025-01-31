@@ -637,8 +637,7 @@ function get_user_statess($user_id)
     ->get()
     ->result(); // Fetch all rows as an array of objects
 
-  // Log the query for debugging
-  log_message('error', "get_user_states() last_query: " . $CI->db->last_query());
+
 
   // Reset again to prevent interference
   $CI->db->reset_query();
@@ -658,7 +657,7 @@ function get_user_states($user_id)
     ->get()
     ->result();
 
-  log_message('error', "get_user_states() last_query: " . $db->last_query());
+
 
   return $states_data; // Return the full state data
 }
