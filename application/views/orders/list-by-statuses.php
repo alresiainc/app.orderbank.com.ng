@@ -698,7 +698,8 @@ function formatActions($order)
                     //alert(result);return;
                     if (result == "success") {
                         toastr["success"]("Record Deleted Successfully!");
-                        $('#order_table').DataTable().ajax.reload();
+                        // $('#order_table').DataTable().ajax.reload();
+                        window.location.reload();
                     } else if (result == "failed") {
                         toastr["error"]("Failed to Delete .Try again!");
                     } else {
@@ -927,7 +928,8 @@ Amount:        ${orderAmount || bundlePrice || 'N/A'}
                                 success: function(result) {
                                     if (result == "success") {
                                         toastr["success"]("Record Updated Successfully!");
-                                        $('#order_table').DataTable().ajax.reload();
+                                        // $('#order_table').DataTable().ajax.reload();
+                                        window.location.reload();
 
                                         $('#update-order-modal').modal('hide');
 
@@ -1045,7 +1047,8 @@ Amount:        ${orderAmount || bundlePrice || 'N/A'}
 
                         if (result == "success") {
                             toastr["success"]("Record Updated Successfully!");
-                            $('#order_table').DataTable().ajax.reload();
+                            // $('#order_table').DataTable().ajax.reload();
+                            window.location.reload();
 
                             $('#change-order-status-modal').modal('hide');
                             $("#change-order-status-form-button").attr('disabled', false);
@@ -1121,7 +1124,8 @@ Amount:        ${orderAmount || bundlePrice || 'N/A'}
                             toastr["success"]("Record Deleted Successfully!");
                             success.currentTime = 0;
                             success.play();
-                            $('#order_table').DataTable().ajax.reload();
+                            // $('#order_table').DataTable().ajax.reload();
+                            window.location.reload();
                             $(".bulk_action_btn").hide();
                             $(".bulk_checkbox").prop("checked", false).iCheck('update');
                         } else if (result == "failed") {
@@ -1168,7 +1172,8 @@ Amount:        ${orderAmount || bundlePrice || 'N/A'}
                             toastr["success"]("Record Deleted Successfully!");
                             success.currentTime = 0;
                             success.play();
-                            $('#order_table').DataTable().ajax.reload();
+                            // $('#order_table').DataTable().ajax.reload();
+                            window.location.reload();
                             $(".bulk_action_btn").hide();
                             $(".bulk_checkbox").prop("checked", false).iCheck('update');
                         } else if (result == "failed") {
@@ -1378,7 +1383,8 @@ Amount:        ${orderAmount || bundlePrice || 'N/A'}
 
 
             $('#state-filter, #date-filter').on('keyup change', function() {
-                // $('#order_table').DataTable().ajax.reload();
+                // // $('#order_table').DataTable().ajax.reload();
+                window.location.reload();
                 // alert(JSON.stringify({
                 //     from_date: document.querySelector('#date-filter')?.value?.split(' to ')[0] || '',
                 //     to_date: document.querySelector('#date-filter')?.value?.split(' to ')[1] || '',
@@ -1452,7 +1458,8 @@ Amount:        ${orderAmount || bundlePrice || 'N/A'}
 
                             // $('#order_table').DataTable().destroy();
                             // load_datatable();
-                            $('#order_table').DataTable().ajax.reload();
+                            // $('#order_table').DataTable().ajax.reload();
+                            window.location.reload();
 
                             $('#new-order-modal').modal('toggle');
                             $('#new-order-form')[0].reset();

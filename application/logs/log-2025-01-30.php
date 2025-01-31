@@ -7,3 +7,6 @@ ERROR - 2025-01-30 18:21:45 --> Severity: error --> Exception: Unknown column 'A
 ERROR - 2025-01-30 18:22:45 --> state post:
 ERROR - 2025-01-30 18:22:45 --> state get:104
 ERROR - 2025-01-30 18:22:46 --> state:104
+ERROR - 2025-01-30 18:52:22 --> state post:
+ERROR - 2025-01-30 18:52:22 --> state get:
+ERROR - 2025-01-30 18:52:22 --> state:
