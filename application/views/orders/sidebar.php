@@ -43,9 +43,14 @@ if (!is_user() && (is_admin() || is_store_admin() || $ci->permissions('view_orde
                 $label = $item['label']; // Dynamically get the label
                 $color = $item['color']; // Dynamically get the label
                 $count = orders_count($key); // Dynamically get the count
+                if ($slug == 'new') {
+                    $params = '?from_date=' . date('Y-m-d') . '&to_date=' . date('Y-m-d');
+                } else {
+                    $params = '';
+                }
                 if (is_admin() || is_store_admin() || $ci->permissions('view_' . $key)) { ?>
                     <li class="<?= $slug == $current_segment ? 'active' : ''; ?>">
-                        <a href="<?php echo $base_url; ?>orders/<?php echo $slug; ?>">
+                        <a href="<?php echo $base_url; ?>orders/<?php echo $slug; ?>/<?php echo $params; ?>">
                             <i class="fa <?php echo $icon; ?>"></i>
                             <span><?php echo $label; ?></span>
                             <?php if ($count > 0) : ?>
