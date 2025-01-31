@@ -163,9 +163,7 @@ class Orders_model extends CI_Model
 
         $state = $this->input->post('state') ?? $this->input->get('state');
 
-        log_message("error", 'state post:' . $this->input->post('state'));
-        log_message("error", 'state get:' . $this->input->get('state'));
-        log_message("error", 'state:' . $state);
+
         if (!empty($state)) {
             $this->db->where('a.state', $state);
         }

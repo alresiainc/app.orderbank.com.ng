@@ -196,7 +196,7 @@ class Broadcast extends MY_Controller
                     $msg->media($media);
                 }
                 $whatsapp = $msg->send();
-                log_message('error', "whatsapp sent successfully." . json_encode($whatsapp));
+                // log_message('error', "whatsapp sent successfully." . json_encode($whatsapp));
             } catch (Exception $e) {
                 log_message('error', "WhatsApp sending failed: " . $e->getMessage());
             }

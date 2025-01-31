@@ -275,7 +275,7 @@ class MY_Controller extends CI_Controller
   public function send_order_message($order, $status, $type = 'whatsapp')
   {
 
-    log_message('error', "send_order_message()  order:." . json_encode($order));
+
 
     $template = $this->orders->get_message($status, $type);
     $fileName = strtolower(str_replace(' ', '-', $order->customer_name . '-' . $order->state . '-' . $order->order_number));
@@ -352,12 +352,11 @@ class MY_Controller extends CI_Controller
           // Attach files if any
           if (isset($emailMedia[0])) {
             $mail->addAttachment($emailMedia[0]);
-            log_message('error', "Email attaching  media." . json_encode($emailMedia[0]));
           }
 
           // Send email
           if ($mail->send()) {
-            log_message('error', "Email sent successfully." . json_encode($mail));
+            // log_message('error', "Email sent successfully." . json_encode($mail));
           } else {
             log_message('error', "Email Error." . json_encode($mail));
             log_message('error', "Email sending failed: " . $mail->ErrorInfo);
@@ -394,12 +393,12 @@ class MY_Controller extends CI_Controller
 
 
             $message->media($whatsAppMedia[0]);
-            log_message('error', "whatsapp attaching  media." . json_encode($whatsAppMedia[0]));
+            // log_message('error', "whatsapp attaching  media." . json_encode($whatsAppMedia[0]));
           }
 
           // Send the message
           $whatsapp = $message->send();
-          log_message('error', "whatsapp sent successfully." . json_encode($whatsapp));
+          // log_message('error', "whatsapp sent successfully." . json_encode($whatsapp));
         } catch (LaravelWassengerException $e) {
           log_message('error', "WhatsApp Message Error: " . $e->getMessage());
         }
