@@ -1384,14 +1384,14 @@ Amount:        ${orderAmount || bundlePrice || 'N/A'}
 
             $('#state-filter, #date-filter').on('keyup change', function() {
                 // // $('#order_table').DataTable().ajax.reload();
-                window.location.reload();
+                // window.location.reload();
                 // alert(JSON.stringify({
                 //     from_date: document.querySelector('#date-filter')?.value?.split(' to ')[0] || '',
                 //     to_date: document.querySelector('#date-filter')?.value?.split(' to ')[1] || '',
                 //     state: document.querySelector('#state-filter')?.value,
                 // }))
                 // $('#order_table').DataTable().destroy();
-                load_datatable();
+                // load_datatable();
             });
 
             $('#new-order-form-button').click(function(e) {
