@@ -44,7 +44,7 @@ if (!is_user() && (is_admin() || is_store_admin() || $ci->permissions('view_orde
                 $color = $item['color']; // Dynamically get the label
                 $count = orders_count($key); // Dynamically get the count
                 if ($slug == 'new') {
-                    $params = '?from_date=' . date('Y-m-d') . '&to_date=' . date('Y-m-d');
+                    $params = '?from_date=' . date('Y-m-d') . '&to_date=' . date('Y-m-d', strtotime('-1 days'));
                 } else {
                     $params = '';
                 }
