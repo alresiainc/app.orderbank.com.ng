@@ -34,7 +34,7 @@ function formatStatusColumn($order)
         }
     }
 
-    if ($current_status != 'payment-received' && (is_admin() || is_store_admin() || $this->permissions('change_status'))) {
+    if ($current_status != 'payment-received' && (is_admin() || is_store_admin() || $CI->permissions('change_status'))) {
         return "<div style='text-align: center; width: 100px;'><div class='btn-group'>
                 <button type='button' class='btn btn-sm {$buttonClass} dropdown-toggle' data-toggle='dropdown'>
                     {$label} <span class='caret'></span>
@@ -1390,7 +1390,7 @@ Amount:        ${orderAmount || bundlePrice || 'N/A'}
                 //     to_date: document.querySelector('#date-filter')?.value?.split(' to ')[1] || '',
                 //     state: document.querySelector('#state-filter')?.value,
                 // }))
-                $('#order_table').DataTable().destroy();
+                // $('#order_table').DataTable().destroy();
                 load_datatable();
             });
 
