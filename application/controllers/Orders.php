@@ -26,7 +26,7 @@ class Orders extends MY_Controller
         $params = str_replace('_', '-', $method);
 
         // Check if the method corresponds to an order status
-        if (!in_array($params, array_keys($this->config->item('order_status')))) {
+        if (!in_array($params, array_keys($this->config->item('order_status'))) && $params != 'search') {
             // If method exists in the current controller
             if (method_exists($this, $method)) {
                 // Call the method dynamically with arguments
@@ -48,7 +48,7 @@ class Orders extends MY_Controller
         $statuses = $this->config->item('order_status');
 
         // Check if the passed status exists in the array, if not default to 'all'
-        if (!array_key_exists($get, $statuses)) {
+        if (!array_key_exists($get, $statuses) && $get != 'search') {
             $get = 'all'; // Default to 'all' if status is invalid
         }
 
@@ -60,7 +60,12 @@ class Orders extends MY_Controller
         $data = $this->data;
         $data['page_title'] = $page_title;
         $data['order_status'] = $status;
-        $data['orders'] = $this->orders->get_orders_by_status($status);
+        if ($get == 'search' &&  !empty($this->input->get('q'))) {
+            $search_query = $this->input->get('q');
+            $data['orders'] = $this->orders->search_orders($search_query);
+        } else {
+            $data['orders'] = $this->orders->get_orders_by_status($status);
+        }
 
         // You may want to fetch the orders based on status here
         // $data['orders'] = $this->order_model->get_orders_by_status($status);

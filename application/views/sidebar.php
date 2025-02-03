@@ -129,6 +129,44 @@ $CI = &get_instance();
         </li>
 
         <li class="dropdown user user-menu">
+
+
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" title="Click To View Rescheduled Orders">
+            <span class=""> <i class="fa fa-search "></i></span>
+
+          </a>
+
+          <ul class="dropdown-menu dropdown-width-lg" style="padding: 10px 15px;">
+            <div class="text-center" style="margin-bottom: 10px;font-weight:600;font-size: 16px;">
+              Search for Orders
+            </div>
+            <form action="/orders/search" method="get">
+              <div class="input-group">
+                <span class="input-group-addon" title="Search Items">Search</span>
+                <input type="text" class="form-control " placeholder="Search Product Name/Order Number" autofocus value="<?= isset($_GET['q']) ? htmlspecialchars($_GET['q']) : ''; ?>" name="q">
+                <span class="input-group-addon pointer" onclick="document.forms[0].submit();"><i class="fa fa-search"></i> </span>
+              </div>
+            </form>
+            <!-- <form action="/orders/search" method="get">
+              <div class="input-group">
+                <span class="input-group-text" title="Search Items">Search</span>
+                <input
+                  type="text"
+                  class="form-control"
+                  placeholder="Search Product Name/Order Number"
+                  autofocus
+                  name="q"
+                  value="<?= isset($_GET['q']) ? htmlspecialchars($_GET['q'], ENT_QUOTES, 'UTF-8') : ''; ?>">
+                <button type="submit" class="btn btn-primary">
+                  <i class="fa fa-search"></i>
+                </button>
+              </div>
+            </form> -->
+
+          </ul>
+        </li>
+
+        <li class="dropdown user user-menu">
           <?php
           $user_id = $this->session->userdata('inv_userid');
           $states_ids = [];

@@ -313,6 +313,12 @@ function formatActions($order)
                                                             <span id="toggle-filter" class="filter-btn  input-group-addon pointer text-green" title="Click to Filter View"><?= $this->input->get('from_date') || $this->input->get('to_date') || $this->input->get('state') ? 'Remove All Filters' : 'Click to Filter Orders' ?> </span>
 
                                                         </div>
+                                                        <!-- <div class="input-group">
+                                                            <span class="input-group-addon" title="Search Items"><i class="fa fa-barcode"></i></span>
+                                                            <input type="text" class="form-control " placeholder="Search Product Name/Order Number" autofocus id="order_search" value="<?= isset($_GET['order_number']) ? htmlspecialchars($_GET['order_number']) : ''; ?>">
+                                                            <span id="toggle-filter" class="filter-btn  input-group-addon pointer text-green" title="Click to Filter View"><?= $this->input->get('from_date') || $this->input->get('to_date') || $this->input->get('state') ? 'Remove All Filters' : 'Click to Filter Orders' ?> </span>
+
+                                                        </div> -->
                                                     </div>
                                                 </div>
                                                 <div class="box-body ">

@@ -318,33 +318,6 @@ class Orders_model extends CI_Model
         }
 
 
-        // $country = $this->input->post('country');
-        // if (!empty($country) && is_array($country)) {
-        //     $this->db->where_in('a.country', $country);
-        // }
-
-        // $state = $this->input->post('state');
-
-        // if (!empty($state)) {
-        //     $this->db->where('a.state', $state);
-        // }
-
-        // // If from_date selected
-        // $fromDate = $this->input->post('from_date');
-        // if (!empty($fromDate)) {
-        //     $formattedFromDate = date('Y-m-d', strtotime($fromDate));
-        //     $this->db->where('a.delivery_date >=', $formattedFromDate);
-        // }
-
-        // // If to_date selected
-        // $toDate = $this->input->post('to_date');
-        // if (!empty($toDate)) {
-        //     $formattedToDate = date('Y-m-d', strtotime($toDate));
-        //     $this->db->where('a.delivery_date <=', $formattedToDate);
-        // }
-
-        // print_r($_POST['length']);
-
         if (isset($_POST['length']) && $_POST['length'] != -1) {
             $this->db->limit($_POST['length'], $_POST['start']);
         }
@@ -352,6 +325,38 @@ class Orders_model extends CI_Model
         $query = $this->db->get();
         return $query->result();
     }
+
+    public function search_orders($search_term = '', $status = 'all')
+    {
+
+        $this->_get_datatables_query();
+
+        if (!empty($search_term)) {
+            $this->db->group_start();
+            foreach ($this->column_search as $i => $item) {
+                if ($i === 0) {
+                    $this->db->like($item, $search_term);
+                } else {
+                    $this->db->or_like($item, $search_term);
+                }
+            }
+            $this->db->group_end();
+        }
+
+
+        if ($status !== 'all') {
+            $this->db->where('status', $status);
+        }
+
+        // Apply limit and offset (for pagination)
+        if (isset($_POST['length']) && $_POST['length'] != -1) {
+            $this->db->limit($_POST['length'], $_POST['start']);
+        }
+
+        $query = $this->db->get();
+        return $query->result();
+    }
+
 
     public function count_orders_by_status($status)
     {
