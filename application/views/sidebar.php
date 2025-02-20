@@ -213,7 +213,7 @@ $CI = &get_instance();
                       </li>
                       <?php foreach ($reschedule_orders as $order): ?>
                         <li class="dropdown-item">
-                          <a href="<?= base_url('orders/search?=' . $order['order_number']); ?>">
+                          <a href="<?= base_url('orders/search?q=' . $order['order_number']); ?>">
                             <div style="font-weight: 600; margin: 0; color:#5e5e5e;font-size: 15px;">Order #<?= $order['order_number']; ?> - <?= $order['state']; ?></div>
                             <p style="margin: 0; font-size: 11px;"> (<?= date('l, jS F, Y', strtotime($order['rescheduled_date'])); ?>)</p>
                           </a>
