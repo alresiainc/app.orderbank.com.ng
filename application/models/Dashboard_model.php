@@ -182,7 +182,7 @@ class Dashboard_model extends CI_Model
 		}
 		return $bar_chart;
 	}
-	public function get_by_date($table_date, $now_query_for_today = false)
+	public function get_by_date_old($table_date, $now_query_for_today = false)
 	{
 		$dates = $this->input->post('dates');
 		if ($dates == 'Today') {
@@ -210,6 +210,33 @@ class Dashboard_model extends CI_Model
 		// $sql_query = $this->db->last_query(); // Get the last executed SQL query
 		// log_message('error', 'Executed SQL Query: ' . $sql_query); // Logs the SQL query
 	}
+
+	public function get_by_date($table_date, $now_query_for_today = false)
+	{
+		date_default_timezone_set('UTC'); // Set PHP to UTC
+		$dates = $this->input->post('dates');
+
+		if ($dates == 'Today') {
+			if ($now_query_for_today) {
+				$this->db->where("$table_date > UTC_DATE()");
+			} else {
+				$this->db->where("$table_date", gmdate("Y-m-d"));
+			}
+		}
+		if ($dates == 'Yesterday') {
+			$this->db->where("$table_date BETWEEN DATE_SUB(UTC_DATE(), INTERVAL 1 DAY) AND UTC_DATE() - INTERVAL 1 SECOND");
+		}
+		if ($dates == 'Weekly') {
+			$this->db->where("$table_date > DATE_SUB(UTC_TIMESTAMP(), INTERVAL 1 WEEK)");
+		}
+		if ($dates == 'Monthly') {
+			$this->db->where("$table_date > DATE_SUB(UTC_TIMESTAMP(), INTERVAL 1 MONTH)");
+		}
+		if ($dates == 'Yearly') {
+			$this->db->where("$table_date > DATE_SUB(UTC_TIMESTAMP(), INTERVAL 1 YEAR)");
+		}
+	}
+
 	public function breadboard_values()
 	{
 		$dates = $this->input->post('dates');
