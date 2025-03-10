@@ -30,10 +30,16 @@ $config['order_status'] = [
         'description' => 'Second attempt to deliver the order',
         'color' => 'dark',
     ],
-    'pending' => [
-        'label' => 'Pending',
+    // 'pending' => [
+    //     'label' => 'Pending',
+    //     'icon' => 'fa-hourglass',
+    //     'description' => 'Order is pending',
+    //     'color' => 'secondary',
+    // ],
+    'out-for-delivery' => [
+        'label' => 'Out for delivery',
         'icon' => 'fa-hourglass',
-        'description' => 'Order is pending',
+        'description' => 'Order is Out for delivery',
         'color' => 'secondary',
     ],
     'discount-sales' => [
