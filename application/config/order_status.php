@@ -54,6 +54,12 @@ $config['order_status'] = [
         'description' => 'Order has been cancelled',
         'color' => 'danger',
     ],
+    'not-paid' => [
+        'label' => 'Not Paid',
+        'icon' => 'fa-times',
+        'description' => 'Order has not been paid',
+        'color' => 'danger',
+    ],
     'rescheduled' => [
         'label' => 'Rescheduled',
         'icon' => 'fa-clock-o',
